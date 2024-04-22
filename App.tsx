@@ -5,6 +5,7 @@ import RootStack from "./navigators/RootStack";
 import SplashScreen from "./screens/SplashScreen";
 import AuthRootScreen from "./screens/AuthRootScreen";
 import DashboardScreen from "./screens/DashboardScreen";
+import BottomRootScreen from "./screens/BottomRootScreen";
 export default function App() {
   return (
     <NavigationContainer>
@@ -12,6 +13,7 @@ export default function App() {
         <RootStack.Screen name="SplashScreen" component={SplashScreen} />
         <RootStack.Screen name="AuthStackScreens" component={AuthRootScreen} />
         <RootStack.Screen name="DashboardScreen" component={DashboardScreen} />
+        <RootStack.Screen name="BottomTab" component={BottomRootScreen} />
       </RootStack.Navigator>
       {/* <View style={styles.container}>
         <Text>Open up App.jsx to start working on your app!</Text>
