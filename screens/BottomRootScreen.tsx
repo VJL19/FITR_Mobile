@@ -1,8 +1,11 @@
-import { StyleSheet, Text, TouchableNativeFeedback, View } from "react-native";
-import React from "react";
+import { StyleSheet, Text, InteractionManager } from "react-native";
+import React, { useEffect, useState } from "react";
 import BottomTab from "../navigators/BottomTab";
 import { Favorites, Home, Programs, Tutorials } from "./bottom_tabs";
-import { DrawerStackScreenProp } from "../utils/types/navigators/DrawerStackNavigators";
+import {
+  DrawerStackNavigationProp,
+  DrawerStackScreenProp,
+} from "../utils/types/navigators/DrawerStackNavigators";
 import {
   About,
   Announcements,
@@ -18,10 +21,11 @@ import { useNavigation } from "@react-navigation/native";
 import { AuthStackNavigationProp } from "../utils/types/navigators/AuthStackNavigators";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import CustomTabBar from "../components/CustomTabBar";
+import LoadingIndicator from "../components/LoadingIndicator";
 
-const BottomRootScreen = ({ route }: DrawerStackScreenProp) => {
-  const navigation = useNavigation<AuthStackNavigationProp>();
-
+const BottomRootScreen = ({
+  route,
+}: DrawerStackScreenProp | { route: any }) => {
   const RenderTabs = () => {
     switch (route.name) {
       case "HomeDrawer":
@@ -48,9 +52,19 @@ const BottomRootScreen = ({ route }: DrawerStackScreenProp) => {
         return <SignOut />;
     }
   };
+
   return (
     <BottomTab.Navigator
       screenOptions={({ route }) => ({
+        tabBarLabel: ({ focused, position, color, children }) => {
+          return (
+            <Text
+              style={{ color: focused ? "#ff2e00" : "#f5f5f5", fontSize: 11 }}
+            >
+              {children}
+            </Text>
+          );
+        },
         headerShown: false,
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
@@ -75,6 +89,7 @@ const BottomRootScreen = ({ route }: DrawerStackScreenProp) => {
 
         tabBarButton: (props) => <CustomTabBar {...props} />,
         tabBarActiveTintColor: "#FF2E00",
+
         tabBarInactiveTintColor: "#F5F5F5",
         tabBarLabelStyle: { color: "#f5f5f5", marginTop: -10 },
         tabBarStyle: { backgroundColor: "#131313", height: 60 },
@@ -83,7 +98,10 @@ const BottomRootScreen = ({ route }: DrawerStackScreenProp) => {
       <BottomTab.Screen
         name="Home_Bottom"
         component={RenderTabs}
-        options={{ tabBarBadge: 3, title: "Home" }}
+        options={{
+          tabBarBadge: 3,
+          title: "Home",
+        }}
       />
       <BottomTab.Screen name="Programs" component={Programs} />
       <BottomTab.Screen name="Tutorials" component={Tutorials} />

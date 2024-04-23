@@ -1,13 +1,8 @@
 import { StyleSheet, Text, TouchableNativeFeedback, View } from "react-native";
 import React from "react";
+import Ionicons from "react-native-vector-icons/Ionicons";
 
-import { BottomTabBarButtonProps } from "@react-navigation/bottom-tabs";
-
-const CustomTabBar = ({
-  children,
-  style,
-  ...props
-}: BottomTabBarButtonProps) => {
+const CustomNotification = (props) => {
   return (
     <TouchableNativeFeedback
       {...props}
@@ -18,11 +13,13 @@ const CustomTabBar = ({
         40
       )}
     >
-      <View style={style}>{children}</View>
+      <View style={{ marginRight: 15 }}>
+        <Ionicons name="notifications-outline" size={30} color={"#f5f5f5"} />
+      </View>
     </TouchableNativeFeedback>
   );
 };
 
-export default CustomTabBar;
+export default CustomNotification;
 
 const styles = StyleSheet.create({});

@@ -9,6 +9,7 @@ import BottomRootScreen from "./screens/BottomRootScreen";
 export default function App() {
   return (
     <NavigationContainer>
+      <StatusBar style="light" />
       <RootStack.Navigator screenOptions={{ headerShown: false }}>
         <RootStack.Screen name="SplashScreen" component={SplashScreen} />
         <RootStack.Screen name="AuthStackScreens" component={AuthRootScreen} />
@@ -17,7 +18,6 @@ export default function App() {
       </RootStack.Navigator>
       {/* <View style={styles.container}>
         <Text>Open up App.jsx to start working on your app!</Text>
-        <StatusBar style="auto" />
         <Button title="Click Me" onPress={handleClick} />
       </View> */}
     </NavigationContainer>

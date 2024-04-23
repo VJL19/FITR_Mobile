@@ -1,15 +1,8 @@
-import {
-  Text,
-  Image,
-  ImageBackground,
-  View,
-  Pressable,
-  StyleSheet,
-  TouchableOpacity,
-} from "react-native";
+import { Image, ImageBackground, View, StyleSheet } from "react-native";
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
 import { RootStackNavigationProp } from "../utils/types/navigators/RootStackNavigators";
+import CustomButton from "../components/CustomButton";
 
 const SplashScreen = () => {
   const navigate = useNavigation<RootStackNavigationProp>();
@@ -32,40 +25,21 @@ const SplashScreen = () => {
             alignItems: "center",
           }}
         >
-          <TouchableOpacity
-            activeOpacity={0.8}
-            style={styles.btnPrimary}
-            onPress={() =>
-              navigate.navigate("AuthStackScreens", { screen: "Sign In" })
-            }
-          >
-            <View
-              style={{
-                flex: 1,
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <Text style={styles.btnPrimaryText}>Get Started</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity
-            activeOpacity={0.8}
-            style={styles.btnSecondary}
-            onPress={() =>
-              navigate.navigate("AuthStackScreens", { screen: "Sign In" })
-            }
-          >
-            <View
-              style={{
-                flex: 1,
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <Text style={styles.btnSecondaryText}>Sign Up</Text>
-            </View>
-          </TouchableOpacity>
+          <CustomButton
+            buttonStyle={styles.btnPrimary}
+            textStyle={styles.btnPrimaryText}
+            screenToNavigate="AuthStackScreens"
+            screenName="Sign In"
+            textValue="Get Started"
+          />
+
+          <CustomButton
+            buttonStyle={styles.btnSecondary}
+            textStyle={styles.btnSecondaryText}
+            screenToNavigate="AuthStackScreens"
+            screenName="Sign Up"
+            textValue="Sign Up"
+          />
         </View>
       </View>
     </ImageBackground>
@@ -79,8 +53,8 @@ const styles = StyleSheet.create({
   },
   btnPrimary: {
     width: "90%",
-    borderRadius: 150,
-    height: 50,
+    borderRadius: 5,
+    height: 45,
     backgroundColor: "#FF2E00",
   },
   btnPrimaryText: {
@@ -91,8 +65,8 @@ const styles = StyleSheet.create({
   },
   btnSecondary: {
     width: "90%",
-    borderRadius: 150,
-    height: 50,
+    borderRadius: 5,
+    height: 45,
     backgroundColor: "#F5F5F5",
   },
   btnSecondaryText: {

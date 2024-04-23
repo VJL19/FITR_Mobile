@@ -3,17 +3,32 @@ import DrawerStack from "../navigators/DrawerStack";
 import BottomRootScreen from "./BottomRootScreen";
 import CustomDrawer from "../components/CustomDrawer";
 import drawerIcon from "../components/drawerIcon";
-import { View } from "react-native";
+import { TouchableNativeFeedback, View } from "react-native";
+import CustomNotification from "../components/CustomNotification";
 
 const DashboardScreen = () => {
   return (
     <DrawerStack.Navigator
       drawerContent={(props) => <CustomDrawer {...props} />}
       screenOptions={{
+        headerBackground: () => {
+          return (
+            <View
+              style={{
+                flex: 1,
+                backgroundColor: "#131313",
+                borderBottomWidth: 0.5,
+                borderBottomColor: "#f5f5f5",
+              }}
+            />
+          );
+        },
+        headerTintColor: "#f5f5f5",
         headerTitle: "",
+        headerRight: (props) => <CustomNotification {...props} />,
         drawerActiveBackgroundColor: "#FF2E00",
         drawerActiveTintColor: "#f2f2f2",
-        drawerLabelStyle: { marginLeft: -20 },
+        drawerLabelStyle: { marginLeft: -15 },
       }}
     >
       <DrawerStack.Screen
