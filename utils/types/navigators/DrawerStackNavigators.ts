@@ -4,7 +4,7 @@ import type {
 } from "@react-navigation/drawer";
 
 type DrawerStackParamList = {
-  Home: undefined;
+  HomeDrawer: undefined;
   Announcements: undefined;
   Attendance: undefined;
   Newsfeed: undefined;
@@ -18,7 +18,7 @@ type DrawerStackParamList = {
 
 type DrawerStackScreenProp = DrawerScreenProps<
   DrawerStackParamList,
-  | "Home"
+  | "HomeDrawer"
   | "Announcements"
   | "Attendance"
   | "Newsfeed"
@@ -31,7 +31,7 @@ type DrawerStackScreenProp = DrawerScreenProps<
 >;
 type DrawerStackNavigationProp = DrawerNavigationProp<
   DrawerStackParamList,
-  | "Home"
+  | "HomeDrawer"
   | "Announcements"
   | "Attendance"
   | "Newsfeed"

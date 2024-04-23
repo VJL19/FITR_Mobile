@@ -1,16 +1,15 @@
 import {
   Text,
   Image,
-  Button,
   ImageBackground,
   View,
   Pressable,
   StyleSheet,
+  TouchableOpacity,
 } from "react-native";
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
 import { RootStackNavigationProp } from "../utils/types/navigators/RootStackNavigators";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 const SplashScreen = () => {
   const navigate = useNavigation<RootStackNavigationProp>();
@@ -22,46 +21,51 @@ const SplashScreen = () => {
       <View style={styles.blur}>
         <Image
           source={require("../assets/fitr_logo3.png")}
-          style={{ height: "40%", width: "100%" }}
+          style={{ height: "50%", width: "100%" }}
         />
 
-        <View>
-          <View style={styles.btnPrimary}>
-            <Pressable
-              style={{ height: 50 }}
-              onPress={() =>
-                navigate.navigate("AuthStackScreens", { screen: "Sign In" })
-              }
+        <View
+          style={{
+            width: "100%",
+            rowGap: 25,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <TouchableOpacity
+            activeOpacity={0.8}
+            style={styles.btnPrimary}
+            onPress={() =>
+              navigate.navigate("AuthStackScreens", { screen: "Sign In" })
+            }
+          >
+            <View
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
             >
-              <View
-                style={{
-                  flex: 1,
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <Text style={styles.btnPrimaryText}>Get Started</Text>
-              </View>
-            </Pressable>
-          </View>
-          <View style={styles.btnSecondary}>
-            <Pressable
-              style={{ height: 50 }}
-              onPress={() =>
-                navigate.navigate("AuthStackScreens", { screen: "Sign In" })
-              }
+              <Text style={styles.btnPrimaryText}>Get Started</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            style={styles.btnSecondary}
+            onPress={() =>
+              navigate.navigate("AuthStackScreens", { screen: "Sign In" })
+            }
+          >
+            <View
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
             >
-              <View
-                style={{
-                  flex: 1,
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <Text style={styles.btnSecondaryText}>Sign Up</Text>
-              </View>
-            </Pressable>
-          </View>
+              <Text style={styles.btnSecondaryText}>Sign Up</Text>
+            </View>
+          </TouchableOpacity>
         </View>
       </View>
     </ImageBackground>

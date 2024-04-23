@@ -4,7 +4,7 @@ import type {
 } from "@react-navigation/bottom-tabs";
 
 type BottomTabParamList = {
-  Home: undefined;
+  Home_Bottom: undefined;
   Programs: undefined;
   Tutorials: undefined;
   Favorites: undefined;
@@ -12,11 +12,11 @@ type BottomTabParamList = {
 
 type BottomTabsScreenProp = BottomTabScreenProps<
   BottomTabParamList,
-  "Home" | "Programs" | "Tutorials" | "Favorites"
+  "Home_Bottom" | "Programs" | "Tutorials" | "Favorites"
 >;
 type BottomTabsNavigationProp = BottomTabNavigationProp<
   BottomTabParamList,
-  "Home" | "Programs" | "Tutorials" | "Favorites"
+  "Home_Bottom" | "Programs" | "Tutorials" | "Favorites"
 >;
 
 export type {
