@@ -7,7 +7,6 @@ import {
   ImageBackground,
 } from "react-native";
 import React from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { RootStackNavigationProp } from "../../utils/types/navigators/RootStackNavigators";
 import CustomButton from "../../components/CustomButton";

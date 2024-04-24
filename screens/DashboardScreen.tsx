@@ -11,6 +11,7 @@ const DashboardScreen = () => {
     <DrawerStack.Navigator
       drawerContent={(props) => <CustomDrawer {...props} />}
       screenOptions={{
+        unmountOnBlur: true,
         headerBackground: () => {
           return (
             <View

@@ -3,9 +3,11 @@ import React from "react";
 import { useNavigation } from "@react-navigation/native";
 import { RootStackNavigationProp } from "../utils/types/navigators/RootStackNavigators";
 import CustomButton from "../components/CustomButton";
+import { enableFreeze } from "react-native-screens";
 
 const SplashScreen = () => {
   const navigate = useNavigation<RootStackNavigationProp>();
+  enableFreeze();
   return (
     <ImageBackground
       style={styles.background}

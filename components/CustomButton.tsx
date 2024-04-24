@@ -4,7 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import { RootStackNavigationProp } from "../utils/types/navigators/RootStackNavigators";
 import IButtonProp from "../utils/types/components_types/Button";
 
-const Button = ({
+const CustomButton = ({
   textStyle,
   buttonStyle,
   textValue,
@@ -36,6 +36,6 @@ const Button = ({
   );
 };
 
-export default Button;
+export default CustomButton;
 
 const styles = StyleSheet.create({});

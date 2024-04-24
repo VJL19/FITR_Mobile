@@ -56,6 +56,7 @@ const BottomRootScreen = ({
   return (
     <BottomTab.Navigator
       screenOptions={({ route }) => ({
+        unmountOnBlur: true,
         tabBarLabel: ({ focused, position, color, children }) => {
           return (
             <Text
