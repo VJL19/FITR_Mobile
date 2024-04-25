@@ -1,6 +1,6 @@
 import axios from "axios";
 const global_axios = axios.create({
-  baseURL: "http://192.168.1.11:8082/api/v1/",
+  baseURL: "http://192.168.1.17:8082/api/v1/",
   withCredentials: true,
 });
 
