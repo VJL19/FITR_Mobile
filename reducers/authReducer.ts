@@ -1,90 +1,75 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import IUser from "../utils/types/user.types";
+import { loginUser } from "../actions/authAction";
+import { createSlice } from "@reduxjs/toolkit";
+import IUser, { IAuthState } from "../utils/types/user.types";
+import { useEffect } from "react";
 import global_axios from "../global/axios";
-import { AxiosError } from "axios";
-
-interface IProductState {
-  message: string;
-}
-
-interface IAuthState {
-  user: IUser[];
-  isAuthenticated: boolean;
-  isLoading: boolean;
-  token: string;
-  message: string | undefined;
-}
+import SecureStore from "expo-secure-store";
+import testToken from "../actions/homeAction";
 
 const initialState: IAuthState = {
-  isAuthenticated: false,
-  isLoading: false,
-  message: "",
-  token: "",
+  status: 0,
   user: [],
+  accessToken: "",
+  message: "",
+  isAuthenticated: false,
 };
 
-// const initialState: IAuthState = {
-//   //   user: {
-//   //     UserID: 0,
-//   //     LastName: "",
-//   //     FirstName: "",
-//   //     MiddleName: "",
-//   //     Age: 0,
-//   //     ContactNumber: "",
-//   //     Email: "",
-//   //     Height: 0,
-//   //     Weight: 0,
-//   //     Username: "",
-//   //     Password: "",
-//   //     ConfirmPassword: "",
-//   //     ProfilePic: "",
-//   //     Gender: "",
-//   //   },
-//   user: [],
-//   isAuthenticated: false,
-//   isLoading: false,
-//   token: "",
-//   message: "",
-// };
-
-export type KnownError = {
-  message: string;
-  description: string;
-  code: number | undefined;
-};
-
-export const fetchUsers = createAsyncThunk(
-  "users/fetchUsers",
-  async (payload, { rejectWithValue }) => {
-    try {
-      const res = await global_axios.get("/user/sample_health");
-      const data: IProductState = res.data;
-      return data;
-    } catch (err) {
-      const error: AxiosError<KnownError> = err as any;
-      if (!error.response) {
-        throw err;
-      }
-      rejectWithValue(error.response.data);
-    }
-  }
-);
-
-export const authSlice = createSlice({
+const authSlice = createSlice({
   name: "auth",
   initialState,
-  reducers: {},
+  reducers: {
+    loadToken: (state) => {
+      // const ACCESS_TOKEN = "accessToken";
+      // useEffect(() => {
+      //   const loadAccessToken = async () => {
+      //     const accessToken = await SecureStore.getItemAsync(ACCESS_TOKEN);
+      //     console.log("access token stored: ", accessToken);
+      //     state.accessToken = accessToken;
+      //     if (accessToken) {
+      //       global_axios.defaults.headers.common[
+      //         "Authorization"
+      //       ] = `Bearer ${accessToken}`;
+      //     }
+      //   };
+      //   loadAccessToken();
+      // }, []);
+    },
+  },
   extraReducers: (builder) => {
-    builder.addCase(fetchUsers.fulfilled, (state, action) => {
-      state.message = action?.payload;
+    //for login api call
+    builder.addCase(loginUser.fulfilled, (state, action) => {
+      state.status = action.payload.status;
+      state.accessToken = action.payload.accessToken;
+      state.user = action.payload.user;
+      state.message = action.payload?.details;
+      state.isAuthenticated = true;
+    }),
+      builder.addCase(loginUser.pending, (state, action) => {
+        state.status = 202;
+        state.message = action?.payload;
+      });
+    builder.addCase(loginUser.rejected, (state, action) => {
+      state.message = action?.payload?.details;
+      state.status = action?.payload.status;
+      state.isAuthenticated = false;
+      state.user = [];
     });
-    builder.addCase(fetchUsers.rejected, (state, action) => {
-      state.message = "rejected";
+    builder.addCase(testToken.fulfilled, (state, action) => {
+      state.message = action?.payload?.payload;
+      state.isAuthenticated = action.payload?.isAuthenticated;
+      state.status = 200;
     });
-    builder.addCase(fetchUsers.pending, (state, action) => {
-      state.message = "pending!";
+    builder.addCase(testToken.pending, (state, action) => {
+      state.message = { details: action?.payload };
+      state.status = 202;
+    });
+    builder.addCase(testToken.rejected, (state, action) => {
+      state.status = 400;
+      state.message = { details: "You are unauthorized!" };
+      state.isAuthenticated = false;
     });
   },
 });
 
+export const { loadToken } = authSlice.actions;
 export default authSlice.reducer;

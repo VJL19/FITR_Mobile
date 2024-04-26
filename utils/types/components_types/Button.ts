@@ -6,7 +6,7 @@ interface IButtonProp {
   textStyle: StyleProp<TextStyle>;
   buttonStyle: StyleProp<ViewStyle>;
   textValue: string;
-  screenToNavigate: any;
+  screenToNavigate?: any;
   screenName?: any;
 }
 

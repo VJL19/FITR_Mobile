@@ -13,23 +13,28 @@ import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
 import { increment, incrementByAmount } from "../../reducers/counterReducer";
-import { fetchUsers } from "../../reducers/authReducer";
+import testToken from "../../actions/homeAction";
+// import { fetchUsers } from "../../reducers/authReducer";
 const Home = () => {
   const [isReady, setIsReady] = useState(false);
 
   const { value, name } = useSelector((state: RootState) => state.counter);
-  const { message } = useSelector((state: RootState) => state.auth);
+  const { message, isAuthenticated } = useSelector(
+    (state: RootState) => state.authReducer
+  );
 
   const dispatch: AppDispatch = useDispatch();
 
   console.log("message: ", message);
+  console.log("isAuthenticated: ", isAuthenticated);
   // console.log("user: ", user);
   // console.log(value);
   useEffect(() => {
     InteractionManager.runAfterInteractions(() => {
       setIsReady(true);
     });
-    dispatch(fetchUsers());
+    dispatch(testToken());
+    // dispatch(fetchUsers());
   }, []);
 
   if (!isReady) {
@@ -47,7 +52,7 @@ const Home = () => {
         title="Increment By Amount"
         onPress={() => dispatch(incrementByAmount(50))}
       />
-      <Button title="Get Data" onPress={() => dispatch(fetchUsers())} />
+      {/* <Button title="Get Data" onPress={() => dispatch(fetchUsers())} /> */}
     </SafeAreaView>
   );
 };

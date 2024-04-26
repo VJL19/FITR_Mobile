@@ -15,6 +15,11 @@ interface IUser {
   Gender: string;
 }
 
+export interface ILoginForm {
+  Username: string;
+  Password: string;
+}
+
 export interface IRegisterState {
   status: number | undefined;
   details: object | undefined | unknown;
@@ -35,4 +40,18 @@ export interface RegisterPayload {
   ProfilePic: string;
   Gender: string;
 }
+
+export interface IAuthState {
+  status: number;
+  user: IUser[];
+  accessToken: string | undefined | null;
+  message: string | unknown | undefined;
+  isAuthenticated: boolean;
+}
+
+export interface LoginPayload {
+  Username: string;
+  Password: string;
+}
+
 export default IUser;

@@ -1,12 +1,46 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import DrawerStack from "../navigators/DrawerStack";
 import BottomRootScreen from "./BottomRootScreen";
 import CustomDrawer from "../components/CustomDrawer";
 import drawerIcon from "../components/drawerIcon";
-import { TouchableNativeFeedback, View } from "react-native";
+import { Button, TouchableNativeFeedback, View } from "react-native";
 import CustomNotification from "../components/CustomNotification";
+import { useSelector } from "react-redux";
+import { RootState } from "../store/store";
+import * as SecureStore from "expo-secure-store";
+import global_axios from "../global/axios";
+import { useNavigation } from "@react-navigation/native";
+import {
+  RootStackNavigationProp,
+  RootStackScreenProp,
+} from "../utils/types/navigators/RootStackNavigators";
 
-const DashboardScreen = () => {
+const DashboardScreen = ({ navigation }: RootStackScreenProp) => {
+  const { isAuthenticated, accessToken, status } = useSelector(
+    (state: RootState) => state.authReducer
+  );
+
+  // console.log("my accesstoken", accessToken);
+
+  // console.log("in dashboard,", isAuthenticated);
+
+  // useEffect(() => {
+  //   navigation.reset({
+  //     index: 0,
+  //     routes: [{ name: "DashboardScreen" }],
+  //   });
+  //   console.log("dashboard use effect");
+  // }, []);
+
+  const checkAccessToken = async () => {
+    const accessToken = await SecureStore.getItemAsync("accessToken");
+    if (!accessToken) {
+      navigation.replace("AuthStackScreens", { screen: "Sign In" });
+    } else {
+      navigation.replace("DashboardScreen");
+    }
+  };
+  console.log("dashboard", status);
   return (
     <DrawerStack.Navigator
       drawerContent={(props) => <CustomDrawer {...props} />}
@@ -26,7 +60,19 @@ const DashboardScreen = () => {
         },
         headerTintColor: "#f5f5f5",
         headerTitle: "",
-        headerRight: (props) => <CustomNotification {...props} />,
+        headerRight: (props) => (
+          <View>
+            <Button
+              title="Logout"
+              onPress={async () => {
+                await SecureStore.deleteItemAsync("accessToken");
+
+                global_axios.defaults.headers.common["Authorization"] = "";
+              }}
+            />
+            <CustomNotification {...props} />
+          </View>
+        ),
         drawerActiveBackgroundColor: "#FF2E00",
         drawerActiveTintColor: "#f2f2f2",
         drawerLabelStyle: { marginLeft: -15 },
