@@ -60,6 +60,11 @@ const SignInScreen = () => {
     dispatch(loginUser(data));
   };
 
+  useEffect(() => {
+    // if (!auth) {
+    //   navigation.navigate("AuthStackScreens", { screen: "Sign In" });
+    // }
+  }, []);
   // useEffect(() => {
   //   navigation.addListener("focus", async () => {
   //     if (status === 400 || status === 200) {
@@ -67,7 +72,7 @@ const SignInScreen = () => {
   //         navigation.replace("DashboardScreen");
   //       }
   //     }
-  //     console.log("run");
+  //     console.log("run", isAuthenticated);
   //   });
   // }, []);
 
@@ -91,7 +96,6 @@ const SignInScreen = () => {
         },
         { text: "OK", onPress: () => {} },
       ]);
-      navigation.navigate("DashboardScreen");
       reset();
     }
   }, [status, message]);

@@ -3,9 +3,7 @@ import { StyleSheet, Text, View, Button } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { Provider } from "react-redux";
 import { store } from "./store/store";
-
 import RootApp from "./RootApp";
-import RootStack from "./navigators/RootStack";
 export default function App() {
   return (
     <Provider store={store}>

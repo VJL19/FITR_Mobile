@@ -49,8 +49,8 @@ const authSlice = createSlice({
         state.message = action?.payload;
       });
     builder.addCase(loginUser.rejected, (state, action) => {
-      state.message = action?.payload?.details;
-      state.status = action?.payload.status;
+      state.message = action?.error.message;
+      state.status = 400;
       state.isAuthenticated = false;
       state.user = [];
     });

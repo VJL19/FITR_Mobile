@@ -7,7 +7,7 @@ const useIsReady = () => {
     setTimeout(() => setIsReady(true), 100);
   }, []);
 
-  return isReady;
+  return { isReady };
 };
 
 export default useIsReady;

@@ -16,8 +16,7 @@ import { increment, incrementByAmount } from "../../reducers/counterReducer";
 import testToken from "../../actions/homeAction";
 // import { fetchUsers } from "../../reducers/authReducer";
 const Home = () => {
-  const [isReady, setIsReady] = useState(false);
-
+  // console.log("TTT", auth);
   const { value, name } = useSelector((state: RootState) => state.counter);
   const { message, isAuthenticated } = useSelector(
     (state: RootState) => state.authReducer
@@ -25,21 +24,15 @@ const Home = () => {
 
   const dispatch: AppDispatch = useDispatch();
 
-  console.log("message: ", message);
-  console.log("isAuthenticated: ", isAuthenticated);
+  // console.log("message: ", message);
+  // console.log("isAuthenticated: ", isAuthenticated);
   // console.log("user: ", user);
   // console.log(value);
   useEffect(() => {
-    InteractionManager.runAfterInteractions(() => {
-      setIsReady(true);
-    });
     dispatch(testToken());
     // dispatch(fetchUsers());
   }, []);
 
-  if (!isReady) {
-    return <LoadingIndicator />;
-  }
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#202020" }}>
       <Text style={{ color: "#f5f5f5", fontWeight: "bold", fontSize: 25 }}>

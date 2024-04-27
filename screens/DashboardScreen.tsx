@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import DrawerStack from "../navigators/DrawerStack";
 import BottomRootScreen from "./BottomRootScreen";
 import CustomDrawer from "../components/CustomDrawer";
 import drawerIcon from "../components/drawerIcon";
-import { Button, TouchableNativeFeedback, View } from "react-native";
+import { Alert, Button, TouchableNativeFeedback, View } from "react-native";
 import CustomNotification from "../components/CustomNotification";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/store";
@@ -14,11 +14,14 @@ import {
   RootStackNavigationProp,
   RootStackScreenProp,
 } from "../utils/types/navigators/RootStackNavigators";
+import { AuthContext } from "../context/AuthContext";
 
 const DashboardScreen = ({ navigation }: RootStackScreenProp) => {
   const { isAuthenticated, accessToken, status } = useSelector(
     (state: RootState) => state.authReducer
   );
+
+  const { logOut } = useContext(AuthContext);
 
   // console.log("my accesstoken", accessToken);
 
@@ -40,7 +43,7 @@ const DashboardScreen = ({ navigation }: RootStackScreenProp) => {
       navigation.replace("DashboardScreen");
     }
   };
-  console.log("dashboard", status);
+  // console.log("dashboard", status);
   return (
     <DrawerStack.Navigator
       drawerContent={(props) => <CustomDrawer {...props} />}
@@ -66,8 +69,16 @@ const DashboardScreen = ({ navigation }: RootStackScreenProp) => {
               title="Logout"
               onPress={async () => {
                 await SecureStore.deleteItemAsync("accessToken");
-
                 global_axios.defaults.headers.common["Authorization"] = "";
+                Alert.alert("Logout message", "", [
+                  {
+                    text: "Cancel",
+                    onPress: () => {},
+                    style: "cancel",
+                  },
+                  { text: "OK", onPress: () => {} },
+                ]);
+                console.log("token deleted successfully!");
               }}
             />
             <CustomNotification {...props} />
