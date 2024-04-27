@@ -34,9 +34,15 @@
       [
         "expo-camera",
         {
-          "cameraPermission": "Allow Fitr Application to access your camera",
-          "microphonePermission": "Allow Fitr Application to access your microphone",
+          "cameraPermission": "Allow Fitr Application to access your camera.",
+          "microphonePermission": "Allow Fitr Application to access your microphone.",
           "recordAudioAndroid": true
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The Fitr Application accesses your photos to let you share them with your friends."
         }
       ]
     ]

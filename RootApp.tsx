@@ -18,16 +18,16 @@ import AuthContextProvider, { AuthContext } from "./context/AuthContext";
 import LoadingIndicator from "./components/LoadingIndicator";
 
 const RootApp = () => {
-  // const { isAuthenticated } = useSelector(
-  //   (state: RootState) => state.authReducer
-  // );
+  const { isAuthenticated: rs } = useSelector(
+    (state: RootState) => state.authReducer
+  );
 
   const navigation = useNavigation<RootStackNavigationProp>();
   const [isReady, setIsReady] = useState(false);
 
   const { token, isAuthenticated } = useContext(AuthContext);
 
-  console.log("auth context", isAuthenticated);
+  console.log("auth context", rs);
   // console.log("auth tokens", token);
 
   useEffect(() => {
@@ -59,22 +59,22 @@ const RootApp = () => {
       screenOptions={{ headerShown: false, freezeOnBlur: true }}
     >
       {!token || !isAuthenticated ? (
-        <>
+        <RootStack.Group>
           <RootStack.Screen
             name="AuthStackScreens"
             component={AuthRootScreen}
           />
           <RootStack.Screen name="SplashScreen" component={SplashScreen} />
-        </>
+        </RootStack.Group>
       ) : (
-        <>
+        <RootStack.Group>
           <RootStack.Screen
             name="DashboardScreen"
             component={DashboardScreen}
           />
           <RootStack.Screen name="BottomTab" component={BottomRootScreen} />
           <RootStack.Screen name="SplashScreen" component={SplashScreen} />
-        </>
+        </RootStack.Group>
       )}
     </RootStack.Navigator>
   );

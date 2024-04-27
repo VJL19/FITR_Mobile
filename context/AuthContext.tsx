@@ -3,8 +3,9 @@ import IUser from "../utils/types/user.types";
 import React from "react";
 import global_axios from "../global/axios";
 import * as SecureStore from "expo-secure-store";
-import { useSelector } from "react-redux";
-import { RootState } from "../store/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../store/store";
+import getAccessToken from "../actions/homeAction";
 
 interface IAuthContext {
   isAuthenticated: boolean;

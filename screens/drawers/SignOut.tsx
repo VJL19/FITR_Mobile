@@ -39,7 +39,7 @@ const SignOut = () => {
     const logOutUser = async () => {
       await logOut();
     };
-    Alert.alert("Message", "Log out successfully!");
+    Alert.alert("Message!", "Log out successfully!");
     logOutUser();
     console.log("deleted successfully!");
   }, [isAuthenticated, token]);

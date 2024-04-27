@@ -10,7 +10,7 @@ import {
   Alert,
 } from "react-native";
 import { Controller } from "react-hook-form";
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { RootStackNavigationProp } from "../../utils/types/navigators/RootStackNavigators";
 import CustomButton from "../../components/CustomButton";
@@ -22,6 +22,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../../actions/authAction";
 import * as SecureStore from "expo-secure-store";
 import { AppDispatch, RootState } from "../../store/store";
+import { AuthContext } from "../../context/AuthContext";
+import getAccessToken from "../../actions/homeAction";
 const SignInScreen = () => {
   const navigation = useNavigation<RootStackNavigationProp>();
 

@@ -6,6 +6,7 @@ import {
   Button,
   StyleSheet,
   ScrollView,
+  Image,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
@@ -21,6 +22,7 @@ import { formSchema } from "../../utils/validations";
 import { joiResolver } from "@hookform/resolvers/joi";
 import LoadingIndicator from "../../components/LoadingIndicator";
 import { RootStackNavigationProp } from "../../utils/types/navigators/RootStackNavigators";
+import * as ImagePicker from "expo-image-picker";
 
 const initialFormState: IForm = {
   LastName: "",
@@ -39,7 +41,7 @@ const initialFormState: IForm = {
 };
 const SignUpScreen = () => {
   const navigation = useNavigation<RootStackNavigationProp>();
-
+  const [image, setImage] = useState<ImagePicker.ImagePickerResult | string>();
   const {
     control,
     handleSubmit,
@@ -108,9 +110,44 @@ const SignUpScreen = () => {
       }),
     [navigation, hasUnsavedChanges]
   );
+
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      cameraType: ImagePicker.CameraType.back,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    console.log(result);
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
+  };
+  console.log("hey", image === undefined);
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Text style={{ fontSize: 25 }}>SignUpScreen</Text>
+      <View
+        style={{
+          justifyContent: "center",
+          alignItems: "center",
+          width: "100%",
+        }}
+      >
+        <Button title="Pick an image from camera roll" onPress={pickImage} />
+        {image ? (
+          <Image source={{ uri: image }} style={styles.image} />
+        ) : (
+          <Image
+            source={require("../../assets/avatar_default.jpeg")}
+            style={styles.image}
+          />
+        )}
+      </View>
       <ScrollView style={{ padding: 25, flex: 1, height: "100%" }}>
         <Controller
           control={control}
@@ -468,6 +505,13 @@ const styles = StyleSheet.create({
     color: "#f5f5f5",
     fontSize: 18,
     fontWeight: "bold",
+  },
+  image: {
+    width: 150,
+    height: 150,
+    borderRadius: 150,
+    borderWidth: 3,
+    borderColor: "#ff2e00",
   },
 });
 
