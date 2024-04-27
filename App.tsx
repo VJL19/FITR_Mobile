@@ -4,17 +4,20 @@ import { NavigationContainer } from "@react-navigation/native";
 import { Provider } from "react-redux";
 import { store } from "./store/store";
 import RootApp from "./RootApp";
+import AuthContextProvider from "./context/AuthContext";
 export default function App() {
   return (
     <Provider store={store}>
-      <NavigationContainer>
-        <StatusBar style="light" />
-        <RootApp />
-        {/* <View style={styles.container}>
+      <AuthContextProvider>
+        <NavigationContainer>
+          <StatusBar style="light" />
+          <RootApp />
+          {/* <View style={styles.container}>
         <Text>Open up App.jsx to start working on your app!</Text>
         <Button title="Click Me" onPress={handleClick} />
       </View> */}
-      </NavigationContainer>
+        </NavigationContainer>
+      </AuthContextProvider>
     </Provider>
   );
 }

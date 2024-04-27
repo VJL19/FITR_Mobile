@@ -40,21 +40,25 @@ const loginUser = createAsyncThunk(
   }
 );
 
-// const logoutUser = createAsyncThunk(
-//   "/user/logout_user",
-//   async (_, { rejectWithValue }) => {
-//     try {
+const logoutUser = createAsyncThunk(
+  "/user/logout_user",
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await global_axios.post("/user/logout_account");
+      const data = res.data;
 
-//         const res = await global_axios.
-//     } catch (err) {
-//       const error = err as AxiosError<KnownError>;
-//       if (!error.response) {
-//         throw err;
-//       }
+      await SecureStore.deleteItemAsync("accessToken");
+      global_axios.defaults.headers.common["Authorization"] = "";
+      return data;
+    } catch (err) {
+      const error = err as AxiosError<KnownError>;
+      if (!error.response) {
+        throw err;
+      }
 
-//       return rejectWithValue(error.response.data)
-//     }
-//   }
-// );
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
 
-export { loginUser };
+export { loginUser, logoutUser };

@@ -18,13 +18,14 @@ import AuthContextProvider, { AuthContext } from "./context/AuthContext";
 import LoadingIndicator from "./components/LoadingIndicator";
 
 const RootApp = () => {
-  const { isAuthenticated } = useSelector(
-    (state: RootState) => state.authReducer
-  );
+  // const { isAuthenticated } = useSelector(
+  //   (state: RootState) => state.authReducer
+  // );
+
   const navigation = useNavigation<RootStackNavigationProp>();
   const [isReady, setIsReady] = useState(false);
 
-  const { token } = useContext(AuthContext);
+  const { token, isAuthenticated } = useContext(AuthContext);
 
   console.log("auth context", isAuthenticated);
   // console.log("auth tokens", token);
@@ -57,7 +58,7 @@ const RootApp = () => {
     <RootStack.Navigator
       screenOptions={{ headerShown: false, freezeOnBlur: true }}
     >
-      {!isAuthenticated ? (
+      {!token || !isAuthenticated ? (
         <>
           <RootStack.Screen
             name="AuthStackScreens"

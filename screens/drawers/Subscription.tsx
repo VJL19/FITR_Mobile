@@ -3,7 +3,7 @@ import React from "react";
 
 const Subscription = () => {
   return (
-    <View>
+    <View style={styles.container}>
       <Text>Subscription</Text>
     </View>
   );
@@ -11,4 +11,11 @@ const Subscription = () => {
 
 export default Subscription;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#202020",
+  },
+});

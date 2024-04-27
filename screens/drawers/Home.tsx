@@ -13,7 +13,7 @@ import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
 import { increment, incrementByAmount } from "../../reducers/counterReducer";
-import testToken from "../../actions/homeAction";
+import getAccessToken from "../../actions/homeAction";
 // import { fetchUsers } from "../../reducers/authReducer";
 const Home = () => {
   // console.log("TTT", auth);
@@ -24,12 +24,12 @@ const Home = () => {
 
   const dispatch: AppDispatch = useDispatch();
 
-  // console.log("message: ", message);
+  console.log("message: ", message);
   // console.log("isAuthenticated: ", isAuthenticated);
   // console.log("user: ", user);
   // console.log(value);
   useEffect(() => {
-    dispatch(testToken());
+    dispatch(getAccessToken());
     // dispatch(fetchUsers());
   }, []);
 

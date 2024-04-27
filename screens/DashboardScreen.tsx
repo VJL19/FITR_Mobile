@@ -49,6 +49,7 @@ const DashboardScreen = ({ navigation }: RootStackScreenProp) => {
       drawerContent={(props) => <CustomDrawer {...props} />}
       screenOptions={{
         unmountOnBlur: true,
+
         headerBackground: () => {
           return (
             <View
@@ -63,9 +64,10 @@ const DashboardScreen = ({ navigation }: RootStackScreenProp) => {
         },
         headerTintColor: "#f5f5f5",
         headerTitle: "",
+
         headerRight: (props) => (
           <View>
-            <Button
+            {/* <Button
               title="Logout"
               onPress={async () => {
                 await SecureStore.deleteItemAsync("accessToken");
@@ -80,7 +82,7 @@ const DashboardScreen = ({ navigation }: RootStackScreenProp) => {
                 ]);
                 console.log("token deleted successfully!");
               }}
-            />
+            /> */}
             <CustomNotification {...props} />
           </View>
         ),

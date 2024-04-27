@@ -1,4 +1,6 @@
-interface IUser {
+import IAttendance from "./attendance.types";
+
+interface IUser extends IAttendance {
   UserID: number;
   LastName: string;
   FirstName: string;
@@ -43,7 +45,7 @@ export interface RegisterPayload {
 
 export interface IAuthState {
   status: number;
-  user: IUser[];
+  user: IUser;
   accessToken: string | undefined | null;
   message: string | unknown | undefined;
   isAuthenticated: boolean;

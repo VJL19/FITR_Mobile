@@ -2,23 +2,24 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import global_axios from "../global/axios";
 import { AxiosError } from "axios";
 import { KnownError } from "./registerAction";
+import IAttendance from "../utils/types/attendance.types";
 
-const getAccessToken = createAsyncThunk(
-  "user/dashboard",
-  async (_, { rejectWithValue }) => {
+const attendanceUser = createAsyncThunk(
+  "/user/attendance",
+  async (arg: IAttendance, { rejectWithValue }) => {
     try {
-      const res = await global_axios.get("/user/dashboard");
-      const data = res.data;
+      const res = await global_axios.post("/user/attendance", arg);
 
+      const data = res.data;
       return data;
     } catch (err) {
       const error = err as AxiosError<KnownError>;
       if (!error.response) {
         throw err;
       }
-      return rejectWithValue(error.response?.data);
+      rejectWithValue(error.response?.data);
     }
   }
 );
 
-export default getAccessToken;
+export default attendanceUser;

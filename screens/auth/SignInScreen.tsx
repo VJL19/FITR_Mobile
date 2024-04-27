@@ -25,14 +25,6 @@ import { AppDispatch, RootState } from "../../store/store";
 const SignInScreen = () => {
   const navigation = useNavigation<RootStackNavigationProp>();
 
-  const checkAccessToken = async () => {
-    const accessToken = await SecureStore.getItemAsync("accessToken");
-    if (!accessToken) {
-      navigation.replace("AuthStackScreens", { screen: "Sign In" });
-    } else {
-      navigation.replace("DashboardScreen");
-    }
-  };
   const defaultValue = {
     Username: "",
     Password: "",
@@ -55,16 +47,16 @@ const SignInScreen = () => {
   // console.log("status", status);
   // console.log("message", message);
   const onSubmit = async (data: ILoginForm) => {
-    console.log("in sign in screen", data);
+    // console.log("in sign in screen", data);
 
     dispatch(loginUser(data));
   };
 
-  useEffect(() => {
-    // if (!auth) {
-    //   navigation.navigate("AuthStackScreens", { screen: "Sign In" });
-    // }
-  }, []);
+  // useEffect(() => {
+  // if (!auth) {
+  //   navigation.navigate("AuthStackScreens", { screen: "Sign In" });
+  // }
+  // }, []);
   // useEffect(() => {
   //   navigation.addListener("focus", async () => {
   //     if (status === 400 || status === 200) {
@@ -105,8 +97,22 @@ const SignInScreen = () => {
       source={require("../../assets/bg_fitr.jpeg")}
     >
       <View style={styles.opacityBg}>
-        <View>
-          <Text style={{ color: "#f5f5f5" }}>Sign Up</Text>
+        <View
+          style={{
+            justifyContent: "flex-start",
+            alignItems: "flex-start",
+            width: "90%",
+          }}
+        >
+          <Text
+            style={{
+              color: "#f5f5f5",
+              fontSize: 38,
+              fontWeight: "bold",
+            }}
+          >
+            Sign In
+          </Text>
         </View>
         <View style={{ width: "90%" }}>
           <Controller
@@ -171,11 +177,13 @@ const SignInScreen = () => {
           style={{
             width: "100%",
             alignItems: "center",
-            justifyContent: "space-around",
             flex: 0.3,
+            top: 35,
+            right: 0,
+            left: 0,
           }}
         >
-          <View style={{ width: "90%" }}>
+          <View style={{ width: "90%", marginBottom: 25 }}>
             <Button
               title="Sign In"
               color={"#FF2E00"}
