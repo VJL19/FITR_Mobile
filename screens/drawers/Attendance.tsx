@@ -20,6 +20,7 @@ import LoadingIndicator from "../../components/LoadingIndicator";
 import { useNavigation } from "@react-navigation/native";
 import { DrawerStackNavigationProp } from "../../utils/types/navigators/DrawerStackNavigators";
 import DropdownComponent from "../../components/DropdownComponent";
+import SubscriptionEnum from "../../utils/enums/Subscription";
 
 const Attendance = () => {
   const [hasPermission, setHasPermission] = useState<boolean>();
@@ -55,7 +56,7 @@ const Attendance = () => {
   console.log("message att", message);
   console.log("status att", status);
   // console.log("error att", error);
-  console.log("current att", user);
+  // console.log("current att", user);
 
   useEffect(() => {
     const getCameraPermissions = async () => {
@@ -89,10 +90,13 @@ const Attendance = () => {
     ProfilePic: user.ProfilePic,
     LastName: user.LastName,
     FirstName: user.FirstName,
-    SubscriptionType: selectedSubscription == "1" ? "Session" : "Monthly",
+    SubscriptionType:
+      selectedSubscription == "1"
+        ? SubscriptionEnum.Session
+        : SubscriptionEnum.Monthly,
+    DateScanned: getCurrentDate(),
     SubscriptionExpectedEnd:
       selectedSubscription == "1" ? advanceSessionEnd() : advanceMonthlyEnd(),
-    DateScanned: getCurrentDate(),
     IsPaid: false,
     IsScanQR: true,
   };
@@ -106,7 +110,7 @@ const Attendance = () => {
     //validation for secret code stored in qr in admin.
     alert(`Bar code with type ${type} and data ${data} has been scanned!`);
     dispatch(attendanceUser(userRecord));
-    // navigation.navigate("HomeDrawer");
+    navigation.navigate("HomeDrawer");
   };
 
   if (hasPermission === null) {

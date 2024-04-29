@@ -7,6 +7,7 @@ import { useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
 import { checkUserScanQr } from "../../actions/attendanceAction";
 import LoadingIndicator from "../../components/LoadingIndicator";
+import SubscriptionEnum from "../../utils/enums/Subscription";
 
 const Subscription = () => {
   const [paymentMethod, setPaymentMethod] = useState("");
@@ -46,10 +47,10 @@ const Subscription = () => {
     <View style={styles.container}>
       <Text style={styles.textStyle}>Subscription</Text>
       <Text>Select a payment method: </Text>
-      {subscription.SubscriptionType === "Session" && (
+      {subscription.SubscriptionType === SubscriptionEnum.Session && (
         <Text style={styles.textStyle}>You have a due amount of 90.00</Text>
       )}
-      {subscription.SubscriptionType === "Monthly" && (
+      {subscription.SubscriptionType === SubscriptionEnum.Monthly && (
         <Text style={styles.textStyle}>You have a due amount of 900.00</Text>
       )}
 
