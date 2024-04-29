@@ -23,6 +23,9 @@ import { joiResolver } from "@hookform/resolvers/joi";
 import LoadingIndicator from "../../components/LoadingIndicator";
 import { RootStackNavigationProp } from "../../utils/types/navigators/RootStackNavigators";
 import * as ImagePicker from "expo-image-picker";
+import DropdownComponent from "../../components/DropdownComponent";
+import CustomTextInput from "../../components/CustomTextInput";
+import DisplayFormError from "../../components/DisplayFormError";
 
 const initialFormState: IForm = {
   LastName: "",
@@ -41,7 +44,7 @@ const initialFormState: IForm = {
 };
 const SignUpScreen = () => {
   const navigation = useNavigation<RootStackNavigationProp>();
-  const [image, setImage] = useState<ImagePicker.ImagePickerResult | string>();
+  const [image, setImage] = useState<string | undefined>();
   const {
     control,
     handleSubmit,
@@ -52,15 +55,25 @@ const SignUpScreen = () => {
     resolver: joiResolver(formSchema),
   });
 
+  const gender = [
+    { label: "Male", value: "1" },
+    { label: "Female", value: "2" },
+  ];
+
   const hasUnsavedChanges = Boolean();
 
   const { status, details } = useSelector((state: RootState) => state.register);
 
   const dispatch: AppDispatch = useDispatch();
   const onSubmit = async (data: IForm) => {
-    // console.log("data", data);
+    const newObj: IForm = {
+      ...data,
+      Gender: data.Gender === "1" ? "Male" : "Female",
+    };
 
-    dispatch(registerUser(data));
+    console.log("data", newObj);
+
+    // dispatch(registerUser(data));
     // navigation.navigate("DashboardScreen");
     // reset();
     // await new Promise((resolve) => setTimeout(resolve, 2500));
@@ -129,7 +142,7 @@ const SignUpScreen = () => {
   };
   console.log("hey", image === undefined);
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#202020" }}>
       <Text style={{ fontSize: 25 }}>SignUpScreen</Text>
       <View
         style={{
@@ -152,327 +165,190 @@ const SignUpScreen = () => {
         <Controller
           control={control}
           render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              style={{
-                borderWidth: 1,
-                height: 55,
-                borderRadius: 8,
-                paddingLeft: 15,
-                borderColor: errors.LastName && "red",
-                marginBottom: 10,
-                fontSize: 16,
-              }}
-              placeholder="Enter your Last name"
+            <CustomTextInput
+              error={errors.LastName}
               onBlur={onBlur}
-              onChangeText={onChange}
+              onChange={onChange}
               value={value}
+              placeholder="Enter your Last name"
             />
           )}
           name="LastName"
         />
-        {errors.LastName && (
-          <Text style={{ color: "red", fontSize: 13 }}>
-            {errors.LastName.message}
-          </Text>
-        )}
+        <DisplayFormError errors={errors.LastName} />
 
         <Controller
           control={control}
           render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              style={{
-                borderWidth: 1,
-                height: 55,
-                borderRadius: 8,
-                paddingLeft: 15,
-                borderColor: errors.FirstName && "red",
-                marginBottom: 10,
-                fontSize: 16,
-              }}
-              placeholder="Enter your First Name"
+            <CustomTextInput
+              error={errors.FirstName}
               onBlur={onBlur}
-              onChangeText={onChange}
+              onChange={onChange}
               value={value}
+              placeholder="Enter your First name"
             />
           )}
           name="FirstName"
         />
-        {errors.FirstName && (
-          <Text style={{ color: "red", fontSize: 13 }}>
-            {errors.FirstName.message}
-          </Text>
-        )}
+        <DisplayFormError errors={errors.FirstName} />
 
         <Controller
           control={control}
           render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              placeholder="Enter your Middle Name"
+            <CustomTextInput
+              error={errors.MiddleName}
               onBlur={onBlur}
-              onChangeText={onChange}
+              onChange={onChange}
               value={value}
-              style={{
-                borderWidth: 1,
-                height: 55,
-                borderRadius: 8,
-                paddingLeft: 15,
-                borderColor: errors.MiddleName && "red",
-                marginBottom: 10,
-                fontSize: 16,
-              }}
+              placeholder="Enter your Middle name"
             />
           )}
           name="MiddleName"
         />
-        {errors.MiddleName && (
-          <Text style={{ color: "red", fontSize: 13 }}>
-            {errors.MiddleName.message}
-          </Text>
-        )}
+        <DisplayFormError errors={errors.MiddleName} />
+
         <Controller
           control={control}
           render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
+            <CustomTextInput
               inputMode="numeric"
-              placeholder="Enter your Age"
+              error={errors.Age}
               onBlur={onBlur}
-              onChangeText={onChange}
+              onChange={onChange}
               value={value}
-              style={{
-                borderWidth: 1,
-                height: 55,
-                borderRadius: 8,
-                paddingLeft: 15,
-                borderColor: errors.Age && "red",
-                marginBottom: 10,
-                fontSize: 16,
-              }}
+              placeholder="Enter your Age"
             />
           )}
           name="Age"
         />
-        {errors.Age && (
-          <Text style={{ color: "red", fontSize: 13 }}>
-            {errors.Age.message}
-          </Text>
-        )}
+        <DisplayFormError errors={errors.Age} />
+
         <Controller
           control={control}
           render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
+            <CustomTextInput
               inputMode="tel"
-              placeholder="Enter your Contact number"
+              error={errors.ContactNumber}
               onBlur={onBlur}
-              onChangeText={onChange}
+              onChange={onChange}
               value={value}
-              style={{
-                borderWidth: 1,
-                height: 55,
-                borderRadius: 8,
-                paddingLeft: 15,
-                borderColor: errors.ContactNumber && "red",
-                marginBottom: 10,
-                fontSize: 16,
-              }}
+              placeholder="Enter your Contact number"
             />
           )}
           name="ContactNumber"
         />
-        {errors.ContactNumber && (
-          <Text style={{ color: "red", fontSize: 13 }}>
-            {errors.ContactNumber.message}
-          </Text>
-        )}
+        <DisplayFormError errors={errors.ContactNumber} />
+
         <Controller
           control={control}
           render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
+            <CustomTextInput
               inputMode="email"
-              placeholder="Enter your Email"
+              error={errors.Email}
               onBlur={onBlur}
-              onChangeText={onChange}
+              onChange={onChange}
               value={value}
-              style={{
-                borderWidth: 1,
-                height: 55,
-                borderRadius: 8,
-                paddingLeft: 15,
-                borderColor: errors.Email && "red",
-                marginBottom: 10,
-                fontSize: 16,
-              }}
+              placeholder="Enter your Email"
             />
           )}
           name="Email"
         />
-        {errors.Email && (
-          <Text style={{ color: "red", fontSize: 13 }}>
-            {errors.Email.message}
-          </Text>
-        )}
+        <DisplayFormError errors={errors.Email} />
+
         <Controller
           control={control}
           render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
+            <CustomTextInput
               inputMode="numeric"
-              placeholder="Enter your Height in cm"
+              error={errors.Height}
               onBlur={onBlur}
-              onChangeText={onChange}
+              onChange={onChange}
               value={value}
-              style={{
-                borderWidth: 1,
-                height: 55,
-                borderRadius: 8,
-                paddingLeft: 15,
-                borderColor: errors.Height && "red",
-                marginBottom: 10,
-                fontSize: 16,
-              }}
+              placeholder="Enter your Height in cm"
             />
           )}
           name="Height"
         />
-        {errors.Height && (
-          <Text style={{ color: "red", fontSize: 13 }}>
-            {errors.Height.message}
-          </Text>
-        )}
+        <DisplayFormError errors={errors.Height} />
+
         <Controller
           control={control}
           render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
+            <CustomTextInput
               inputMode="numeric"
-              placeholder="Enter your Weight in kg"
+              error={errors.Weight}
               onBlur={onBlur}
-              onChangeText={onChange}
+              onChange={onChange}
               value={value}
-              style={{
-                borderWidth: 1,
-                height: 55,
-                borderRadius: 8,
-                paddingLeft: 15,
-                borderColor: errors.Weight && "red",
-                marginBottom: 10,
-                fontSize: 16,
-              }}
+              placeholder="Enter your Weight in kg"
             />
           )}
           name="Weight"
         />
-        {errors.Weight && (
-          <Text style={{ color: "red", fontSize: 13 }}>
-            {errors.Weight.message}
-          </Text>
-        )}
+        <DisplayFormError errors={errors.Weight} />
+
         <Controller
           control={control}
           render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              placeholder="Enter your Username"
+            <CustomTextInput
+              inputMode="numeric"
+              error={errors.Username}
               onBlur={onBlur}
-              onChangeText={onChange}
+              onChange={onChange}
               value={value}
-              style={{
-                borderWidth: 1,
-                height: 55,
-                borderRadius: 8,
-                paddingLeft: 15,
-                borderColor: errors.Username && "red",
-                marginBottom: 10,
-                fontSize: 16,
-              }}
+              placeholder="Enter your username"
             />
           )}
           name="Username"
         />
-        {errors.Username && (
-          <Text style={{ color: "red", fontSize: 13 }}>
-            {errors.Username.message}
-          </Text>
-        )}
+        <DisplayFormError errors={errors.Username} />
 
         <Controller
           control={control}
           render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
+            <CustomTextInput
               secureTextEntry={true}
-              placeholder="Enter your Password"
+              error={errors.Password}
               onBlur={onBlur}
-              onChangeText={onChange}
+              onChange={onChange}
               value={value}
-              style={{
-                borderWidth: 1,
-                height: 55,
-                borderRadius: 8,
-                paddingLeft: 15,
-                borderColor: errors.Password && "red",
-                marginBottom: 10,
-                fontSize: 16,
-              }}
+              placeholder="Enter your Password"
             />
           )}
           name="Password"
         />
-        {errors.Password && (
-          <Text style={{ color: "red", fontSize: 13 }}>
-            {errors.Password.message}
-          </Text>
-        )}
+        <DisplayFormError errors={errors.Password} />
 
         <Controller
           control={control}
           render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
+            <CustomTextInput
               secureTextEntry={true}
-              placeholder="Enter your ConfirmPassword"
+              error={errors.ConfirmPassword}
               onBlur={onBlur}
-              onChangeText={onChange}
+              onChange={onChange}
               value={value}
-              style={{
-                borderWidth: 1,
-                height: 55,
-                borderRadius: 8,
-                paddingLeft: 15,
-                borderColor: errors.ConfirmPassword && "red",
-                marginBottom: 10,
-                fontSize: 16,
-              }}
+              placeholder="Enter your Confirm Password"
             />
           )}
           name="ConfirmPassword"
         />
-        {errors.ConfirmPassword && (
-          <Text style={{ color: "red", fontSize: 13 }}>
-            {errors.ConfirmPassword.message}
-          </Text>
-        )}
+        <DisplayFormError errors={errors.ConfirmPassword} />
 
-        <Controller
-          control={control}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              placeholder="Enter your Gender"
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-              style={{
-                borderWidth: 1,
-                height: 55,
-                borderRadius: 8,
-                paddingLeft: 15,
-                borderColor: errors.Gender && "red",
-                marginBottom: 25,
-                fontSize: 16,
-              }}
-            />
-          )}
-          name="Gender"
-        />
-        {errors.Gender && (
-          <Text style={{ color: "red", fontSize: 13, marginBottom: 25 }}>
-            {errors.Gender.message}
-          </Text>
-        )}
+        <View style={{ marginBottom: 25, padding: 5 }}>
+          <Controller
+            control={control}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <DropdownComponent
+                data={gender}
+                value={value}
+                handleChange={onChange}
+              />
+            )}
+            name="Gender"
+          />
+          <DisplayFormError errors={errors.Gender} />
+        </View>
       </ScrollView>
       <View style={{ padding: 15 }}>
         {isSubmitting && <LoadingIndicator />}
@@ -482,7 +358,6 @@ const SignUpScreen = () => {
             title="Sign Up"
             color={"#ff2e00"}
             onPress={handleSubmit(onSubmit)}
-            disabled={!isValid}
           />
         )}
       </View>

@@ -24,6 +24,8 @@ import * as SecureStore from "expo-secure-store";
 import { AppDispatch, RootState } from "../../store/store";
 import { AuthContext } from "../../context/AuthContext";
 import getAccessToken from "../../actions/homeAction";
+import CustomTextInput from "../../components/CustomTextInput";
+import DisplayFormError from "../../components/DisplayFormError";
 const SignInScreen = () => {
   const navigation = useNavigation<RootStackNavigationProp>();
 
@@ -120,60 +122,32 @@ const SignInScreen = () => {
           <Controller
             control={control}
             render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
-                style={{
-                  color: "#f5f5f5",
-                  borderWidth: 1,
-                  height: 55,
-                  borderRadius: 8,
-                  paddingLeft: 15,
-                  borderColor: errors.Username ? "red" : "#f5f5f5",
-                  marginBottom: 10,
-                  fontSize: 16,
-                }}
-                placeholderTextColor={"#ccc"}
+              <CustomTextInput
+                error={errors.Username}
                 placeholder="Enter your Username"
                 onBlur={onBlur}
-                onChangeText={onChange}
+                onChange={onChange}
                 value={value}
               />
             )}
             name="Username"
           />
-          {errors.Username && (
-            <Text style={{ fontSize: 16, color: "red" }}>
-              {errors.Username.message}
-            </Text>
-          )}
+          <DisplayFormError errors={errors.Username} />
           <Controller
             control={control}
             render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
-                style={{
-                  color: "#f5f5f5",
-                  borderWidth: 1,
-                  height: 55,
-                  borderRadius: 8,
-                  paddingLeft: 15,
-                  borderColor: errors.Password ? "red" : "#f5f5f5",
-                  marginBottom: 10,
-                  fontSize: 16,
-                }}
+              <CustomTextInput
+                error={errors.Password}
                 secureTextEntry={true}
-                placeholderTextColor={"#ccc"}
                 placeholder="Enter your Password"
                 onBlur={onBlur}
-                onChangeText={onChange}
+                onChange={onChange}
                 value={value}
               />
             )}
             name="Password"
           />
-          {errors.Password && (
-            <Text style={{ fontSize: 16, color: "red" }}>
-              {errors.Password.message}
-            </Text>
-          )}
+          <DisplayFormError errors={errors.Password} />
         </View>
         <View
           style={{

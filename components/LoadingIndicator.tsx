@@ -8,19 +8,22 @@ const LoadingIndicator = () => {
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
+        backgroundColor: "#202020",
       }}
     >
       <View
         style={{
-          flex: 0.15,
+          flex: 0.2,
           justifyContent: "center",
           alignItems: "center",
-          width: 100,
+          width: 120,
           backgroundColor: "rgba(0,0,0,.75)",
           borderRadius: 8,
+          borderWidth: 1,
+          borderColor: "#f5f5f5",
         }}
       >
-        <ActivityIndicator size="large" color="#FF2E00" />
+        <ActivityIndicator size="large" color="#f5f5f5" />
       </View>
     </View>
   );

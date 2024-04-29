@@ -6,6 +6,7 @@ interface IAttendance {
   LastName: string;
   FirstName: string;
   SubscriptionType: string;
+  SubscriptionExpectedEnd: string;
   DateScanned: string;
   IsPaid: boolean;
   IsScanQR: boolean;

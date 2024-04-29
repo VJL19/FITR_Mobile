@@ -25,7 +25,10 @@ const formSchema = Joi.object<IForm>({
   ConfirmPassword: Joi.any()
     .valid(Joi.ref("Password"))
     .required()
-    .messages({ "any.only": "Your Password do not match!" })
+    .messages({
+      "any.only": "Your Password do not match!",
+      "any.required": "ConfirmPassword is not allowed to be empty",
+    })
     .label("ConfirmPassword"),
   ProfilePic: Joi.string().optional().label("ProfilePic"),
   Gender: Joi.string().required().label("Gender"),

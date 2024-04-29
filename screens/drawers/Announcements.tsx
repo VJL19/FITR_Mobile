@@ -1,12 +1,10 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
+import { WebView } from "react-native-webview";
+import CheckoutScreen from "../../components/CheckoutScreen";
 
 const Announcements = () => {
-  return (
-    <View style={styles.container}>
-      <Text style={{ color: "#f5f5f5" }}>Announcements</Text>
-    </View>
-  );
+  return <CheckoutScreen />;
 };
 
 export default Announcements;

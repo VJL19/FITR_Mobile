@@ -7,34 +7,55 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
 import IAttendance from "../../utils/types/attendance.types";
 import getAccessToken from "../../actions/homeAction";
-import attendanceUser from "../../actions/attendanceAction";
-import formatDate from "../../utils/helpers/formatDate";
+import {
+  getSecretCode,
+  attendanceUser,
+  checkUserScanQr,
+} from "../../actions/attendanceAction";
+import getCurrentDate, {
+  advanceMonthlyEnd,
+  advanceSessionEnd,
+} from "../../utils/helpers/formatDate";
+import LoadingIndicator from "../../components/LoadingIndicator";
+import { useNavigation } from "@react-navigation/native";
+import { DrawerStackNavigationProp } from "../../utils/types/navigators/DrawerStackNavigators";
+import DropdownComponent from "../../components/DropdownComponent";
 
 const Attendance = () => {
   const [hasPermission, setHasPermission] = useState<boolean>();
   const [scanned, setScanned] = useState(false);
   const [toggleScan, setToggleScan] = useState(false);
   const [selectedSubscription, setSelectedSubscription] = useState("");
-  const [userRecord, setUserRecord] = useState<IAttendance>({
-    UserID: 0,
-    ProfilePic: "",
-    LastName: "",
-    FirstName: "",
-    SubscriptionType: selectedSubscription,
-    DateScanned: new Date().toLocaleString(),
-    IsPaid: false,
-    IsScanQR: false,
-  });
+  const navigation = useNavigation<DrawerStackNavigationProp>();
+  // const [userRecord, setUserRecord] = useState<IAttendance>({
+  //   UserID: 0,
+  //   ProfilePic: "",
+  //   LastName: "",
+  //   FirstName: "",
+  //   SubscriptionType: selectedSubscription,
+  //   SubscriptionExpectedEnd: new Date().toLocaleString(),
+  //   DateScanned: new Date().toLocaleString(),
+  //   IsPaid: false,
+  //   IsScanQR: false,
+  // });
+
+  const subscription_types = [
+    { label: "Session", value: "1" },
+    { label: "Monthly", value: "2" },
+  ];
 
   const dispatch: AppDispatch = useDispatch();
-  const { status, error, message } = useSelector(
-    (state: RootState) => state.attendance
-  );
+  const { status, error, message, secretCode, IsScanQR, isLoading } =
+    useSelector((state: RootState) => state.attendance);
 
   const { user } = useSelector((state: RootState) => state.authReducer);
 
-  console.log("status", status);
-  console.log("message", message);
+  // console.log("secret code", secretCode);
+  console.log("is Scan Qr", IsScanQR);
+  console.log("message att", message);
+  console.log("status att", status);
+  // console.log("error att", error);
+  console.log("current att", user);
 
   useEffect(() => {
     const getCameraPermissions = async () => {
@@ -45,26 +66,47 @@ const Attendance = () => {
     getCameraPermissions();
   }, []);
 
+  // const userRecord = {
+  //   UserID: user.UserID,
+  //   ProfilePic: user.ProfilePic,
+  //   LastName: user.LastName,
+  //   FirstName: user.FirstName,
+  //   SubscriptionType: selectedSubscription == "1" ? "Session" : "Monthly",
+  //   DateScanned: getCurrentDate(),
+  //   IsPaid: "false",
+  //   IsScanQR: "true",
+  // };
+
+  console.log(selectedSubscription);
   useEffect(() => {
+    dispatch(getSecretCode());
     dispatch(getAccessToken());
-    setUserRecord({
-      UserID: user.UserID,
-      ProfilePic: user.ProfilePic,
-      LastName: user.LastName,
-      FirstName: user.FirstName,
-      SubscriptionType: selectedSubscription == "1" ? "Session" : "Monthly",
-      DateScanned: formatDate(new Date()),
-      IsPaid: false,
-      IsScanQR: false,
-    });
+    dispatch(checkUserScanQr(user));
   }, []);
+
+  const userRecord: IAttendance = {
+    UserID: user.UserID,
+    ProfilePic: user.ProfilePic,
+    LastName: user.LastName,
+    FirstName: user.FirstName,
+    SubscriptionType: selectedSubscription == "1" ? "Session" : "Monthly",
+    SubscriptionExpectedEnd:
+      selectedSubscription == "1" ? advanceSessionEnd() : advanceMonthlyEnd(),
+    DateScanned: getCurrentDate(),
+    IsPaid: false,
+    IsScanQR: true,
+  };
   const handleBarCodeScanned = async ({
     type,
     data,
   }: BarCodeScanningResult) => {
     setScanned(true);
+    setToggleScan(false);
+
+    //validation for secret code stored in qr in admin.
     alert(`Bar code with type ${type} and data ${data} has been scanned!`);
     dispatch(attendanceUser(userRecord));
+    // navigation.navigate("HomeDrawer");
   };
 
   if (hasPermission === null) {
@@ -74,36 +116,28 @@ const Attendance = () => {
     return <Text>No access to camera</Text>;
   }
 
-  const subscription_types = [
-    { label: "Session", value: "1" },
-    { label: "Monthly", value: "2" },
-  ];
+  if (isLoading) {
+    return <LoadingIndicator />;
+  }
 
   return (
     <View style={styles.container}>
       <View style={{ justifyContent: "center", alignItems: "center" }}>
         <Text style={styles.textTitle}>Scan Me!</Text>
-        <Text style={styles.description}>
-          Please select between the types of subscription you wanna inquire in
-          the gym.
-        </Text>
+        {IsScanQR === "false" && (
+          <Text style={styles.description}>
+            Please select between the types of subscription you wanna inquire in
+            the gym.
+          </Text>
+        )}
       </View>
-      <Dropdown
-        style={styles.dropdown}
-        placeholderStyle={styles.placeholderStyle}
-        selectedTextStyle={styles.selectedTextStyle}
-        inputSearchStyle={styles.inputSearchStyle}
-        iconStyle={styles.iconStyle}
-        data={subscription_types}
-        maxHeight={200}
-        labelField="label"
-        valueField="value"
-        searchPlaceholder="Search..."
-        value={selectedSubscription}
-        onChange={(item) => {
-          setSelectedSubscription(item.value);
-        }}
-      />
+      {IsScanQR === "false" && (
+        <DropdownComponent
+          data={subscription_types}
+          value={selectedSubscription}
+          handleChange={setSelectedSubscription}
+        />
+      )}
       {toggleScan && (
         <View style={{ flex: 1, backgroundColor: "#ccc" }}>
           <CameraView
@@ -119,12 +153,22 @@ const Attendance = () => {
           />
         </View>
       )}
-      <Button
-        title={`${toggleScan ? "Untoggle" : "Toggle"} Camera`}
-        onPress={() => setToggleScan((prev) => !prev)}
-        color={"#ff2e00"}
-      />
-      {scanned && <Text>No more scan again!</Text>}
+
+      {IsScanQR === "true" && (
+        <View>
+          <Text style={{ fontSize: 20, color: "#f5f5f5" }}>
+            You have already scanned the qr code.
+          </Text>
+        </View>
+      )}
+
+      {selectedSubscription !== "" && (
+        <Button
+          title="Proceed"
+          onPress={() => setToggleScan((prev) => !prev)}
+          color={"#ff2e00"}
+        />
+      )}
     </View>
   );
 };

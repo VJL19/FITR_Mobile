@@ -5,6 +5,7 @@ import {
   DrawerItemList,
   DrawerContentComponentProps,
 } from "@react-navigation/drawer";
+import Avatar from "./Avatar";
 
 const CustomDrawer = (props: DrawerContentComponentProps) => {
   return (
@@ -27,6 +28,7 @@ const CustomDrawer = (props: DrawerContentComponentProps) => {
             opacity: 0.4,
           }}
         />
+        <Avatar />
       </View>
       <View style={{ flex: 1, backgroundColor: "#f5f5f5" }}>
         <DrawerContentScrollView {...props}>
