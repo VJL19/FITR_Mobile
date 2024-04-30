@@ -123,21 +123,11 @@ const DashboardScreen = ({ navigation }: RootStackScreenProp) => {
         }}
       />
       <DrawerStack.Screen
-        name="Newsfeed"
+        name="Pay"
         component={BottomRootScreen}
         options={{
           drawerIcon: ({ color, focused, size }) => {
-            const name = "megaphone";
-            return drawerIcon({ color, size, focused, name });
-          },
-        }}
-      />
-      <DrawerStack.Screen
-        name="My Posts"
-        component={BottomRootScreen}
-        options={{
-          drawerIcon: ({ color, focused, size }) => {
-            const name = "person-circle";
+            const name = "card";
             return drawerIcon({ color, size, focused, name });
           },
         }}
@@ -153,11 +143,21 @@ const DashboardScreen = ({ navigation }: RootStackScreenProp) => {
         }}
       />
       <DrawerStack.Screen
-        name="Pay"
+        name="Newsfeed"
         component={BottomRootScreen}
         options={{
           drawerIcon: ({ color, focused, size }) => {
-            const name = "card";
+            const name = "megaphone";
+            return drawerIcon({ color, size, focused, name });
+          },
+        }}
+      />
+      <DrawerStack.Screen
+        name="My Posts"
+        component={BottomRootScreen}
+        options={{
+          drawerIcon: ({ color, focused, size }) => {
+            const name = "person-circle";
             return drawerIcon({ color, size, focused, name });
           },
         }}

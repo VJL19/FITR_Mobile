@@ -80,7 +80,7 @@ const AuthContextProvider = ({ children }: any) => {
     loadAccessToken();
   }, [rs]);
 
-  // console.log("access token stored main apss", token);
+  // console.log("access token stored main aps", token);
 
   // useEffect(() => {
   //   const loadUser = async () => {

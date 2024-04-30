@@ -1,6 +1,11 @@
-enum SubscriptionEnum {
+enum SubscriptionTypeEnum {
   Session = "Session",
   Monthly = "Monthly",
 }
 
-export default SubscriptionEnum;
+export enum SubscriptionAmount {
+  SESSION = 2000,
+  MONTHLY = 3000,
+}
+
+export default SubscriptionTypeEnum;

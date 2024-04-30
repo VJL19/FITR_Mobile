@@ -1,13 +1,19 @@
 import { StyleSheet, Text, View } from "react-native";
 import { WebView } from "react-native-webview";
-import React from "react";
+import React, { useState } from "react";
 
-const CheckoutScreen = () => {
-  const url_checkout = "https://checkout.paymongo.com/null";
+const CheckoutScreen = ({ url }: { url: string }) => {
+  const url_checkout = url;
 
+  const [confirmationUrl, setConfirmationUrl] = useState("");
+  const checkout_link = url;
+
+  console.log("url passed in props", url_checkout);
+  console.log("url var", checkout_link);
+  console.log("the next url of the webview is " + confirmationUrl);
   return (
     <View style={styles.container}>
-      {url_checkout == "https://checkout.paymongo.com/null" ? (
+      {url !== checkout_link ? (
         <View>
           <Text>You paid today!</Text>
         </View>
@@ -15,12 +21,15 @@ const CheckoutScreen = () => {
         <WebView
           originWhitelist={["*"]}
           source={{
-            uri: url_checkout,
+            uri: url,
           }}
           nestedScrollEnabled={true}
           scrollEnabled={true}
           showsVerticalScrollIndicator={true}
           style={styles.webStyle}
+          onNavigationStateChange={(state) => {
+            setConfirmationUrl(state.url);
+          }}
         />
       )}
     </View>

@@ -5,6 +5,7 @@ import type {
 import { NavigatorScreenParams, RouteProp } from "@react-navigation/native";
 import { AuthStackParamLists } from "./AuthStackNavigators";
 import { DrawerStackParamList } from "./DrawerStackNavigators";
+import { DetailedRootStackNavigatorsParamList } from "../detailed_screens/DetailedRootStackNavigators";
 
 type RootStackParamList = {
   SplashScreen: undefined;
@@ -12,6 +13,7 @@ type RootStackParamList = {
   DashboardScreen: undefined;
   SideStackNavigations: NavigatorScreenParams<DrawerStackParamList>;
   BottomTab: undefined;
+  DetailedScreens: NavigatorScreenParams<DetailedRootStackNavigatorsParamList>;
 };
 
 type RootStackScreenProp = NativeStackScreenProps<
@@ -21,6 +23,7 @@ type RootStackScreenProp = NativeStackScreenProps<
   | "DashboardScreen"
   | "SideStackNavigations"
   | "BottomTab"
+  | "DetailedScreens"
 >;
 type RootStackNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -29,6 +32,7 @@ type RootStackNavigationProp = NativeStackNavigationProp<
   | "DashboardScreen"
   | "SideStackNavigations"
   | "BottomTab"
+  | "DetailedScreens"
 >;
 
 export type {

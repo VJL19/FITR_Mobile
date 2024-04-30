@@ -5,7 +5,6 @@ import AuthRootScreen from "./screens/AuthRootScreen";
 import BottomRootScreen from "./screens/BottomRootScreen";
 import DashboardScreen from "./screens/DashboardScreen";
 import SplashScreen from "./screens/SplashScreen";
-import global_axios from "./global/axios";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "./store/store";
@@ -16,6 +15,7 @@ import {
 } from "./utils/types/navigators/RootStackNavigators";
 import AuthContextProvider, { AuthContext } from "./context/AuthContext";
 import LoadingIndicator from "./components/LoadingIndicator";
+import DetailedRootScreen from "./screens/DetailedRootScreen";
 
 const RootApp = () => {
   const { isAuthenticated: rs } = useSelector(
@@ -74,6 +74,10 @@ const RootApp = () => {
           />
           <RootStack.Screen name="BottomTab" component={BottomRootScreen} />
           <RootStack.Screen name="SplashScreen" component={SplashScreen} />
+          <RootStack.Screen
+            name="DetailedScreens"
+            component={DetailedRootScreen}
+          />
         </RootStack.Group>
       )}
     </RootStack.Navigator>

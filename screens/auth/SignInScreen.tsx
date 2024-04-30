@@ -111,8 +111,9 @@ const SignInScreen = () => {
           <Text
             style={{
               color: "#f5f5f5",
-              fontSize: 38,
-              fontWeight: "bold",
+              fontSize: 40,
+              fontFamily: "Inter-Bold",
+              letterSpacing: 1,
             }}
           >
             Sign In
@@ -122,13 +123,25 @@ const SignInScreen = () => {
           <Controller
             control={control}
             render={({ field: { onChange, onBlur, value } }) => (
-              <CustomTextInput
-                error={errors.Username}
-                placeholder="Enter your Username"
-                onBlur={onBlur}
-                onChange={onChange}
-                value={value}
-              />
+              <React.Fragment>
+                <Text
+                  style={{
+                    color: "#f5f5f5",
+                    fontSize: 21,
+                    fontFamily: "Inter-Bold",
+                    letterSpacing: 1,
+                  }}
+                >
+                  Username
+                </Text>
+                <CustomTextInput
+                  error={errors.Username}
+                  placeholder="Enter your Username"
+                  onBlur={onBlur}
+                  onChange={onChange}
+                  value={value}
+                />
+              </React.Fragment>
             )}
             name="Username"
           />
@@ -136,14 +149,26 @@ const SignInScreen = () => {
           <Controller
             control={control}
             render={({ field: { onChange, onBlur, value } }) => (
-              <CustomTextInput
-                error={errors.Password}
-                secureTextEntry={true}
-                placeholder="Enter your Password"
-                onBlur={onBlur}
-                onChange={onChange}
-                value={value}
-              />
+              <React.Fragment>
+                <Text
+                  style={{
+                    color: "#f5f5f5",
+                    fontSize: 21,
+                    fontFamily: "Inter-Bold",
+                    letterSpacing: 1,
+                  }}
+                >
+                  Password
+                </Text>
+                <CustomTextInput
+                  error={errors.Password}
+                  secureTextEntry={true}
+                  placeholder="Enter your Password"
+                  onBlur={onBlur}
+                  onChange={onChange}
+                  value={value}
+                />
+              </React.Fragment>
             )}
             name="Password"
           />

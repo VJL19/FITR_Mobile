@@ -7,18 +7,37 @@ import { useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
 import { checkUserScanQr } from "../../actions/attendanceAction";
 import LoadingIndicator from "../../components/LoadingIndicator";
-import SubscriptionEnum from "../../utils/enums/Subscription";
+import SubscriptionTypeEnum, {
+  SubscriptionAmount,
+} from "../../utils/enums/Subscription";
+import processPayment, {
+  CheckoutPayload,
+  ILineItems,
+} from "../../actions/subscriptionAction";
+import { useNavigation } from "@react-navigation/native";
+import { RootStackNavigationProp } from "../../utils/types/navigators/RootStackNavigators";
 
 const Subscription = () => {
   const [paymentMethod, setPaymentMethod] = useState("");
   const [bankName, setBankName] = useState("");
   const [amount, setAmount] = useState(0);
 
+  const navigation = useNavigation<RootStackNavigationProp>();
+
   const dispatch: AppDispatch = useDispatch();
 
   const { user: subscription, isLoading } = useSelector(
     (state: RootState) => state.attendance
   );
+
+  const { details, error, status, checkout_url } = useSelector(
+    (state: RootState) => state.subscription
+  );
+
+  console.log("details subs", details);
+  console.log("details error", error);
+  console.log("details status", status);
+  console.log("details url", checkout_url);
   const { user } = useSelector((state: RootState) => state.authReducer);
   const subscription_types = [
     { label: "Cash", value: "1" },
@@ -40,6 +59,31 @@ const Subscription = () => {
 
   console.log(subscription, "current subscription");
 
+  const handlePayment = async () => {
+    const checkOutDetails: ILineItems[] = [
+      {
+        currency: "PHP",
+        amount:
+          subscription.SubscriptionType === SubscriptionTypeEnum.Session
+            ? SubscriptionAmount.SESSION
+            : SubscriptionAmount.MONTHLY,
+        name: subscription.SubscriptionType,
+        quantity: 1,
+      },
+    ];
+
+    const paymentDetails: CheckoutPayload = {
+      name: user.LastName + " " + user.FirstName,
+      email: user.Email,
+      phone: user.ContactNumber,
+      line_items: checkOutDetails,
+      payment_method_types: ["gcash", "paymaya", "grab_pay", "card"],
+    };
+
+    // dispatch(processPayment(paymentDetails));
+    navigation.navigate("DetailedScreens", { screen: "Process Checkout" });
+  };
+
   if (isLoading) {
     return <LoadingIndicator />;
   }
@@ -47,10 +91,10 @@ const Subscription = () => {
     <View style={styles.container}>
       <Text style={styles.textStyle}>Subscription</Text>
       <Text>Select a payment method: </Text>
-      {subscription.SubscriptionType === SubscriptionEnum.Session && (
+      {subscription.SubscriptionType === SubscriptionTypeEnum.Session && (
         <Text style={styles.textStyle}>You have a due amount of 90.00</Text>
       )}
-      {subscription.SubscriptionType === SubscriptionEnum.Monthly && (
+      {subscription.SubscriptionType === SubscriptionTypeEnum.Monthly && (
         <Text style={styles.textStyle}>You have a due amount of 900.00</Text>
       )}
 
@@ -71,7 +115,7 @@ const Subscription = () => {
       )}
       {paymentMethod !== "" && (
         <View style={{ flex: 1, width: "85%" }}>
-          <Button title="Pay now" color={"#ff2e00"} />
+          <Button title="Pay now" color={"#ff2e00"} onPress={handlePayment} />
         </View>
       )}
     </View>

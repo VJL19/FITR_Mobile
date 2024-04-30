@@ -1,5 +1,4 @@
 import Ionicons from "react-native-vector-icons/Ionicons";
-
 interface IDrawerIconProp {
   color: string;
   size: number;

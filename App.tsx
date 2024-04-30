@@ -5,7 +5,16 @@ import { Provider } from "react-redux";
 import { store } from "./store/store";
 import RootApp from "./RootApp";
 import AuthContextProvider from "./context/AuthContext";
+import "react-native-gesture-handler";
+import { useFonts } from "expo-font";
+import LoadingIndicator from "./components/LoadingIndicator";
+import useFontsLoaded from "./hooks/useFontsLoaded";
 export default function App() {
+  const fontsLoaded = useFontsLoaded();
+
+  if (!fontsLoaded) {
+    return <LoadingIndicator />;
+  }
   return (
     <Provider store={store}>
       <AuthContextProvider>
