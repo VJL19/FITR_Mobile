@@ -26,18 +26,18 @@ const Subscription = () => {
 
   const dispatch: AppDispatch = useDispatch();
 
-  const { user: subscription, isLoading } = useSelector(
+  const { user: subscription } = useSelector(
     (state: RootState) => state.attendance
   );
 
-  const { details, error, status, checkout_url } = useSelector(
+  const { details, error, status, checkout_url, isLoading } = useSelector(
     (state: RootState) => state.subscription
   );
 
   console.log("details subs", details);
   console.log("details error", error);
   console.log("details status", status);
-  console.log("details url", checkout_url);
+  console.log("loading", isLoading);
   const { user } = useSelector((state: RootState) => state.authReducer);
   const subscription_types = [
     { label: "Cash", value: "1" },
@@ -59,7 +59,7 @@ const Subscription = () => {
 
   console.log(subscription, "current subscription");
 
-  const handlePayment = async () => {
+  const handlePayment = () => {
     const checkOutDetails: ILineItems[] = [
       {
         currency: "PHP",
@@ -80,8 +80,13 @@ const Subscription = () => {
       payment_method_types: ["gcash", "paymaya", "grab_pay", "card"],
     };
 
-    // dispatch(processPayment(paymentDetails));
-    navigation.navigate("DetailedScreens", { screen: "Process Checkout" });
+    dispatch(processPayment(paymentDetails));
+    if (!isLoading) {
+      navigation.navigate("DetailedScreens", {
+        screen: "Process Checkout",
+        params: { checkout_url: checkout_url },
+      });
+    }
   };
 
   if (isLoading) {
@@ -98,7 +103,7 @@ const Subscription = () => {
         <Text style={styles.textStyle}>You have a due amount of 900.00</Text>
       )}
 
-      <DropdownComponent
+      {/* <DropdownComponent
         searchPlaceholder="Select a payment method..."
         data={subscription_types}
         handleChange={setPaymentMethod}
@@ -112,12 +117,11 @@ const Subscription = () => {
           handleChange={setBankName}
           value={bankName}
         />
-      )}
-      {paymentMethod !== "" && (
-        <View style={{ flex: 1, width: "85%" }}>
-          <Button title="Pay now" color={"#ff2e00"} onPress={handlePayment} />
-        </View>
-      )}
+      )} */}
+
+      <View style={{ flex: 0.2, width: "85%" }}>
+        <Button title="Pay now" color={"#ff2e00"} onPress={handlePayment} />
+      </View>
     </View>
   );
 };

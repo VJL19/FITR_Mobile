@@ -8,6 +8,7 @@ interface ISubscriptionState {
   payment_intent: string;
   isLoading: boolean;
   checkout_url: string;
+  confirmationUrl: string;
 }
 
 const initialState: ISubscriptionState = {
@@ -17,6 +18,7 @@ const initialState: ISubscriptionState = {
   isLoading: false,
   payment_intent: "",
   checkout_url: "",
+  confirmationUrl: "",
 };
 
 const subscriptionSlice = createSlice({
@@ -30,6 +32,7 @@ const subscriptionSlice = createSlice({
       state.payment_intent = action.payload?.data?.attributes?.payment_intent;
       state.status = 200;
       state.checkout_url = action.payload?.data?.attributes?.checkout_url;
+      state.confirmationUrl = action.payload?.data?.attributes?.checkout_url;
     });
     builder.addCase(processPayment.pending, (state, action) => {
       state.isLoading = true;

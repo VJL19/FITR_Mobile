@@ -52,7 +52,7 @@ const CalculateBMI = () => {
                   letterSpacing: 1,
                 }}
               >
-                Height
+                Height in cm
               </Text>
 
               <CustomTextInput
@@ -82,7 +82,7 @@ const CalculateBMI = () => {
                   letterSpacing: 1,
                 }}
               >
-                Weight
+                Weight in kg
               </Text>
               <CustomTextInput
                 inputMode="numeric"
