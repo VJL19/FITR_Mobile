@@ -3,7 +3,7 @@ import React from "react";
 
 const MyPosts = () => {
   return (
-    <View>
+    <View style={styles.container}>
       <Text>MyPosts</Text>
     </View>
   );
@@ -11,4 +11,11 @@ const MyPosts = () => {
 
 export default MyPosts;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#202020",
+  },
+});

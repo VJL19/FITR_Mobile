@@ -15,7 +15,7 @@ const Favorites = () => {
     return <LoadingIndicator />;
   }
   return (
-    <View>
+    <View style={styles.container}>
       <Text>Favorites</Text>
     </View>
   );
@@ -23,4 +23,11 @@ const Favorites = () => {
 
 export default Favorites;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#202020",
+  },
+});

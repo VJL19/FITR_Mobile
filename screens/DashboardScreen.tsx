@@ -64,7 +64,6 @@ const DashboardScreen = ({ navigation }: RootStackScreenProp) => {
         },
         headerTintColor: "#f5f5f5",
         headerTitle: "",
-
         headerRight: (props) => (
           <View>
             {/* <Button

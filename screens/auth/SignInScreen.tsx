@@ -127,7 +127,7 @@ const SignInScreen = () => {
                 <Text
                   style={{
                     color: "#f5f5f5",
-                    fontSize: 21,
+                    fontSize: 18,
                     fontFamily: "Inter-Bold",
                     letterSpacing: 1,
                   }}
@@ -153,7 +153,7 @@ const SignInScreen = () => {
                 <Text
                   style={{
                     color: "#f5f5f5",
-                    fontSize: 21,
+                    fontSize: 18,
                     fontFamily: "Inter-Bold",
                     letterSpacing: 1,
                   }}
