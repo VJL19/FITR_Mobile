@@ -4,6 +4,7 @@ import registerReducer from "../reducers/registerReducer";
 import authReducer from "../reducers/authReducer";
 import attendanceReducer from "../reducers/attendanceReducer";
 import subscriptionReducer from "../reducers/subscriptionReducer";
+import postReducer from "../reducers/postReducer";
 export const store = configureStore({
   reducer: {
     counter: counterReducer,
@@ -11,6 +12,7 @@ export const store = configureStore({
     authReducer: authReducer,
     attendance: attendanceReducer,
     subscription: subscriptionReducer,
+    post: postReducer,
   },
 });
 

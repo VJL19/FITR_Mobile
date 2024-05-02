@@ -26,6 +26,8 @@ import { AuthContext } from "../../context/AuthContext";
 import getAccessToken from "../../actions/homeAction";
 import CustomTextInput from "../../components/CustomTextInput";
 import DisplayFormError from "../../components/DisplayFormError";
+import CustomAlert from "../../components/CustomAlert";
+import DisplayAlert from "../../components/CustomAlert";
 const SignInScreen = () => {
   const navigation = useNavigation<RootStackNavigationProp>();
 
@@ -74,24 +76,10 @@ const SignInScreen = () => {
 
   useEffect(() => {
     if (status === 400 && isSubmitted) {
-      Alert.alert("Error message", message, [
-        {
-          text: "Cancel",
-          onPress: () => {},
-          style: "cancel",
-        },
-        { text: "OK", onPress: () => {} },
-      ]);
+      DisplayAlert("Error, message", message);
     }
     if (status === 200 && isSubmitted) {
-      Alert.alert("Success message", message, [
-        {
-          text: "Cancel",
-          onPress: () => {},
-          style: "cancel",
-        },
-        { text: "OK", onPress: () => {} },
-      ]);
+      DisplayAlert("Success, message", message);
       reset();
     }
   }, [status, message]);
