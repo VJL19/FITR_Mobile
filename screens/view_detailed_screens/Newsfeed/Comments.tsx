@@ -1,0 +1,15 @@
+import { StyleSheet, Text, View } from "react-native";
+import React from "react";
+
+const Comments = ({ UserID, CommentText }: IComments) => {
+  return (
+    <View>
+      <Text>{UserID}</Text>
+      <Text>{CommentText}</Text>
+    </View>
+  );
+};
+
+export default Comments;
+
+const styles = StyleSheet.create({});

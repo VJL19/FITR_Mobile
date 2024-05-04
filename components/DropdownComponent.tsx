@@ -44,7 +44,7 @@ export default DropdownComponent;
 const styles = StyleSheet.create({
   dropdown: {
     width: 250,
-    marginTop: 25,
+    marginTop: 10,
     height: 50,
     borderBottomColor: "#f5f5f5",
     borderBottomWidth: 0.5,
@@ -55,11 +55,11 @@ const styles = StyleSheet.create({
   },
   placeholderStyle: {
     fontSize: 16,
-    color: "#f5f5f5",
+    color: "#202020",
   },
   selectedTextStyle: {
     fontSize: 16,
-    color: "#f5f5f5",
+    color: "#202020",
   },
   iconStyle: {
     width: 20,

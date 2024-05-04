@@ -7,11 +7,7 @@ const CustomNotification = (props) => {
     <TouchableNativeFeedback
       {...props}
       useForeground={true}
-      background={TouchableNativeFeedback.Ripple(
-        "rgba(255,46,0,0.5)",
-        true,
-        40
-      )}
+      background={TouchableNativeFeedback.Ripple("rgba(20,20,2,0.1)", true, 40)}
     >
       <View style={{ marginRight: 15 }}>
         <Ionicons name="notifications-outline" size={30} color={"#f5f5f5"} />

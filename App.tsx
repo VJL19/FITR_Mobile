@@ -9,24 +9,31 @@ import "react-native-gesture-handler";
 import { useFonts } from "expo-font";
 import LoadingIndicator from "./components/LoadingIndicator";
 import useFontsLoaded from "./hooks/useFontsLoaded";
+import * as SplashScreen from "expo-splash-screen";
+import { PaperProvider } from "react-native-paper";
+import theme from "./assets/themes/theme";
+
 export default function App() {
   const fontsLoaded = useFontsLoaded();
-
+  SplashScreen.preventAutoHideAsync();
+  setTimeout(SplashScreen.hideAsync, 2500);
   if (!fontsLoaded) {
     return <LoadingIndicator />;
   }
   return (
     <Provider store={store}>
-      <AuthContextProvider>
-        <NavigationContainer>
-          <StatusBar style="light" />
-          <RootApp />
-          {/* <View style={styles.container}>
+      <PaperProvider theme={theme}>
+        <AuthContextProvider>
+          <NavigationContainer>
+            <StatusBar style="light" />
+            <RootApp />
+            {/* <View style={styles.container}>
         <Text>Open up App.jsx to start working on your app!</Text>
         <Button title="Click Me" onPress={handleClick} />
       </View> */}
-        </NavigationContainer>
-      </AuthContextProvider>
+          </NavigationContainer>
+        </AuthContextProvider>
+      </PaperProvider>
     </Provider>
   );
 }

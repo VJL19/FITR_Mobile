@@ -1,13 +1,15 @@
-import { NavigationProp } from "@react-navigation/native";
-import { StyleProp, TextStyle, ViewStyle } from "react-native";
-import { AuthStackNavigationProp } from "../navigators/AuthStackNavigators";
+import {
+  GestureResponderEvent,
+  StyleProp,
+  TextStyle,
+  ViewStyle,
+} from "react-native";
 
 interface IButtonProp {
   textStyle: StyleProp<TextStyle>;
   buttonStyle: StyleProp<ViewStyle>;
   textValue: string;
-  screenToNavigate?: any;
-  screenName?: any;
+  onPress: (event: GestureResponderEvent) => void;
 }
 
 export default IButtonProp;

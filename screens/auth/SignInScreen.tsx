@@ -1,14 +1,4 @@
-import {
-  Text,
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  Image,
-  ImageBackground,
-  TextInput,
-  Button,
-  Alert,
-} from "react-native";
+import { Text, View, StyleSheet, ImageBackground } from "react-native";
 import { Controller } from "react-hook-form";
 import React, { useContext, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -20,13 +10,9 @@ import { joiResolver } from "@hookform/resolvers/joi";
 import { loginSchema } from "../../utils/validations";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../../actions/authAction";
-import * as SecureStore from "expo-secure-store";
 import { AppDispatch, RootState } from "../../store/store";
-import { AuthContext } from "../../context/AuthContext";
-import getAccessToken from "../../actions/homeAction";
 import CustomTextInput from "../../components/CustomTextInput";
 import DisplayFormError from "../../components/DisplayFormError";
-import CustomAlert from "../../components/CustomAlert";
 import DisplayAlert from "../../components/CustomAlert";
 const SignInScreen = () => {
   const navigation = useNavigation<RootStackNavigationProp>();
@@ -84,10 +70,7 @@ const SignInScreen = () => {
     }
   }, [status, message]);
   return (
-    <ImageBackground
-      style={styles.container}
-      source={require("../../assets/bg_fitr.jpeg")}
-    >
+    <ImageBackground style={styles.container}>
       <View style={styles.opacityBg}>
         <View
           style={{
@@ -98,7 +81,7 @@ const SignInScreen = () => {
         >
           <Text
             style={{
-              color: "#f5f5f5",
+              color: "#202020",
               fontSize: 40,
               fontFamily: "Inter-Bold",
               letterSpacing: 1,
@@ -114,7 +97,7 @@ const SignInScreen = () => {
               <React.Fragment>
                 <Text
                   style={{
-                    color: "#f5f5f5",
+                    color: "#202020",
                     fontSize: 18,
                     fontFamily: "Inter-Bold",
                     letterSpacing: 1,
@@ -140,7 +123,7 @@ const SignInScreen = () => {
               <React.Fragment>
                 <Text
                   style={{
-                    color: "#f5f5f5",
+                    color: "#202020",
                     fontSize: 18,
                     fontFamily: "Inter-Bold",
                     letterSpacing: 1,
@@ -166,24 +149,32 @@ const SignInScreen = () => {
           style={{
             width: "100%",
             alignItems: "center",
-            flex: 0.3,
-            top: 35,
+            top: 20,
             right: 0,
             left: 0,
           }}
         >
-          <View style={{ width: "90%", marginBottom: 25 }}>
-            <Button
-              title="Sign In"
-              color={"#FF2E00"}
-              onPress={handleSubmit(onSubmit)}
+          <View
+            style={{
+              width: "100%",
+              alignItems: "center",
+              marginBottom: 15,
+            }}
+          >
+            <CustomButton
+              buttonStyle={styles.btnPrimary}
+              textStyle={styles.btnPrimaryText}
+              textValue="Sign In"
+              onPress={() => handleSubmit(onSubmit)}
             />
           </View>
           <CustomButton
             buttonStyle={styles.btnSecondary}
             textStyle={styles.btnSecondaryText}
             textValue="Sign Up"
-            screenToNavigate={"Sign Up"}
+            onPress={() =>
+              navigation.navigate("AuthStackScreens", { screen: "Sign Up" })
+            }
           />
         </View>
       </View>
@@ -196,12 +187,9 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "space-around",
     alignItems: "center",
-    backgroundColor: "rgba(0,0,0,.75)",
-    opacity: 0.9,
   },
   opacityBg: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,.75)",
     opacity: 1,
     width: "100%",
     alignItems: "center",
@@ -214,18 +202,22 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 5,
+    elevation: 4,
+    shadowColor: "#000000",
   },
   btnPrimaryText: { color: "#F5F5F5", fontWeight: "800", fontSize: 18 },
   btnSecondary: {
     width: "90%",
-    backgroundColor: "#F5F5F5",
+    backgroundColor: "#202020",
     height: 45,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 5,
+    elevation: 4,
+    shadowColor: "#000000",
   },
   btnSecondaryText: {
-    color: "#131313",
+    color: "#f5f5f5",
     fontWeight: "800",
     fontSize: 18,
   },

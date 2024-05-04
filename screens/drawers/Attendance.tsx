@@ -50,7 +50,9 @@ const Attendance = () => {
   const { status, error, message, secretCode, IsScanQR, isLoading } =
     useSelector((state: RootState) => state.attendance);
 
-  const { user } = useSelector((state: RootState) => state.authReducer);
+  const { user, isAuthenticated } = useSelector(
+    (state: RootState) => state.authReducer
+  );
 
   // console.log("secret code", secretCode);
   console.log("is Scan Qr", IsScanQR);
@@ -122,6 +124,13 @@ const Attendance = () => {
     return <Text>No access to camera</Text>;
   }
 
+  if (!isAuthenticated) {
+    return (
+      <View>
+        <Text>You are not authenticated! Please Login Again!</Text>
+      </View>
+    );
+  }
   if (isLoading) {
     return <LoadingIndicator />;
   }

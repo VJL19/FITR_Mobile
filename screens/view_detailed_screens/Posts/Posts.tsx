@@ -2,10 +2,24 @@ import { StyleSheet, Text, View, TouchableOpacity, Image } from "react-native";
 import React from "react";
 import { IPost } from "../../../utils/types/post.types";
 import logo from "../../../assets/fitr_logo3.png";
+import { useNavigation } from "@react-navigation/native";
+import { RootStackNavigationProp } from "../../../utils/types/navigators/RootStackNavigators";
 
-const Posts = ({ PostTitle, PostDate }: IPost) => {
+const Posts = ({ PostTitle, PostDate, PostImage, PostDescription }: IPost) => {
+  const navigation = useNavigation<RootStackNavigationProp>();
+  const handlePress = () => {
+    navigation.navigate("DetailedScreens", {
+      screen: "View Post",
+      params: {
+        PostDate: PostDate,
+        PostDescription: PostDescription,
+        PostImage: PostImage,
+        PostTitle: PostTitle,
+      },
+    });
+  };
   return (
-    <TouchableOpacity activeOpacity={0.8}>
+    <TouchableOpacity activeOpacity={0.8} onPress={handlePress}>
       <View style={styles.box}>
         <View>
           <Text style={styles.title}>{PostTitle}</Text>

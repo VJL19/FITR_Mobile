@@ -1,4 +1,4 @@
-import { StyleSheet, Text, InteractionManager } from "react-native";
+import { StyleSheet, Text, InteractionManager, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import BottomTab from "../navigators/BottomTab";
 import { Favorites, Home, Programs, Tutorials } from "./bottom_tabs";
@@ -95,7 +95,20 @@ const BottomRootScreen = ({
             default:
               break;
           }
-          return <Ionicons name={name} size={28} color={color} />;
+          return (
+            <View
+              style={{
+                justifyContent: "center",
+                borderRadius: 50,
+                paddingLeft: 25,
+                paddingRight: 25,
+                backgroundColor: focused ? "rgba(255,45,0, .2)" : "transparent",
+                height: 45,
+              }}
+            >
+              <Ionicons name={name} size={28} color={color} />
+            </View>
+          );
         },
 
         tabBarButton: (props) => <CustomTabBar {...props} />,
@@ -103,7 +116,7 @@ const BottomRootScreen = ({
         tabBarInactiveTintColor: "#202020",
         tabBarStyle: {
           backgroundColor: "#F5F5F5",
-          height: 60,
+          height: 62,
           shadowColor: "#000000",
           elevation: 50,
         },

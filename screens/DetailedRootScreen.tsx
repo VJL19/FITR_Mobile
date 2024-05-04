@@ -7,9 +7,22 @@ import { CardStyleInterpolators } from "@react-navigation/stack";
 import AddPrograms from "./view_detailed_screens/Programs/AddProgram";
 import ViewAnnouncements from "./view_detailed_screens/Announcements/ViewAnnouncements";
 import AddPost from "./view_detailed_screens/Posts/AddPost";
-import Ionicons from "react-native-vector-icons/Ionicons";
+import DetailedPostFeed from "./view_detailed_screens/Newsfeed/DetailedPostFeed";
+import ViewPost from "./view_detailed_screens/Posts/ViewPost";
+import CustomMenu from "../components/CustomMenu";
 
 const DetailedRootScreen = () => {
+  const config = {
+    animation: "spring",
+    config: {
+      stiffness: 1000,
+      damping: 500,
+      mass: 3,
+      overshootClamping: true,
+      restDisplacementThreshold: 0.01,
+      restSpeedThreshold: 0.01,
+    },
+  };
   return (
     <DetailedScreenStacks.Navigator
       screenOptions={{
@@ -69,6 +82,28 @@ const DetailedRootScreen = () => {
           gestureEnabled: true,
           gestureDirection: "horizontal",
           cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+      />
+      <DetailedScreenStacks.Screen
+        name="View Post Feed"
+        component={DetailedPostFeed}
+        options={{
+          presentation: "card",
+          gestureEnabled: true,
+          gestureDirection: "horizontal",
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+      />
+      <DetailedScreenStacks.Screen
+        name="View Post"
+        component={ViewPost}
+        options={{
+          cardOverlayEnabled: true,
+          presentation: "card",
+          gestureEnabled: true,
+          gestureDirection: "horizontal",
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+          headerRight: () => <CustomMenu />,
         }}
       />
     </DetailedScreenStacks.Navigator>

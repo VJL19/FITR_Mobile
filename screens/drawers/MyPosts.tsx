@@ -15,7 +15,9 @@ import { setRoute } from "../../reducers/routeReducer";
 const MyPosts = () => {
   const navigation = useNavigation<RootStackNavigationProp>();
 
-  const { user } = useSelector((state: RootState) => state.authReducer);
+  const { user, isAuthenticated } = useSelector(
+    (state: RootState) => state.authReducer
+  );
   const { postItems, isLoading, message, status } = useSelector(
     (state: RootState) => state.post
   );
@@ -35,6 +37,14 @@ const MyPosts = () => {
   if (isLoading) {
     return <LoadingIndicator />;
   }
+
+  // if (!isAuthenticated) {
+  //   return (
+  //     <View>
+  //       <Text>You are not authenticated!</Text>
+  //     </View>
+  //   );
+  // }
 
   return (
     <View style={styles.container}>

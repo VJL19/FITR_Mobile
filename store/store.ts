@@ -7,6 +7,7 @@ import subscriptionReducer from "../reducers/subscriptionReducer";
 import postReducer from "../reducers/postReducer";
 import routeReducer from "../reducers/routeReducer";
 import newsfeedReducer from "../reducers/newsfeedReducer";
+import commentReducer from "../reducers/commentReducer";
 export const store = configureStore({
   reducer: {
     counter: counterReducer,
@@ -17,6 +18,7 @@ export const store = configureStore({
     post: postReducer,
     route: routeReducer,
     newsfeed: newsfeedReducer,
+    comment: commentReducer,
   },
 });
 

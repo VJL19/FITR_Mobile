@@ -8,21 +8,12 @@ const CustomButton = ({
   textStyle,
   buttonStyle,
   textValue,
-  screenToNavigate,
-  screenName,
+  onPress,
 }: IButtonProp) => {
   const navigation = useNavigation<RootStackNavigationProp>();
 
   return (
-    <TouchableOpacity
-      style={buttonStyle}
-      activeOpacity={0.8}
-      onPress={() =>
-        navigation.navigate(screenToNavigate, {
-          screen: screenName,
-        })
-      }
-    >
+    <TouchableOpacity style={buttonStyle} activeOpacity={0.8} onPress={onPress}>
       <View
         style={{
           flex: 1,

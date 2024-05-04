@@ -43,12 +43,12 @@ const CustomTextInput = ({
         height: 55,
         borderRadius: 8,
         paddingLeft: 15,
-        color: "#f5f5f5",
-        borderColor: error ? "#d9534f" : "#f5f5f5",
+        color: "#202020",
+        borderColor: error ? "#d9534f" : "#202020",
         marginBottom: 10,
         fontSize: 16,
       }}
-      placeholderTextColor={"#f5f5f5"}
+      placeholderTextColor={"#c2c2c2"}
     />
   );
 };

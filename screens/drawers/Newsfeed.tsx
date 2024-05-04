@@ -7,14 +7,21 @@ import { getAllPostsAction } from "../../actions/newsfeedAction";
 import { FlatList } from "react-native-gesture-handler";
 import Postsfeed from "../view_detailed_screens/Newsfeed/Postsfeed";
 import LoadingIndicator from "../../components/LoadingIndicator";
+import getAccessToken from "../../actions/homeAction";
 
 const Newsfeed = () => {
   const dispatch: AppDispatch = useDispatch();
 
+  const { isAuthenticated, message } = useSelector(
+    (state: RootState) => state.authReducer
+  );
+
   const { result, isLoading } = useSelector(
     (state: RootState) => state.newsfeed
   );
+
   useEffect(() => {
+    dispatch(getAccessToken());
     dispatch(setRoute("Newsfeed"));
     dispatch(getAllPostsAction());
   }, []);
@@ -22,7 +29,16 @@ const Newsfeed = () => {
   if (isLoading) {
     return <LoadingIndicator />;
   }
+  if (!isAuthenticated) {
+    return (
+      <View>
+        <Text>You are not authenticated! Please Login again!</Text>
+      </View>
+    );
+  }
   console.log("feed", result);
+  console.log("feed", isAuthenticated);
+  console.log("feed", message);
   return (
     <View style={styles.container}>
       <FlatList
@@ -31,8 +47,6 @@ const Newsfeed = () => {
         renderItem={({ item }: { item: INewsFeed }) => <Postsfeed {...item} />}
         keyExtractor={(item) => item.NewsfeedID}
       />
-
-      <Text>Newsfeed</Text>
     </View>
   );
 };

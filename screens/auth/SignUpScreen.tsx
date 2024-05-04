@@ -142,7 +142,7 @@ const SignUpScreen = () => {
   };
   console.log("hey", image === undefined);
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#202020" }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#f5f5f5" }}>
       <Text style={{ fontSize: 25 }}>SignUpScreen</Text>
       <View
         style={{
@@ -291,7 +291,6 @@ const SignUpScreen = () => {
           control={control}
           render={({ field: { onChange, onBlur, value } }) => (
             <CustomTextInput
-              inputMode="numeric"
               error={errors.Username}
               onBlur={onBlur}
               onChange={onChange}
@@ -336,6 +335,7 @@ const SignUpScreen = () => {
         <DisplayFormError errors={errors.ConfirmPassword} />
 
         <View style={{ marginBottom: 25, padding: 5 }}>
+          <Text>Gender</Text>
           <Controller
             control={control}
             render={({ field: { onChange, onBlur, value } }) => (
@@ -382,8 +382,8 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   image: {
-    width: 150,
-    height: 150,
+    width: 120,
+    height: 120,
     borderRadius: 150,
     borderWidth: 3,
     borderColor: "#ff2e00",
