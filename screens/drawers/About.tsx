@@ -1,7 +1,14 @@
 import { StyleSheet, Text, View } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../store/store";
+import { setRoute } from "../../reducers/routeReducer";
 
 const About = () => {
+  const dispatch: AppDispatch = useDispatch();
+  useEffect(() => {
+    dispatch(setRoute("About MJeshter"));
+  }, []);
   return (
     <View style={styles.container}>
       <Text>About us</Text>

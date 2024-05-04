@@ -13,7 +13,8 @@ const CustomTabBar = ({
       {...props}
       useForeground={true}
       background={TouchableNativeFeedback.Ripple(
-        "rgba(255,46,0,0.5)",
+        "rgba(20,20,2,0.1)",
+
         true,
         40
       )}

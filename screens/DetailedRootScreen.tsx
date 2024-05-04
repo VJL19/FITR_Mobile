@@ -14,7 +14,7 @@ const DetailedRootScreen = () => {
     <DetailedScreenStacks.Navigator
       screenOptions={{
         headerStyle: {
-          backgroundColor: "#131313",
+          backgroundColor: "#ff2e00",
           borderBottomWidth: 0.5,
           borderBottomColor: "#f5f5f5",
         },
@@ -22,10 +22,10 @@ const DetailedRootScreen = () => {
           color: "#f5f5f5",
         },
         cardStyle: {
-          backgroundColor: "#202020",
+          backgroundColor: "#f5f5f5",
         },
         headerTintColor: "#f5f5f5",
-        headerPressColor: "#ff2e00",
+        headerPressColor: "#d3d3d3",
         headerPressOpacity: 0.2,
         presentation: "card",
         cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,

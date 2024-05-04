@@ -48,11 +48,11 @@ const styles = StyleSheet.create({
   avatarNameStyle: {
     marginTop: 10,
     fontSize: 16,
-    color: "#f5f5f5",
+    color: "#131313",
   },
   avatarInfoStyle: {
     marginTop: 10,
     fontSize: 12,
-    color: "#f5f5f5",
+    color: "#131313",
   },
 });

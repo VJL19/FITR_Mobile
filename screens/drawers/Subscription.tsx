@@ -16,6 +16,7 @@ import processPayment, {
 } from "../../actions/subscriptionAction";
 import { useNavigation } from "@react-navigation/native";
 import { RootStackNavigationProp } from "../../utils/types/navigators/RootStackNavigators";
+import { setRoute } from "../../reducers/routeReducer";
 
 const Subscription = () => {
   const [paymentMethod, setPaymentMethod] = useState("");
@@ -55,6 +56,7 @@ const Subscription = () => {
   console.log(paymentMethod);
   useEffect(() => {
     dispatch(checkUserScanQr(user));
+    dispatch(setRoute("Subscription"));
   }, []);
 
   console.log(subscription, "current subscription");

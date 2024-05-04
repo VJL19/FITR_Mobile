@@ -1,5 +1,5 @@
 import { Button, StyleSheet, Text, View } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
 import bmiSchema from "../../utils/validations/bmi.validations";
@@ -7,6 +7,9 @@ import CustomTextInput from "../../components/CustomTextInput";
 import DisplayFormError from "../../components/DisplayFormError";
 import calculateBMI from "../../utils/helpers/getBmi";
 import getClassification from "../../utils/helpers/getClassification";
+import { AppDispatch } from "../../store/store";
+import { useDispatch } from "react-redux";
+import { setRoute } from "../../reducers/routeReducer";
 export interface IBMIField {
   Height: string;
   Weight: string;
@@ -19,6 +22,12 @@ const IDefaultValue: IBMIField = {
 const CalculateBMI = () => {
   const [BMI, setBMI] = useState("");
   const [classification, setClassificiation] = useState("");
+
+  const dispatch: AppDispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(setRoute("Calculate BMI"));
+  }, []);
 
   const {
     handleSubmit,

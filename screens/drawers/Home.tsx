@@ -14,6 +14,8 @@ import { useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
 import { increment, incrementByAmount } from "../../reducers/counterReducer";
 import getAccessToken from "../../actions/homeAction";
+import { setRoute } from "../../reducers/routeReducer";
+import { useRoute } from "@react-navigation/native";
 // import { fetchUsers } from "../../reducers/authReducer";
 const Home = () => {
   // console.log("TTT", auth);
@@ -22,19 +24,20 @@ const Home = () => {
     (state: RootState) => state.authReducer
   );
 
+  const route = useRoute();
   const dispatch: AppDispatch = useDispatch();
-
   console.log("message: ", message);
   // console.log("isAuthenticated: ", isAuthenticated);
   // console.log("user: ", user);
   // console.log(value);
   useEffect(() => {
     dispatch(getAccessToken());
+    dispatch(setRoute("Home"));
     // dispatch(fetchUsers());
   }, []);
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#202020" }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#f5f5f5" }}>
       <Text style={{ color: "#f5f5f5", fontWeight: "bold", fontSize: 25 }}>
         Home
       </Text>

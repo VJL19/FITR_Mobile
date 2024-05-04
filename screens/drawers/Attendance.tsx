@@ -21,6 +21,7 @@ import { useNavigation } from "@react-navigation/native";
 import { DrawerStackNavigationProp } from "../../utils/types/navigators/DrawerStackNavigators";
 import DropdownComponent from "../../components/DropdownComponent";
 import SubscriptionEnum from "../../utils/enums/Subscription";
+import { setRoute } from "../../reducers/routeReducer";
 
 const Attendance = () => {
   const [hasPermission, setHasPermission] = useState<boolean>();
@@ -83,6 +84,7 @@ const Attendance = () => {
     dispatch(getSecretCode());
     dispatch(getAccessToken());
     dispatch(checkUserScanQr(user));
+    dispatch(setRoute("Attendance"));
   }, []);
 
   const userRecord: IAttendance = {

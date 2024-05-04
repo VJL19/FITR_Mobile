@@ -2,16 +2,28 @@ import { InteractionManager, StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import LoadingIndicator from "../../components/LoadingIndicator";
 import { useNavigation } from "@react-navigation/native";
-import { RootStackNavigationProp } from "../../utils/types/navigators/RootStackNavigators";
+import {
+  RootStackNavigationProp,
+  RootStackParamList,
+} from "../../utils/types/navigators/RootStackNavigators";
+import { DashboardStackNavigationProp } from "../../utils/types/navigators/DashboardStackNavigator";
+import { setBottomRoute, setRoute } from "../../reducers/routeReducer";
+import { AppDispatch } from "../../store/store";
+import { useDispatch } from "react-redux";
+import { useRoute } from "@react-navigation/native";
+import useIsReady from "../../hooks/useIsReady";
+import { DrawerStackNavigationProp } from "../../utils/types/navigators/DrawerStackNavigators";
 
 const Programs = () => {
-  const [isReady, setIsReady] = useState(false);
-
+  const { isReady } = useIsReady();
   const navigation = useNavigation<RootStackNavigationProp>();
+  const navigation2 = useNavigation<DashboardStackNavigationProp>();
+  const route = useRoute();
+  const dispatch: AppDispatch = useDispatch();
   useEffect(() => {
-    InteractionManager.runAfterInteractions(() => {
-      setIsReady(true);
-    });
+    dispatch(setRoute(route.name));
+    dispatch(setBottomRoute(route.name));
+    navigation2.setOptions({ headerTitle: "Programs" });
   }, []);
 
   if (!isReady) {
@@ -44,3 +56,6 @@ const styles = StyleSheet.create({
     color: "#f5f5f5",
   },
 });
+function RouteProp<T>() {
+  throw new Error("Function not implemented.");
+}

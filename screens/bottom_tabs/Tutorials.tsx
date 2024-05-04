@@ -9,13 +9,22 @@ import React, { useEffect, useState } from "react";
 import LoadingIndicator from "../../components/LoadingIndicator";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import { useRoute } from "@react-navigation/native";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../store/store";
+import { setBottomRoute, setRoute } from "../../reducers/routeReducer";
 
 const Tutorials = () => {
   const [isReady, setIsReady] = useState(false);
+  const route = useRoute();
+
+  const dispatch: AppDispatch = useDispatch();
 
   useEffect(() => {
     InteractionManager.runAfterInteractions(() => {
       setIsReady(true);
+      dispatch(setRoute(route.name));
+      dispatch(setBottomRoute(route.name));
     });
   }, []);
 
@@ -26,7 +35,7 @@ const Tutorials = () => {
     <View style={styles.container}>
       <Text
         style={{
-          color: "#f5f5f5",
+          color: "#202020",
           fontFamily: "Inter-Bold",
           fontSize: 34,
           textAlign: "left",
@@ -58,7 +67,7 @@ const Tutorials = () => {
             <Text style={styles.BoxTextStyle}>Gym Equipments</Text>
             <MaterialCommunityIcons
               name="dumbbell"
-              color={"#f1f1f1"}
+              color={"#ff2e00"}
               size={170}
               style={{ opacity: 0.7, zIndex: 1 }}
             />
@@ -76,7 +85,7 @@ const Tutorials = () => {
             <Text style={styles.BoxTextStyle}>Exercises</Text>
             <MaterialCommunityIcons
               name="run-fast"
-              color={"#f1f1f1"}
+              color={"#ff2e00"}
               size={170}
               style={{ opacity: 0.7, zIndex: 1 }}
             />
@@ -94,7 +103,7 @@ const Tutorials = () => {
             <Text style={styles.BoxTextStyle}>Workouts</Text>
             <MaterialCommunityIcons
               name="weight-lifter"
-              color={"#f1f1f1"}
+              color={"#000000"}
               size={170}
               style={{ opacity: 0.7, zIndex: 1 }}
             />
@@ -110,7 +119,7 @@ export default Tutorials;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#202020",
+    backgroundColor: "#f5f5f5",
     justifyContent: "space-around",
   },
   BoxStyle: {

@@ -9,7 +9,10 @@ import { useSelector } from "react-redux";
 import { RootState } from "../store/store";
 import * as SecureStore from "expo-secure-store";
 import global_axios from "../global/axios";
-import { useNavigation } from "@react-navigation/native";
+import {
+  getFocusedRouteNameFromRoute,
+  useNavigation,
+} from "@react-navigation/native";
 import {
   RootStackNavigationProp,
   RootStackScreenProp,
@@ -20,9 +23,29 @@ const DashboardScreen = ({ navigation }: RootStackScreenProp) => {
   const { isAuthenticated, accessToken, status } = useSelector(
     (state: RootState) => state.authReducer
   );
+  const { route: nav } = useSelector((state: RootState) => state.route);
+
+  function getHeaderTitle(route) {
+    // If the focused route is not found, we need to assume it's the initial screen
+    // This can happen during if there hasn't been any navigation inside the screen
+    // In our case, it's "Feed" as that's the first screen inside the navigator
+    const routeName = getFocusedRouteNameFromRoute(route) ?? nav.name;
+
+    switch (routeName) {
+      case "Home_Bottom":
+        return nav.name;
+      case "Programs":
+        return "Programs";
+      case "Tutorials":
+        return "Tutorials";
+      case "Favorites":
+        return "Favorites";
+    }
+  }
 
   const { logOut } = useContext(AuthContext);
 
+  // console.log("routes", route.name);
   // console.log("my accesstoken", accessToken);
 
   // console.log("in dashboard,", isAuthenticated);
@@ -44,26 +67,29 @@ const DashboardScreen = ({ navigation }: RootStackScreenProp) => {
     }
   };
   // console.log("dashboard", status);
+
   return (
     <DrawerStack.Navigator
       drawerContent={(props) => <CustomDrawer {...props} />}
-      screenOptions={{
+      screenOptions={({ route }) => ({
+        headerTitle: getHeaderTitle(route),
         unmountOnBlur: true,
-
         headerBackground: () => {
           return (
             <View
               style={{
                 flex: 1,
-                backgroundColor: "#131313",
-                borderBottomWidth: 0.5,
-                borderBottomColor: "#f5f5f5",
+                backgroundColor: "#ff2e00",
+                shadowColor: "#000000",
+                elevation: 10,
               }}
             />
           );
         },
+        drawerStyle: {
+          width: 310,
+        },
         headerTintColor: "#f5f5f5",
-        headerTitle: "",
         headerRight: (props) => (
           <View>
             {/* <Button
@@ -85,10 +111,10 @@ const DashboardScreen = ({ navigation }: RootStackScreenProp) => {
             <CustomNotification {...props} />
           </View>
         ),
-        drawerActiveBackgroundColor: "#FF2E00",
-        drawerActiveTintColor: "#f2f2f2",
-        drawerLabelStyle: { marginLeft: -15 },
-      }}
+        drawerActiveBackgroundColor: "#rgba(255,45,0, .2)",
+        drawerActiveTintColor: "#ff2e00",
+        drawerLabelStyle: { marginLeft: -5 },
+      })}
     >
       <DrawerStack.Screen
         name="HomeDrawer"
@@ -104,12 +130,14 @@ const DashboardScreen = ({ navigation }: RootStackScreenProp) => {
       <DrawerStack.Screen
         name="Announcements"
         component={BottomRootScreen}
-        options={{
+        options={({ route }) => ({
+          headerTitle: getHeaderTitle(route),
+          title: "Announcements",
           drawerIcon: ({ color, focused, size }) => {
-            const name = "megaphone";
+            const name = "announcement";
             return drawerIcon({ color, size, focused, name });
           },
-        }}
+        })}
       />
       <DrawerStack.Screen
         name="Attendance"
@@ -126,7 +154,7 @@ const DashboardScreen = ({ navigation }: RootStackScreenProp) => {
         component={BottomRootScreen}
         options={{
           drawerIcon: ({ color, focused, size }) => {
-            const name = "card";
+            const name = "payment";
             return drawerIcon({ color, size, focused, name });
           },
         }}
@@ -136,7 +164,7 @@ const DashboardScreen = ({ navigation }: RootStackScreenProp) => {
         component={BottomRootScreen}
         options={{
           drawerIcon: ({ color, focused, size }) => {
-            const name = "calculator";
+            const name = "calculate";
             return drawerIcon({ color, size, focused, name });
           },
         }}
@@ -146,7 +174,7 @@ const DashboardScreen = ({ navigation }: RootStackScreenProp) => {
         component={BottomRootScreen}
         options={{
           drawerIcon: ({ color, focused, size }) => {
-            const name = "megaphone";
+            const name = "article";
             return drawerIcon({ color, size, focused, name });
           },
         }}
@@ -156,7 +184,7 @@ const DashboardScreen = ({ navigation }: RootStackScreenProp) => {
         component={BottomRootScreen}
         options={{
           drawerIcon: ({ color, focused, size }) => {
-            const name = "person-circle";
+            const name = "person";
             return drawerIcon({ color, size, focused, name });
           },
         }}
@@ -167,11 +195,11 @@ const DashboardScreen = ({ navigation }: RootStackScreenProp) => {
         component={BottomRootScreen}
         options={{
           drawerItemStyle: {
-            borderTopWidth: 3,
-            borderTopColor: "#131313",
+            borderTopWidth: 1.5,
+            borderTopColor: "#ccc",
           },
           drawerIcon: ({ color, focused, size }) => {
-            const name = "information-circle";
+            const name = "info";
             return drawerIcon({ color, size, focused, name });
           },
         }}
@@ -181,7 +209,7 @@ const DashboardScreen = ({ navigation }: RootStackScreenProp) => {
         component={BottomRootScreen}
         options={{
           drawerIcon: ({ color, focused, size }) => {
-            const name = "person-circle";
+            const name = "settings";
             return drawerIcon({ color, size, focused, name });
           },
         }}
@@ -191,7 +219,7 @@ const DashboardScreen = ({ navigation }: RootStackScreenProp) => {
         component={BottomRootScreen}
         options={{
           drawerIcon: ({ color, focused, size }) => {
-            const name = "arrow-back-circle";
+            const name = "arrow-back";
             return drawerIcon({ color, size, focused, name });
           },
         }}

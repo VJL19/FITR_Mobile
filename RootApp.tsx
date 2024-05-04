@@ -8,7 +8,7 @@ import SplashScreen from "./screens/SplashScreen";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "./store/store";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import {
   RootStackNavigationProp,
   RootStackScreenProp,
@@ -16,6 +16,7 @@ import {
 import AuthContextProvider, { AuthContext } from "./context/AuthContext";
 import LoadingIndicator from "./components/LoadingIndicator";
 import DetailedRootScreen from "./screens/DetailedRootScreen";
+import useIsReady from "./hooks/useIsReady";
 
 const RootApp = () => {
   const { isAuthenticated: rs } = useSelector(
@@ -23,17 +24,17 @@ const RootApp = () => {
   );
 
   const navigation = useNavigation<RootStackNavigationProp>();
-  const [isReady, setIsReady] = useState(false);
 
+  const { isReady } = useIsReady();
   const { token, isAuthenticated } = useContext(AuthContext);
 
   console.log("auth context", rs);
   // console.log("auth tokens", token);
 
   useEffect(() => {
-    InteractionManager.runAfterInteractions(() => {
-      setIsReady(true);
-    });
+    // InteractionManager.runAfterInteractions(() => {
+    //   setIsReady(true);
+    // });
     // navigation.addListener("focus", async () => {
     //   if (status === 200) {
     //     if (isAuthenticated) {

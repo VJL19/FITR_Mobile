@@ -16,21 +16,21 @@ import { useNavigation } from "@react-navigation/native";
 import DisplayAlert from "../../../components/CustomAlert";
 import postDefault from "../../../assets/post_default.webp";
 import { ScrollView } from "react-native-gesture-handler";
+import { createPostInFeedAction } from "../../../actions/newsfeedAction";
 
 const defaultValue = {
   PostTitle: "",
+  PostDescription: "",
 };
 const AddPost = () => {
   const { user } = useSelector((state: RootState) => state.authReducer);
   const { message, status } = useSelector((state: RootState) => state.post);
-
   const navigation = useNavigation();
   const dispatch: AppDispatch = useDispatch();
   useEffect(() => {
     dispatch(getAccessToken());
   }, []);
 
-  const { UserID, FirstName, LastName } = user;
   const {
     handleSubmit,
     control,
@@ -41,11 +41,13 @@ const AddPost = () => {
     defaultValues: defaultValue,
     resolver: joiResolver(postSchema),
   });
+
   const onInvalid = (errors) => console.error(errors);
 
   const onSubmit = async (data: IPost) => {
     const { UserID, FirstName, LastName } = user;
 
+    console.log(data);
     const fullName = FirstName + " " + LastName;
     setValue("UserID", UserID);
     setValue("PostImage", "mydefault_poster.png");
@@ -62,7 +64,15 @@ const AddPost = () => {
       PostDescription: data.PostDescription,
       PostAuthor: fullName,
     };
+
+    const newsfeedData = {
+      ...postData,
+      PostLikes: 0,
+      PostIsLike: "false",
+    };
     dispatch(postUserAction(postData));
+    dispatch(getPostAction(user.UserID));
+    dispatch(createPostInFeedAction(newsfeedData));
     DisplayAlert("Successs, message", message);
     reset();
     if (status === 200 && !isLoading) {
@@ -108,39 +118,41 @@ const AddPost = () => {
             <React.Fragment>
               <Text
                 style={{
-                  color: "#f5f5f5",
+                  color: "#202020",
                   fontSize: 18,
                   fontFamily: "Inter-Bold",
                   letterSpacing: 1,
                 }}
               >
-                Title
+                Description
               </Text>
 
               <TextInput
+                multiline={true}
+                textAlignVertical="top"
                 placeholder="Enter the description"
+                placeholderTextColor={"#202020"}
                 onBlur={onBlur}
                 onChangeText={onChange}
                 value={value}
                 style={{
                   borderWidth: 1,
-                  height: 55,
+                  height: 300,
                   borderRadius: 8,
-                  paddingLeft: 15,
-                  color: "#f5f5f5",
-                  borderColor: error ? "#d9534f" : "#f5f5f5",
+                  padding: 15,
+                  color: "#202020",
+                  borderColor: errors.PostDescription ? "#d9534f" : "#202020",
                   marginBottom: 10,
                   fontSize: 16,
                 }}
-                placeholderTextColor={"#f5f5f5"}
               />
             </React.Fragment>
           )}
-          name=""
+          name="PostDescription"
         />
       </View>
 
-      <DisplayFormError errors={errors.} />
+      <DisplayFormError errors={errors.PostDescription} />
 
       <Button
         title="Add Post"

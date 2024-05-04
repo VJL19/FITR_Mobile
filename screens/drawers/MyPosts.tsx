@@ -1,12 +1,4 @@
-import {
-  Button,
-  StyleSheet,
-  Text,
-  View,
-  ScrollView,
-  ListRenderItemInfo,
-  Pressable,
-} from "react-native";
+import { StyleSheet, Text, View, Pressable } from "react-native";
 import React, { useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { RootStackNavigationProp } from "../../utils/types/navigators/RootStackNavigators";
@@ -18,6 +10,7 @@ import LoadingIndicator from "../../components/LoadingIndicator";
 import Posts from "../view_detailed_screens/Posts/Posts";
 import { FlatList } from "react-native-gesture-handler";
 import { IPost } from "../../utils/types/post.types";
+import { setRoute } from "../../reducers/routeReducer";
 
 const MyPosts = () => {
   const navigation = useNavigation<RootStackNavigationProp>();
@@ -31,10 +24,9 @@ const MyPosts = () => {
   useEffect(() => {
     dispatch(getAccessToken());
     dispatch(getPostAction(user.UserID));
+    dispatch(setRoute("My posts"));
   }, []);
   console.log("user post", postItems);
-  console.log("Message", message);
-  console.log("status", status);
 
   const handlePress = () => {
     navigation.navigate("DetailedScreens", { screen: "Add Post" });
@@ -54,7 +46,6 @@ const MyPosts = () => {
 
       <FlatList
         alwaysBounceVertical={true}
-        showsVerticalScrollIndicator={false}
         data={postItems}
         renderItem={({ item }) => <Posts {...item} />}
         keyExtractor={(item: IPost) => item.PostID}

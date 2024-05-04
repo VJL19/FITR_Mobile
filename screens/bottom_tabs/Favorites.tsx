@@ -1,13 +1,22 @@
 import { InteractionManager, StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import LoadingIndicator from "../../components/LoadingIndicator";
+import { useRoute } from "@react-navigation/native";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../store/store";
+import { setBottomRoute, setRoute } from "../../reducers/routeReducer";
 
 const Favorites = () => {
   const [isReady, setIsReady] = useState(false);
 
+  const route = useRoute();
+
+  const dispatch: AppDispatch = useDispatch();
   useEffect(() => {
     InteractionManager.runAfterInteractions(() => {
       setIsReady(true);
+      dispatch(setRoute(route.name));
+      dispatch(setBottomRoute(route.name));
     });
   }, []);
 

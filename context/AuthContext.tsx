@@ -68,7 +68,7 @@ const AuthContextProvider = ({ children }: any) => {
   useEffect(() => {
     const loadAccessToken = async () => {
       const accessTokenStored = await SecureStore.getItemAsync(ACCESS_TOKEN);
-      console.log("access token stored: ", accessTokenStored);
+      // console.log("access token stored: ", accessTokenStored);
       if (accessTokenStored) {
         setToken(accessTokenStored);
         setIsAuthenticated(true);
@@ -80,7 +80,7 @@ const AuthContextProvider = ({ children }: any) => {
     loadAccessToken();
   }, [rs]);
 
-  // console.log("access token stored main aps", token);
+  // console.log("access token stored main apss", token);
 
   // useEffect(() => {
   //   const loadUser = async () => {

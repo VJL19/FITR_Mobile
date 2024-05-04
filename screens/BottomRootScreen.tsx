@@ -18,14 +18,21 @@ import {
   Subscription,
 } from "./drawers";
 import { useNavigation } from "@react-navigation/native";
-import { AuthStackNavigationProp } from "../utils/types/navigators/AuthStackNavigators";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import CustomTabBar from "../components/CustomTabBar";
-import LoadingIndicator from "../components/LoadingIndicator";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../store/store";
+import { setRoute } from "../reducers/routeReducer";
 
 const BottomRootScreen = ({
   route,
 }: DrawerStackScreenProp | { route: any }) => {
+  const navigation = useNavigation<DrawerStackNavigationProp>();
+  const dispatch: AppDispatch = useDispatch();
+  useEffect(() => {
+    dispatch(setRoute(route.name));
+    // navigation.setOptions({ headerTitle: route.name });
+  }, []);
   const RenderTabs = () => {
     switch (route.name) {
       case "HomeDrawer":
@@ -55,45 +62,51 @@ const BottomRootScreen = ({
 
   return (
     <BottomTab.Navigator
-      screenOptions={({ route }) => ({
+      screenOptions={({ route, navigation }) => ({
         unmountOnBlur: true,
+        headerShown: false,
         tabBarLabel: ({ focused, position, color, children }) => {
           return (
             <Text
-              style={{ color: focused ? "#ff2e00" : "#f5f5f5", fontSize: 11 }}
+              style={{
+                color: focused ? "#FF2E00" : "#202020",
+                fontSize: 11,
+              }}
             >
               {children}
             </Text>
           );
         },
-        headerShown: false,
         tabBarIcon: ({ focused, color, size }) => {
-          let iconName;
+          let name;
           switch (route.name) {
             case "Home_Bottom":
-              iconName = focused ? "home" : "home-outline";
+              name = focused ? "home" : "home-outline";
               break;
             case "Programs":
-              iconName = focused ? "barbell" : "barbell-outline";
+              name = focused ? "barbell" : "barbell-outline";
               break;
             case "Tutorials":
-              iconName = focused ? "play-circle" : "play-circle-outline";
+              name = focused ? "play-circle" : "play-circle-outline";
               break;
             case "Favorites":
-              iconName = focused ? "heart" : "heart-outline";
+              name = focused ? "heart" : "heart-outline";
               break;
             default:
               break;
           }
-          return <Ionicons name={iconName} size={size} color={color} />;
+          return <Ionicons name={name} size={28} color={color} />;
         },
 
         tabBarButton: (props) => <CustomTabBar {...props} />,
         tabBarActiveTintColor: "#FF2E00",
-
-        tabBarInactiveTintColor: "#F5F5F5",
-        tabBarLabelStyle: { color: "#f5f5f5", marginTop: -10 },
-        tabBarStyle: { backgroundColor: "#131313", height: 60 },
+        tabBarInactiveTintColor: "#202020",
+        tabBarStyle: {
+          backgroundColor: "#F5F5F5",
+          height: 60,
+          shadowColor: "#000000",
+          elevation: 50,
+        },
       })}
     >
       <BottomTab.Screen

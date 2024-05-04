@@ -12,22 +12,14 @@ const CustomDrawer = (props: DrawerContentComponentProps) => {
     <View style={{ flex: 1 }}>
       <View
         style={{
-          flex: 0.45,
+          flex: 0.5,
+          backgroundColor: "#ff2e00",
           alignItems: "flex-start",
           justifyContent: "center",
-          backgroundColor: "#131313",
-          borderBottomWidth: 1,
-          borderBottomColor: "#FF2E00",
+          shadowColor: "#000000",
+          elevation: 54,
         }}
       >
-        <Image
-          source={require("../assets/fitr_logo3.png")}
-          style={{
-            height: 170,
-            width: 180,
-            opacity: 0.4,
-          }}
-        />
         <Avatar />
       </View>
       <View style={{ flex: 1, backgroundColor: "#f5f5f5" }}>
