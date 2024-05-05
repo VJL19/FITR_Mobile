@@ -10,6 +10,7 @@ import AddPost from "./view_detailed_screens/Posts/AddPost";
 import DetailedPostFeed from "./view_detailed_screens/Newsfeed/DetailedPostFeed";
 import ViewPost from "./view_detailed_screens/Posts/ViewPost";
 import CustomMenu from "../components/CustomMenu";
+import CommentPost from "./view_detailed_screens/Newsfeed/CommentPost";
 
 const DetailedRootScreen = () => {
   const config = {
@@ -104,6 +105,17 @@ const DetailedRootScreen = () => {
           gestureDirection: "horizontal",
           cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
           headerRight: () => <CustomMenu />,
+        }}
+      />
+      <DetailedScreenStacks.Screen
+        name="Comment on Post"
+        component={CommentPost}
+        options={{
+          cardOverlayEnabled: true,
+          presentation: "card",
+          gestureEnabled: true,
+          gestureDirection: "horizontal",
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
       />
     </DetailedScreenStacks.Navigator>

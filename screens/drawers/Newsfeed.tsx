@@ -8,10 +8,10 @@ import { FlatList } from "react-native-gesture-handler";
 import Postsfeed from "../view_detailed_screens/Newsfeed/Postsfeed";
 import LoadingIndicator from "../../components/LoadingIndicator";
 import getAccessToken from "../../actions/homeAction";
+import { INewsFeed } from "../../utils/types/newsfeed.types";
+import { useNavigation } from "@react-navigation/native";
 
 const Newsfeed = () => {
-  const dispatch: AppDispatch = useDispatch();
-
   const { isAuthenticated, message } = useSelector(
     (state: RootState) => state.authReducer
   );
@@ -20,10 +20,16 @@ const Newsfeed = () => {
     (state: RootState) => state.newsfeed
   );
 
+  const navigation = useNavigation();
+  const dispatch: AppDispatch = useDispatch();
   useEffect(() => {
     dispatch(getAccessToken());
-    dispatch(setRoute("Newsfeed"));
     dispatch(getAllPostsAction());
+    dispatch(setRoute("Newsfeed"));
+
+    navigation.addListener("focus", () => {
+      dispatch(getAllPostsAction());
+    });
   }, []);
 
   if (isLoading) {
@@ -45,7 +51,7 @@ const Newsfeed = () => {
         alwaysBounceVertical={true}
         data={result}
         renderItem={({ item }: { item: INewsFeed }) => <Postsfeed {...item} />}
-        keyExtractor={(item) => item.NewsfeedID}
+        keyExtractor={(item) => item.NewsfeedID?.toString()}
       />
     </View>
   );

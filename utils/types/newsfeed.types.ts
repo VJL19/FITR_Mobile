@@ -1,6 +1,6 @@
-interface INewsFeed {
+export interface INewsFeed {
   UserID: number;
-  NewsfeedID?: number;
+  NewsfeedID: number;
   PostImage: string;
   PostTitle: string;
   PostDescription: string;
@@ -10,8 +10,10 @@ interface INewsFeed {
   PostAuthor: string;
 }
 
-interface IComments {
+export interface IComments {
   UserID: number;
+  Username?: string;
+  ProfilePic?: string;
   NewsfeedID: number;
   CommentID: number;
   CommentText: string;

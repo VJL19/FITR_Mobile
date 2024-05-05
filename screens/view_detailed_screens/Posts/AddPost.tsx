@@ -42,7 +42,9 @@ const AddPost = () => {
     resolver: joiResolver(postSchema),
   });
 
-  const onInvalid = (errors) => console.error(errors);
+  const onInvalid = (errors) => {
+    // console.error(errors)
+  };
 
   const onSubmit = async (data: IPost) => {
     const { UserID, FirstName, LastName } = user;

@@ -10,8 +10,12 @@ const AuthRootScreen = () => {
     (state: RootState) => state.authReducer
   );
   return (
-    <AuthStack.Navigator screenOptions={{ headerShown: false }}>
-      <AuthStack.Screen name="Sign In" component={SignInScreen} />
+    <AuthStack.Navigator>
+      <AuthStack.Screen
+        name="Sign In"
+        component={SignInScreen}
+        options={{ headerShown: false }}
+      />
       <AuthStack.Screen name="Sign Up" component={SignUpScreen} />
     </AuthStack.Navigator>
   );

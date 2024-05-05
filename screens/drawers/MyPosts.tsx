@@ -38,13 +38,13 @@ const MyPosts = () => {
     return <LoadingIndicator />;
   }
 
-  // if (!isAuthenticated) {
-  //   return (
-  //     <View>
-  //       <Text>You are not authenticated!</Text>
-  //     </View>
-  //   );
-  // }
+  if (!isAuthenticated) {
+    return (
+      <View>
+        <Text>You are not authenticated!</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>

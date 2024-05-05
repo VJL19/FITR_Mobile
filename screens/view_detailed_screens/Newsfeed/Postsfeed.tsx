@@ -8,6 +8,7 @@ import LoadingIndicator from "../../../components/LoadingIndicator";
 import { useNavigation } from "@react-navigation/native";
 import { DetailedRootStackNavigationProp } from "../../../utils/types/detailed_screens/DetailedRootStackNavigators";
 import { RootStackNavigationProp } from "../../../utils/types/navigators/RootStackNavigators";
+import { INewsFeed } from "../../../utils/types/newsfeed.types";
 
 const Postsfeed = ({
   PostTitle,
@@ -18,17 +19,11 @@ const Postsfeed = ({
   PostIsLike,
   PostImage,
   PostLikes,
+  UserID,
 }: INewsFeed) => {
   const dispatch: AppDispatch = useDispatch();
 
-  const { comments, message } = useSelector(
-    (state: RootState) => state.comment
-  );
-
   const navigation = useNavigation<RootStackNavigationProp>();
-  useEffect(() => {
-    dispatch(getAllCommentsAction(NewsfeedID || 0));
-  }, []);
 
   const handlePress = () => {
     //navigate to another screen and pass params.
@@ -42,18 +37,18 @@ const Postsfeed = ({
         PostIsLike: PostIsLike,
         PostImage: PostImage,
         PostLikes: PostLikes,
-        comments: comments,
+        NewsfeedID: NewsfeedID,
+        UserID: UserID,
       },
     });
   };
-  console.log("comments", message);
 
   return (
     <TouchableOpacity activeOpacity={0.8} onPress={handlePress}>
       <View style={styles.box}>
         <View>
           <Text style={styles.title}>{PostTitle}</Text>
-          <Text style={styles.date}>{PostDate.substring(0, 10)}</Text>
+          <Text style={styles.date}>{PostDate?.substring(0, 10)}</Text>
         </View>
         <Image
           source={logo}

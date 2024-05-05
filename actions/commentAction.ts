@@ -6,11 +6,11 @@ import { KnownError } from "./registerAction";
 const commentPostAction = createAsyncThunk(
   "user/comment_post",
   async (
-    arg: { NewsfeedID: number; UserID: number; CommentText: string },
+    arg: { CommentText: string; UserID: number; NewsfeedID: number },
     { rejectWithValue }
   ) => {
     try {
-      const res = await global_axios.post("/user/comment_post", { arg });
+      const res = await global_axios.post("/user/comment_post", arg);
 
       const data = res.data;
       return data;
