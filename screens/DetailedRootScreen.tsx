@@ -11,6 +11,10 @@ import DetailedPostFeed from "./view_detailed_screens/Newsfeed/DetailedPostFeed"
 import ViewPost from "./view_detailed_screens/Posts/ViewPost";
 import CustomMenu from "../components/CustomMenu";
 import CommentPost from "./view_detailed_screens/Newsfeed/CommentPost";
+import Notifications from "./view_detailed_screens/Notifications/Notifications";
+import GymEquipments from "./view_detailed_screens/Tutorials/GymEquipments/GymEquipments";
+import Workouts from "./view_detailed_screens/Tutorials/Workouts/Workouts";
+import Exercises from "./view_detailed_screens/Tutorials/Exercises/Exercises";
 
 const DetailedRootScreen = () => {
   const config = {
@@ -110,6 +114,50 @@ const DetailedRootScreen = () => {
       <DetailedScreenStacks.Screen
         name="Comment on Post"
         component={CommentPost}
+        options={{
+          cardOverlayEnabled: true,
+          presentation: "card",
+          gestureEnabled: true,
+          gestureDirection: "horizontal",
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+      />
+      <DetailedScreenStacks.Screen
+        name="Notifications"
+        component={Notifications}
+        options={{
+          cardOverlayEnabled: true,
+          presentation: "card",
+          gestureEnabled: true,
+          gestureDirection: "horizontal",
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+      />
+      <DetailedScreenStacks.Screen
+        name="Gym Equipments"
+        component={GymEquipments}
+        options={{
+          cardOverlayEnabled: true,
+          presentation: "card",
+          gestureEnabled: true,
+          gestureDirection: "horizontal",
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+      />
+      <DetailedScreenStacks.Screen
+        name="Workouts"
+        component={Workouts}
+        options={{
+          cardOverlayEnabled: true,
+          presentation: "card",
+          gestureEnabled: true,
+          gestureDirection: "horizontal",
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+      />
+      <DetailedScreenStacks.Screen
+        name="Exercises"
+        component={Exercises}
         options={{
           cardOverlayEnabled: true,
           presentation: "card",

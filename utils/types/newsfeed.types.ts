@@ -8,6 +8,7 @@ export interface INewsFeed {
   PostIsLike: string;
   PostDate: string;
   PostAuthor: string;
+  Username: string;
 }
 
 export interface IComments {

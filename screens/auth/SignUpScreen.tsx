@@ -143,7 +143,6 @@ const SignUpScreen = () => {
   console.log("hey", image === undefined);
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#f5f5f5" }}>
-      <Text style={{ fontSize: 25 }}>SignUpScreen</Text>
       <View
         style={{
           justifyContent: "center",

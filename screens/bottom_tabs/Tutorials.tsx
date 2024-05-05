@@ -9,22 +9,16 @@ import React, { useEffect, useState } from "react";
 import LoadingIndicator from "../../components/LoadingIndicator";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import { useRoute } from "@react-navigation/native";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../store/store";
-import { setBottomRoute, setRoute } from "../../reducers/routeReducer";
+import { useNavigation } from "@react-navigation/native";
+import { RootStackNavigationProp } from "../../utils/types/navigators/RootStackNavigators";
 
 const Tutorials = () => {
   const [isReady, setIsReady] = useState(false);
-  const route = useRoute();
 
-  const dispatch: AppDispatch = useDispatch();
-
+  const navigation = useNavigation<RootStackNavigationProp>();
   useEffect(() => {
     InteractionManager.runAfterInteractions(() => {
       setIsReady(true);
-      dispatch(setRoute(route.name));
-      dispatch(setBottomRoute(route.name));
     });
   }, []);
 
@@ -62,6 +56,9 @@ const Tutorials = () => {
 
             100
           )}
+          onPress={() =>
+            navigation.navigate("DetailedScreens", { screen: "Gym Equipments" })
+          }
         >
           <View style={styles.BoxStyle}>
             <Text style={styles.BoxTextStyle}>Gym Equipments</Text>
@@ -80,6 +77,9 @@ const Tutorials = () => {
             true,
             100
           )}
+          onPress={() =>
+            navigation.navigate("DetailedScreens", { screen: "Exercises" })
+          }
         >
           <View style={styles.BoxStyle}>
             <Text style={styles.BoxTextStyle}>Exercises</Text>
@@ -98,6 +98,9 @@ const Tutorials = () => {
             true,
             100
           )}
+          onPress={() =>
+            navigation.navigate("DetailedScreens", { screen: "Workouts" })
+          }
         >
           <View style={styles.BoxStyle}>
             <Text style={styles.BoxTextStyle}>Workouts</Text>

@@ -9,6 +9,7 @@ import { useNavigation } from "@react-navigation/native";
 import { DetailedRootStackNavigationProp } from "../../../utils/types/detailed_screens/DetailedRootStackNavigators";
 import { RootStackNavigationProp } from "../../../utils/types/navigators/RootStackNavigators";
 import { INewsFeed } from "../../../utils/types/newsfeed.types";
+import getAccessToken from "../../../actions/homeAction";
 
 const Postsfeed = ({
   PostTitle,
@@ -22,6 +23,10 @@ const Postsfeed = ({
   UserID,
 }: INewsFeed) => {
   const dispatch: AppDispatch = useDispatch();
+  const { user } = useSelector((state: RootState) => state.authReducer);
+  useEffect(() => {
+    dispatch(getAccessToken());
+  }, []);
 
   const navigation = useNavigation<RootStackNavigationProp>();
 
@@ -39,6 +44,7 @@ const Postsfeed = ({
         PostLikes: PostLikes,
         NewsfeedID: NewsfeedID,
         UserID: UserID,
+        Username: user.Username,
       },
     });
   };

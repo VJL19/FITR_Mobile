@@ -18,6 +18,7 @@ import {
   unlikePostAction,
 } from "../../../actions/newsfeedAction";
 import DisplayAlert from "../../../components/CustomAlert";
+import { notifyLikeAction } from "../../../actions/notificationAction";
 
 const DetailedPostFeed = () => {
   const route =
@@ -26,7 +27,7 @@ const DetailedPostFeed = () => {
     >();
 
   const { user } = useSelector((state: RootState) => state.authReducer);
-  const { comments, message, isLoading } = useSelector(
+  const { comments, isLoading } = useSelector(
     (state: RootState) => state.comment
   );
 
@@ -35,6 +36,10 @@ const DetailedPostFeed = () => {
     status,
     result,
   } = useSelector((state: RootState) => state.newsfeed);
+
+  const { message, status: nStatus } = useSelector(
+    (state: RootState) => state.notification
+  );
 
   const navigation = useNavigation<RootStackNavigationProp>();
   const dispatch: AppDispatch = useDispatch();
@@ -48,11 +53,18 @@ const DetailedPostFeed = () => {
     PostDate,
     NewsfeedID,
     UserID,
+    Username,
   } = route.params;
 
   const arg = {
     UserID: user.UserID,
     NewsfeedID: NewsfeedID,
+  };
+
+  const notify_arg = {
+    UserID: UserID,
+    PostAuthor: PostAuthor,
+    Username: Username,
   };
   useEffect(() => {
     dispatch(getAccessToken());
@@ -64,22 +76,23 @@ const DetailedPostFeed = () => {
   const fullName = `${user.FirstName} ${user.LastName}`;
 
   const handleUnlike = () => {
-    console.log("clicked");
     dispatch(unlikePostAction(arg));
+    dispatch(getAllPostsAction());
     if (status === 200) {
-      dispatch(getAllPostsAction());
       DisplayAlert("Success message", "Unliked post successfully");
-      navigation.goBack();
+      // navigation.goBack();
     }
   };
 
   const handleLike = () => {
-    console.log("clicked");
     dispatch(getAllPostsAction());
     if (status === 200) {
       dispatch(likePostAction(arg));
+      dispatch(notifyLikeAction(notify_arg));
       DisplayAlert("Success message", "Liked post successfully");
-      navigation.goBack();
+      // navigation.goBack();
+      console.log("heyy notif message!", message);
+      console.log("heyy notif status!", nStatus);
     }
   };
   const handleComment = () => {
@@ -92,7 +105,6 @@ const DetailedPostFeed = () => {
       },
     });
   };
-  console.log("heyy message!", result[0]);
 
   if (isLoading) {
     return <LoadingIndicator />;
@@ -115,10 +127,10 @@ const DetailedPostFeed = () => {
         (!isLoading && (
           <Button
             title={`${
-              result[0]?.PostIsLike === "liked" ? "unliked" : "liked"
+              result?.[0]?.PostIsLike === "liked" ? "unliked" : "liked"
             }post`}
             onPress={
-              result[0]?.PostIsLike === "liked" ? handleUnlike : handleLike
+              result?.[0]?.PostIsLike === "liked" ? handleUnlike : handleLike
             }
           />
         ))}

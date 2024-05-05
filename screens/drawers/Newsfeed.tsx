@@ -42,9 +42,9 @@ const Newsfeed = () => {
       </View>
     );
   }
-  console.log("feed", result);
-  console.log("feed", isAuthenticated);
-  console.log("feed", message);
+  // console.log("feed", result);
+  // console.log("feed", isAuthenticated);
+  // console.log("feed", message);
   return (
     <View style={styles.container}>
       <FlatList

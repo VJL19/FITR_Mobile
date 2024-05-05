@@ -43,16 +43,17 @@ const styles = StyleSheet.create({
     width: 85,
     borderRadius: 150,
     borderWidth: 1,
-    borderColor: "#ff2e00",
+    borderColor: "#f5f5f5",
   },
   avatarNameStyle: {
     marginTop: 10,
-    fontSize: 16,
-    color: "#131313",
+    fontSize: 18,
+    color: "#f5f5f5",
+    fontWeight: "bold",
   },
   avatarInfoStyle: {
     marginTop: 10,
-    fontSize: 12,
-    color: "#131313",
+    fontSize: 14,
+    color: "#f5f5f5",
   },
 });

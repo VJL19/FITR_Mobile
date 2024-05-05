@@ -17,6 +17,7 @@ export type DetailedRootStackNavigatorsParamList = {
     PostIsLike: string;
     NewsfeedID: number;
     UserID: number;
+    Username: string;
   };
   "View Post": {
     PostImage: string;
@@ -29,6 +30,10 @@ export type DetailedRootStackNavigatorsParamList = {
     UserID: number;
     PostTitle: string;
   };
+  Notifications: undefined;
+  "Gym Equipments": undefined;
+  Workouts: undefined;
+  Exercises: undefined;
 };
 
 export type DetailedRootStackScreenProp = StackScreenProps<
@@ -39,6 +44,11 @@ export type DetailedRootStackScreenProp = StackScreenProps<
   | "Add Post"
   | "View Post Feed"
   | "View Post"
+  | "Comment on Post"
+  | "Notifications"
+  | "Gym Equipments"
+  | "Workouts"
+  | "Exercises"
 >;
 export type DetailedRootStackNavigationProp = StackNavigationProp<
   DetailedRootStackNavigatorsParamList,
@@ -48,4 +58,9 @@ export type DetailedRootStackNavigationProp = StackNavigationProp<
   | "Add Post"
   | "View Post Feed"
   | "View Post"
+  | "Comment on Post"
+  | "Notifications"
+  | "Gym Equipments"
+  | "Workouts"
+  | "Exercises"
 >;
