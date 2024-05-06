@@ -5,7 +5,13 @@ import logo from "../../../assets/fitr_logo3.png";
 import { useNavigation } from "@react-navigation/native";
 import { RootStackNavigationProp } from "../../../utils/types/navigators/RootStackNavigators";
 
-const Posts = ({ PostTitle, PostDate, PostImage, PostDescription }: IPost) => {
+const Posts = ({
+  PostTitle,
+  PostDate,
+  PostImage,
+  PostDescription,
+  PostID,
+}: IPost) => {
   const navigation = useNavigation<RootStackNavigationProp>();
   const handlePress = () => {
     navigation.navigate("DetailedScreens", {
@@ -15,6 +21,7 @@ const Posts = ({ PostTitle, PostDate, PostImage, PostDescription }: IPost) => {
         PostDescription: PostDescription,
         PostImage: PostImage,
         PostTitle: PostTitle,
+        PostID: PostID,
       },
     });
   };
@@ -23,12 +30,8 @@ const Posts = ({ PostTitle, PostDate, PostImage, PostDescription }: IPost) => {
       <View style={styles.box}>
         <View>
           <Text style={styles.title}>{PostTitle}</Text>
-          <Text style={styles.date}>{PostDate.substring(0, 10)}</Text>
+          <Text style={styles.date}>{PostDate?.substring(0, 10)}</Text>
         </View>
-        <Image
-          source={logo}
-          style={{ height: 130, width: "50%", opacity: 0.4 }}
-        />
       </View>
     </TouchableOpacity>
   );
@@ -41,23 +44,21 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     justifyContent: "space-between",
-    height: 150,
+    height: 100,
     width: 300,
     padding: 15,
     marginTop: 15,
-    borderRadius: 8,
-    borderWidth: 0.5,
-    borderColor: "#f5f5f5",
-    backgroundColor: "#303030",
+    borderBottomWidth: 2,
+    borderBottomColor: "#ccc",
   },
   title: {
     fontSize: 22,
-    color: "#f5f5f5",
+    color: "#131313",
     fontWeight: "800",
     fontFamily: "Inter-Bold",
   },
   date: {
     fontSize: 14,
-    color: "#f5f5f5",
+    color: "#131313",
   },
 });

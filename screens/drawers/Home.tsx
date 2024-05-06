@@ -16,9 +16,11 @@ import { increment, incrementByAmount } from "../../reducers/counterReducer";
 import getAccessToken from "../../actions/homeAction";
 import { setRoute } from "../../reducers/routeReducer";
 import { useRoute } from "@react-navigation/native";
+import useIsReady from "../../hooks/useIsReady";
 // import { fetchUsers } from "../../reducers/authReducer";
 const Home = () => {
   // console.log("TTT", auth);
+  const { isReady } = useIsReady();
   const { value, name } = useSelector((state: RootState) => state.counter);
   const { message, isAuthenticated } = useSelector(
     (state: RootState) => state.authReducer
@@ -36,6 +38,9 @@ const Home = () => {
     // dispatch(fetchUsers());
   }, []);
 
+  if (!isReady) {
+    return <LoadingIndicator />;
+  }
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#f5f5f5" }}>
       <Text style={{ color: "#f5f5f5", fontWeight: "bold", fontSize: 25 }}>

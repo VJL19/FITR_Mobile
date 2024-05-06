@@ -1,6 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { INotifications } from "../utils/types/notifications.types";
-import { notifyLikeAction } from "../actions/notificationAction";
+import {
+  getNotificationAction,
+  notifyCommentAction,
+  notifyLikeAction,
+  removeNotificationAction,
+} from "../actions/notificationAction";
 
 interface INotificationState {
   message: string;
@@ -35,6 +40,68 @@ const notificationSlice = createSlice({
       state.status = 202;
     });
     builder.addCase(notifyLikeAction.rejected, (state, action) => {
+      state.message = action.payload?.message;
+      state.status = action.payload?.status;
+      state.error = action.payload?.error;
+      state.isLoading = false;
+      state.result = [];
+    });
+    //reducers for notifying user for comment.
+    builder.addCase(notifyCommentAction.fulfilled, (state, action) => {
+      state.message = action;
+      state.result = action.payload?.result;
+      state.isLoading = false;
+      state.status = action.payload?.status;
+    });
+    builder.addCase(notifyCommentAction.pending, (state, action) => {
+      state.message = { details: "Loading in notify comment action..." };
+      state.isLoading = true;
+      state.status = 202;
+    });
+    builder.addCase(notifyCommentAction.rejected, (state, action) => {
+      state.message = action.payload?.message;
+      state.status = action.payload?.status;
+      state.error = action.payload?.error;
+      state.isLoading = false;
+      state.result = [];
+    });
+
+    //reducers for removing the user for like.
+    builder.addCase(removeNotificationAction.fulfilled, (state, action) => {
+      state.message = action;
+      state.result = action.payload?.result;
+      state.isLoading = false;
+      state.status = action.payload?.status;
+    });
+    builder.addCase(removeNotificationAction.pending, (state, action) => {
+      state.message = {
+        details: "Loading in removing notification like action...",
+      };
+      state.isLoading = true;
+      state.status = 202;
+    });
+    builder.addCase(removeNotificationAction.rejected, (state, action) => {
+      state.message = action.payload?.message;
+      state.status = action.payload?.status;
+      state.error = action.payload?.error;
+      state.isLoading = false;
+      state.result = [];
+    });
+    //reducers for getting all notifications in user.
+    builder.addCase(getNotificationAction.fulfilled, (state, action) => {
+      state.message = action;
+      state.result = action.payload?.result;
+      state.isLoading = false;
+      state.status = action.payload?.status;
+    });
+    builder.addCase(getNotificationAction.pending, (state, action) => {
+      state.message = {
+        details: "Loading in getting notification likes, and comment action...",
+      };
+      state.isLoading = true;
+      state.status = 202;
+    });
+    builder.addCase(getNotificationAction.rejected, (state, action) => {
       state.message = action.payload?.message;
       state.status = action.payload?.status;
       state.error = action.payload?.error;

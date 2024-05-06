@@ -1,5 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getPostAction, postUserAction } from "../actions/postAction";
+import {
+  deletePostAction,
+  getPostAction,
+  postUserAction,
+} from "../actions/postAction";
 import { IPost } from "../utils/types/post.types";
 
 interface IPostState {
@@ -52,6 +56,23 @@ const postSlice = createSlice({
       state.status = 202;
     });
     builder.addCase(getPostAction.rejected, (state, action) => {
+      state.isLoading = false;
+      state.message = action.payload?.error;
+      state.status = 400;
+    });
+    //for deleting the specific post.
+    builder.addCase(deletePostAction.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.message = action.payload?.message;
+      state.status = action.payload?.status;
+      state.postItems = action.payload?.result;
+    });
+    builder.addCase(deletePostAction.pending, (state, action) => {
+      state.isLoading = true;
+      state.message = { details: "Loading user deleting a post..." };
+      state.status = 202;
+    });
+    builder.addCase(deletePostAction.rejected, (state, action) => {
       state.isLoading = false;
       state.message = action.payload?.error;
       state.status = 400;

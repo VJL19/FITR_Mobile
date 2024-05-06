@@ -21,6 +21,23 @@ const createPostInFeedAction = createAsyncThunk(
   }
 );
 
+const deletePostinFeedAction = createAsyncThunk(
+  "user/remove_postfeed",
+  async (PostID: number, { rejectWithValue }) => {
+    try {
+      const res = await global_axios.delete(`/user/remove_postfeed:${PostID}`);
+      const data = res.data;
+      return data;
+    } catch (err) {
+      const error = err as AxiosError<KnownError>;
+      if (!error.response) {
+        throw error;
+      }
+      rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const getAllPostsAction = createAsyncThunk(
   "user/all_posts",
   async (_, { rejectWithValue }) => {
@@ -94,4 +111,5 @@ export {
   likePostAction,
   unlikePostAction,
   checkLikepostAction,
+  deletePostinFeedAction,
 };

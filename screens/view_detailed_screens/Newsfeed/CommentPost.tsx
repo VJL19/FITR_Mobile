@@ -15,6 +15,7 @@ import { AppDispatch, RootState } from "../../../store/store";
 import { useDispatch, useSelector } from "react-redux";
 import DisplayAlert from "../../../components/CustomAlert";
 import getAccessToken from "../../../actions/homeAction";
+import { notifyCommentAction } from "../../../actions/notificationAction";
 
 const CommentPost = () => {
   const route =
@@ -35,9 +36,20 @@ const CommentPost = () => {
   useEffect(() => {
     dispatch(getAccessToken());
   }, []);
-  const { UserID, PostTitle, NewsfeedID } = route.params;
+  const {
+    UserID,
+    PostTitle,
+    NewsfeedID,
+    PostAuthor,
+    Username,
+    NotificationDate,
+    CommentDate,
+  } = route.params;
 
-  const { message, status } = useSelector((state: RootState) => state.comment);
+  // const { message, status } = useSelector((state: RootState) => state.comment);
+  const { message, status } = useSelector(
+    (state: RootState) => state.notification
+  );
   const { user } = useSelector((state: RootState) => state.authReducer);
 
   const onInvalid = (errors) => {
@@ -45,21 +57,28 @@ const CommentPost = () => {
   };
   const navigation = useNavigation();
 
-  console.log("comment res", message);
-  console.log("comment status", status);
-
+  const notify_arg = {
+    UserID: UserID,
+    PostAuthor: PostAuthor,
+    Username: Username,
+    NotificationDate: NotificationDate,
+  };
   const onComment = (data: IComments) => {
     const arg = {
       CommentText: data.CommentText,
       UserID: user.UserID,
       NewsfeedID: NewsfeedID,
+      CommentDate: CommentDate,
     };
     dispatch(commentPostAction(arg));
     dispatch(getAllCommentsAction(NewsfeedID || 0));
+    dispatch(notifyCommentAction(notify_arg));
 
+    console.log("notif comment res", message);
+    console.log("notif comment status", status);
     if (status === 200 && !isLoading) {
-      DisplayAlert("Success message", "Successfully commented on post");
-      navigation.goBack();
+      DisplayAlert("Success message", "Successfully commented on this post.");
+      // navigation.goBack();
     }
     reset();
   };

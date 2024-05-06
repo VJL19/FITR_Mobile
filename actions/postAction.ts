@@ -38,4 +38,21 @@ const getPostAction = createAsyncThunk(
     }
   }
 );
-export { postUserAction, getPostAction };
+
+const deletePostAction = createAsyncThunk(
+  "/user/delete_post",
+  async (PostID: number, { rejectWithValue }) => {
+    try {
+      const res = await global_axios.delete(`/user/delete_post:${PostID}`);
+      const data = res.data;
+      return data;
+    } catch (err) {
+      const error = err as AxiosError<KnownError>;
+      if (!error.response) {
+        throw error;
+      }
+      rejectWithValue(error.response.data);
+    }
+  }
+);
+export { postUserAction, getPostAction, deletePostAction };

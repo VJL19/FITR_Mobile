@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import {
   checkLikepostAction,
   createPostInFeedAction,
+  deletePostinFeedAction,
   getAllPostsAction,
   likePostAction,
   unlikePostAction,
@@ -31,7 +32,7 @@ const newsfeedSlice = createSlice({
   extraReducers: (builder) => {
     //for getting all the posts in a feed.
     builder.addCase(getAllPostsAction.fulfilled, (state, action) => {
-      state.message = action;
+      state.message = action.payload?.message;
       state.status = action.payload?.status;
       state.result = action.payload?.result;
       state.isLoading = false;
@@ -68,7 +69,7 @@ const newsfeedSlice = createSlice({
     });
     //for the liking the post in a feed action.
     builder.addCase(likePostAction.fulfilled, (state, action) => {
-      state.message = action;
+      state.message = action.payload?.message;
       state.status = action.payload?.status;
       state.result = action.payload?.result;
       state.isLoading = false;
@@ -86,7 +87,7 @@ const newsfeedSlice = createSlice({
     });
     //for the unliking the post in a feed action.
     builder.addCase(unlikePostAction.fulfilled, (state, action) => {
-      state.message = action;
+      state.message = action.payload?.message;
       state.status = action.payload?.status;
       state.result = action.payload?.result;
       state.isLoading = false;
@@ -104,7 +105,7 @@ const newsfeedSlice = createSlice({
     });
     //for the checking the post if liked already in a feed action.
     builder.addCase(checkLikepostAction.fulfilled, (state, action) => {
-      state.message = action;
+      state.message = action.payload?.message;
       state.status = action.payload?.status;
       state.result = action.payload?.result;
       state.isLoading = false;
@@ -117,6 +118,26 @@ const newsfeedSlice = createSlice({
       state.isLoading = true;
     });
     builder.addCase(checkLikepostAction.rejected, (state, action) => {
+      state.error = action.payload?.error;
+      state.status = 400;
+      state.isLoading = false;
+      state.result = [];
+    });
+    //for deleting the post in a feed action
+    builder.addCase(deletePostinFeedAction.fulfilled, (state, action) => {
+      state.message = action.payload?.message;
+      state.status = action.payload?.status;
+      state.result = action.payload?.result;
+      state.isLoading = false;
+    });
+    builder.addCase(deletePostinFeedAction.pending, (state, action) => {
+      state.message = {
+        details: "Loading in deleting post in a feed.",
+      };
+      state.status = 202;
+      state.isLoading = true;
+    });
+    builder.addCase(deletePostinFeedAction.rejected, (state, action) => {
       state.error = action.payload?.error;
       state.status = 400;
       state.isLoading = false;

@@ -25,10 +25,13 @@ const MyPosts = () => {
 
   useEffect(() => {
     dispatch(getAccessToken());
-    dispatch(getPostAction(user.UserID));
     dispatch(setRoute("My posts"));
+
+    navigation.addListener("focus", () => {
+      dispatch(getPostAction(user.UserID));
+    });
   }, []);
-  console.log("user post", postItems);
+  // console.log("user post", postItems);
 
   const handlePress = () => {
     navigation.navigate("DetailedScreens", { screen: "Add Post" });
@@ -46,6 +49,30 @@ const MyPosts = () => {
     );
   }
 
+  if (postItems?.length === 0) {
+    return (
+      <View>
+        <Text>My posts is empty!</Text>
+        <Pressable
+          onPress={handlePress}
+          style={{
+            alignSelf: "flex-end",
+            width: "20%",
+            borderRadius: 50,
+            height: 70,
+            backgroundColor: "#ff2e00",
+            position: "absolute",
+            top: "80%",
+          }}
+        >
+          <View style={{ alignItems: "center", justifyContent: "center" }}>
+            <Text style={{ fontSize: 40, color: "#f5f5f5" }}>+</Text>
+          </View>
+        </Pressable>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <View>
@@ -58,7 +85,7 @@ const MyPosts = () => {
         alwaysBounceVertical={true}
         data={postItems}
         renderItem={({ item }) => <Posts {...item} />}
-        keyExtractor={(item: IPost) => item.PostID}
+        keyExtractor={(item: IPost) => item?.PostID?.toString()}
       />
 
       <Pressable
@@ -67,7 +94,6 @@ const MyPosts = () => {
           alignSelf: "flex-end",
           width: "20%",
           borderRadius: 50,
-          borderWidth: 1,
           height: 70,
           backgroundColor: "#ff2e00",
           position: "absolute",
@@ -89,6 +115,5 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "space-evenly",
-    backgroundColor: "#202020",
   },
 });

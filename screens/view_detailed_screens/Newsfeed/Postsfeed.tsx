@@ -3,10 +3,8 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../store/store";
 import { getAllCommentsAction } from "../../../actions/commentAction";
-import logo from "../../../assets/fitr_logo3.png";
 import LoadingIndicator from "../../../components/LoadingIndicator";
 import { useNavigation } from "@react-navigation/native";
-import { DetailedRootStackNavigationProp } from "../../../utils/types/detailed_screens/DetailedRootStackNavigators";
 import { RootStackNavigationProp } from "../../../utils/types/navigators/RootStackNavigators";
 import { INewsFeed } from "../../../utils/types/newsfeed.types";
 import getAccessToken from "../../../actions/homeAction";
@@ -17,10 +15,9 @@ const Postsfeed = ({
   PostDate,
   PostAuthor,
   NewsfeedID,
-  PostIsLike,
   PostImage,
-  PostLikes,
   UserID,
+  Username,
 }: INewsFeed) => {
   const dispatch: AppDispatch = useDispatch();
   const { user } = useSelector((state: RootState) => state.authReducer);
@@ -39,9 +36,7 @@ const Postsfeed = ({
         PostDescription: PostDescription,
         PostDate: PostDate,
         PostAuthor: PostAuthor,
-        PostIsLike: PostIsLike,
         PostImage: PostImage,
-        PostLikes: PostLikes,
         NewsfeedID: NewsfeedID,
         UserID: UserID,
         Username: user.Username,
@@ -49,17 +44,20 @@ const Postsfeed = ({
     });
   };
 
+  const userName =
+    user.FirstName + " " + user.LastName === PostAuthor && user.Username;
+
+  console.log(Username);
+
   return (
     <TouchableOpacity activeOpacity={0.8} onPress={handlePress}>
       <View style={styles.box}>
         <View>
           <Text style={styles.title}>{PostTitle}</Text>
+
+          <Text>@{userName}</Text>
           <Text style={styles.date}>{PostDate?.substring(0, 10)}</Text>
         </View>
-        <Image
-          source={logo}
-          style={{ height: 130, width: "50%", opacity: 0.4 }}
-        />
       </View>
     </TouchableOpacity>
   );
@@ -72,23 +70,21 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     justifyContent: "space-between",
-    height: 150,
+    height: 120,
     width: 300,
     padding: 15,
     marginTop: 15,
-    borderRadius: 8,
-    borderWidth: 0.5,
-    borderColor: "#f5f5f5",
-    backgroundColor: "#303030",
+    borderBottomWidth: 2,
+    borderColor: "#ccc",
   },
   title: {
     fontSize: 22,
-    color: "#f5f5f5",
+    color: "#202020",
     fontWeight: "800",
     fontFamily: "Inter-Bold",
   },
   date: {
     fontSize: 14,
-    color: "#f5f5f5",
+    color: "#202020",
   },
 });

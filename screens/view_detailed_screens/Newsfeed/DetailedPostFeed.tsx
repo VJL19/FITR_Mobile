@@ -18,7 +18,11 @@ import {
   unlikePostAction,
 } from "../../../actions/newsfeedAction";
 import DisplayAlert from "../../../components/CustomAlert";
-import { notifyLikeAction } from "../../../actions/notificationAction";
+import {
+  notifyLikeAction,
+  removeNotificationAction,
+} from "../../../actions/notificationAction";
+import getCurrentDate from "../../../utils/helpers/formatDate";
 
 const DetailedPostFeed = () => {
   const route =
@@ -65,6 +69,7 @@ const DetailedPostFeed = () => {
     UserID: UserID,
     PostAuthor: PostAuthor,
     Username: Username,
+    NotificationDate: getCurrentDate(),
   };
   useEffect(() => {
     dispatch(getAccessToken());
@@ -76,9 +81,10 @@ const DetailedPostFeed = () => {
   const fullName = `${user.FirstName} ${user.LastName}`;
 
   const handleUnlike = () => {
-    dispatch(unlikePostAction(arg));
     dispatch(getAllPostsAction());
     if (status === 200) {
+      dispatch(unlikePostAction(arg));
+      dispatch(removeNotificationAction(notify_arg));
       DisplayAlert("Success message", "Unliked post successfully");
       // navigation.goBack();
     }
@@ -91,10 +97,10 @@ const DetailedPostFeed = () => {
       dispatch(notifyLikeAction(notify_arg));
       DisplayAlert("Success message", "Liked post successfully");
       // navigation.goBack();
-      console.log("heyy notif message!", message);
-      console.log("heyy notif status!", nStatus);
     }
   };
+  console.log("heyy notif message!", message);
+  console.log("heyy notif status!", nStatus);
   const handleComment = () => {
     navigation.navigate("DetailedScreens", {
       screen: "Comment on Post",
@@ -102,6 +108,10 @@ const DetailedPostFeed = () => {
         NewsfeedID: NewsfeedID,
         PostTitle: PostTitle,
         UserID: UserID,
+        PostAuthor: PostAuthor,
+        Username: Username,
+        CommentDate: getCurrentDate(),
+        NotificationDate: getCurrentDate(),
       },
     });
   };

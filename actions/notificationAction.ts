@@ -30,11 +30,19 @@ const notifyLikeAction = createAsyncThunk(
 const notifyCommentAction = createAsyncThunk(
   "/user/notify_comment",
   async (
-    arg: { UserID: number; PostAuthor: string; Username: string },
+    arg: {
+      UserID: number;
+      PostAuthor: string;
+      Username: string;
+      NotificationDate: string;
+    },
     { rejectWithValue }
   ) => {
     try {
-      const res = await global_axios.post("/user/notify_comment", arg);
+      const res = await global_axios.post(
+        "/user/notifications/notify_comment",
+        arg
+      );
       const data = res.data;
       return data;
     } catch (err) {
@@ -52,7 +60,10 @@ const getNotificationAction = createAsyncThunk(
   "/user/notifications",
   async (arg: { UserID: number }, { rejectWithValue }) => {
     try {
-      const res = await global_axios.post("/user/getNotifications", arg);
+      const res = await global_axios.post(
+        "/user/notifications/getNotifications",
+        arg
+      );
       const data = res.data;
       return data;
     } catch (err) {
@@ -66,4 +77,53 @@ const getNotificationAction = createAsyncThunk(
   }
 );
 
-export { notifyLikeAction, notifyCommentAction, getNotificationAction };
+const removeNotificationAction = createAsyncThunk(
+  "/user/notifications/remove_notification",
+  async (arg: { Username: string }, { rejectWithValue }) => {
+    try {
+      const res = await global_axios.post(
+        "/user/notifications/remove_notification",
+        arg
+      );
+      const data = res.data;
+      return data;
+    } catch (err) {
+      const error = err as AxiosError<KnownError>;
+      if (!error.response) {
+        throw error;
+      }
+      rejectWithValue(error.response.data);
+    }
+  }
+);
+
+const removeNotificationCommentAction = createAsyncThunk(
+  "/user/notifications/remove_notification_comment",
+  async (
+    arg: { Username: string; NotificationID: number },
+    { rejectWithValue }
+  ) => {
+    try {
+      const res = await global_axios.post(
+        "/user/notifications/remove_notification_comment",
+        arg
+      );
+      const data = res.data;
+      return data;
+    } catch (err) {
+      const error = err as AxiosError<KnownError>;
+      if (!error.response) {
+        throw error;
+      }
+      rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export {
+  notifyLikeAction,
+  notifyCommentAction,
+  getNotificationAction,
+  removeNotificationAction,
+  removeNotificationCommentAction,
+};

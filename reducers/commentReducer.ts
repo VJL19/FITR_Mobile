@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import {
   commentPostAction,
   getAllCommentsAction,
+  removeUserCommentAction,
 } from "../actions/commentAction";
 import { IComments } from "../utils/types/newsfeed.types";
 
@@ -27,6 +28,7 @@ const commentSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
+    //for getting all the comment in a post
     builder.addCase(getAllCommentsAction.fulfilled, (state, action) => {
       state.message = action.payload?.message;
       state.status = action.payload?.status;
@@ -57,6 +59,23 @@ const commentSlice = createSlice({
       state.isLoading = true;
     });
     builder.addCase(commentPostAction.rejected, (state, action) => {
+      state.message = action.payload?.message;
+      state.error = action.payload?.error;
+      state.isLoading = false;
+      state.status = 400;
+    });
+    //for removing the comment in a post.
+    builder.addCase(removeUserCommentAction.fulfilled, (state, action) => {
+      state.message = action;
+      state.status = action.payload?.status;
+      state.isLoading = false;
+    });
+    builder.addCase(removeUserCommentAction.pending, (state, action) => {
+      state.message = { details: "Loading removing comment in a posts..." };
+      state.status = 202;
+      state.isLoading = true;
+    });
+    builder.addCase(removeUserCommentAction.rejected, (state, action) => {
       state.message = action.payload?.message;
       state.error = action.payload?.error;
       state.isLoading = false;

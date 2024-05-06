@@ -16,7 +16,10 @@ import { useNavigation } from "@react-navigation/native";
 import DisplayAlert from "../../../components/CustomAlert";
 import postDefault from "../../../assets/post_default.webp";
 import { ScrollView } from "react-native-gesture-handler";
-import { createPostInFeedAction } from "../../../actions/newsfeedAction";
+import {
+  createPostInFeedAction,
+  getAllPostsAction,
+} from "../../../actions/newsfeedAction";
 
 const defaultValue = {
   PostTitle: "",
@@ -24,11 +27,17 @@ const defaultValue = {
 };
 const AddPost = () => {
   const { user } = useSelector((state: RootState) => state.authReducer);
-  const { message, status } = useSelector((state: RootState) => state.post);
+  const { message, status, postItems } = useSelector(
+    (state: RootState) => state.post
+  );
+
+  const { result } = useSelector((state: RootState) => state.newsfeed);
+
   const navigation = useNavigation();
   const dispatch: AppDispatch = useDispatch();
   useEffect(() => {
     dispatch(getAccessToken());
+    dispatch(getAllPostsAction());
   }, []);
 
   const {
@@ -41,10 +50,6 @@ const AddPost = () => {
     defaultValues: defaultValue,
     resolver: joiResolver(postSchema),
   });
-
-  const onInvalid = (errors) => {
-    // console.error(errors)
-  };
 
   const onSubmit = async (data: IPost) => {
     const { UserID, FirstName, LastName } = user;
@@ -69,21 +74,20 @@ const AddPost = () => {
 
     const newsfeedData = {
       ...postData,
-      PostLikes: 0,
-      PostIsLike: "false",
+      PostID: postItems.length === 0 ? 1 : result?.[0].NewsfeedID! + 1,
     };
     dispatch(postUserAction(postData));
     dispatch(getPostAction(user.UserID));
     dispatch(createPostInFeedAction(newsfeedData));
-    DisplayAlert("Successs, message", message);
+    console.log("post message", result?.[0].NewsfeedID!);
+    DisplayAlert("Success message", message);
     reset();
     if (status === 200 && !isLoading) {
-      navigation.goBack();
+      // navigation.goBack();
     }
   };
   return (
     <ScrollView>
-      <Text>AddPost</Text>
       <Image source={postDefault} style={{ height: 200, width: 345 }} />
 
       <View style={{ marginTop: 25 }}>
@@ -93,7 +97,7 @@ const AddPost = () => {
             <React.Fragment>
               <Text
                 style={{
-                  color: "#f5f5f5",
+                  color: "#202020",
                   fontSize: 18,
                   fontFamily: "Inter-Bold",
                   letterSpacing: 1,
@@ -159,7 +163,7 @@ const AddPost = () => {
       <Button
         title="Add Post"
         color={"#ff2e00"}
-        onPress={handleSubmit(onSubmit, onInvalid)}
+        onPress={handleSubmit(onSubmit)}
       />
     </ScrollView>
   );

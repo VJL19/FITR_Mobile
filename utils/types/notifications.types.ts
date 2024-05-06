@@ -4,4 +4,7 @@ export interface INotifications {
   NotificationID?: number;
   NotificationText: string;
   isMarkRead: string;
+  NotifBy: string;
+  NotificationType: string;
+  NotificationDate: string;
 }

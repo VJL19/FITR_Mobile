@@ -1,11 +1,10 @@
 export interface INewsFeed {
   UserID: number;
+  PostID: number;
   NewsfeedID: number;
   PostImage: string;
   PostTitle: string;
   PostDescription: string;
-  PostLikes: number;
-  PostIsLike: string;
   PostDate: string;
   PostAuthor: string;
   Username: string;

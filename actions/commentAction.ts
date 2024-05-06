@@ -6,7 +6,12 @@ import { KnownError } from "./registerAction";
 const commentPostAction = createAsyncThunk(
   "user/comment_post",
   async (
-    arg: { CommentText: string; UserID: number; NewsfeedID: number },
+    arg: {
+      CommentText: string;
+      UserID: number;
+      NewsfeedID: number;
+      CommentDate: string;
+    },
     { rejectWithValue }
   ) => {
     try {
@@ -41,4 +46,19 @@ const getAllCommentsAction = createAsyncThunk(
   }
 );
 
-export { getAllCommentsAction, commentPostAction };
+const removeUserCommentAction = createAsyncThunk(
+  "/user/remove_comment",
+  async (arg: { CommentID: number }, { rejectWithValue }) => {
+    try {
+      const res = await global_axios.post("/user/remove_comment", arg);
+    } catch (err) {
+      const error = err as AxiosError<KnownError>;
+      if (!error.response) {
+        throw err;
+      }
+      rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export { getAllCommentsAction, commentPostAction, removeUserCommentAction };

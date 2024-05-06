@@ -13,8 +13,6 @@ export type DetailedRootStackNavigatorsParamList = {
     PostAuthor: string;
     PostDate: string;
     comments?: IComments[];
-    PostLikes: number;
-    PostIsLike: string;
     NewsfeedID: number;
     UserID: number;
     Username: string;
@@ -24,11 +22,16 @@ export type DetailedRootStackNavigatorsParamList = {
     PostTitle: string;
     PostDescription: string;
     PostDate: string;
+    PostID: number | undefined;
   };
   "Comment on Post": {
     NewsfeedID: number;
     UserID: number;
     PostTitle: string;
+    NotificationDate: string;
+    CommentDate: string;
+    Username: string;
+    PostAuthor: string;
   };
   Notifications: undefined;
   "Gym Equipments": undefined;
