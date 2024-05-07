@@ -85,8 +85,8 @@ const DetailedPostFeed = () => {
     if (status === 200) {
       dispatch(unlikePostAction(arg));
       dispatch(removeNotificationAction(notify_arg));
-      DisplayAlert("Success message", "Unliked post successfully");
-      // navigation.goBack();
+      DisplayAlert("Success message", nMessage);
+      navigation.goBack();
     }
   };
 
@@ -95,8 +95,8 @@ const DetailedPostFeed = () => {
     if (status === 200) {
       dispatch(likePostAction(arg));
       dispatch(notifyLikeAction(notify_arg));
-      DisplayAlert("Success message", "Liked post successfully");
-      // navigation.goBack();
+      DisplayAlert("Success message", nMessage);
+      navigation.goBack();
     }
   };
   console.log("heyy notif message!", message);

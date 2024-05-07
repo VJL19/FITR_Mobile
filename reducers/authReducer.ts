@@ -12,6 +12,7 @@ const initialState: IAuthState = {
   accessToken: "",
   message: "",
   isAuthenticated: false,
+  isLoading: false,
 };
 
 const authSlice = createSlice({
@@ -43,30 +44,36 @@ const authSlice = createSlice({
       state.user = action.payload.user;
       state.message = action.payload?.details;
       state.isAuthenticated = true;
+      state.isLoading = false;
     }),
       builder.addCase(loginUser.pending, (state, action) => {
         state.status = 202;
         state.message = action?.payload;
+        state.isLoading = true;
       });
     builder.addCase(loginUser.rejected, (state, action) => {
       state.message = action?.payload?.details;
       state.status = 400;
       state.isAuthenticated = false;
       state.user = [];
+      state.isLoading = false;
     });
     builder.addCase(testToken.fulfilled, (state, action) => {
       state.message = action?.payload?.payload;
       state.isAuthenticated = action.payload?.isAuthenticated;
       state.status = 200;
+      state.isLoading = false;
     });
     builder.addCase(testToken.pending, (state, action) => {
       state.message = { details: action?.payload };
       state.status = 202;
+      state.isLoading = true;
     });
     builder.addCase(testToken.rejected, (state, action) => {
       state.status = 400;
       state.message = { details: "You are unauthorized!" };
       state.isAuthenticated = false;
+      state.isLoading = false;
     });
   },
 });

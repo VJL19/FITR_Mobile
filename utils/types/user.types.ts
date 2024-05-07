@@ -49,6 +49,7 @@ export interface IAuthState {
   accessToken: string | undefined | null;
   message: string | unknown | undefined;
   isAuthenticated: boolean;
+  isLoading: boolean;
 }
 
 export interface LoginPayload {

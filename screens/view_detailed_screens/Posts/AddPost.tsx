@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View, TextInput, Button, Image } from "react-native";
 import React, { useEffect } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { FieldErrors, SubmitHandler, useForm } from "react-hook-form";
 import { Controller } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { IPost } from "../../../utils/types/post.types";
@@ -16,30 +16,22 @@ import { useNavigation } from "@react-navigation/native";
 import DisplayAlert from "../../../components/CustomAlert";
 import postDefault from "../../../assets/post_default.webp";
 import { ScrollView } from "react-native-gesture-handler";
-import {
-  createPostInFeedAction,
-  getAllPostsAction,
-} from "../../../actions/newsfeedAction";
+import { createPostInFeedAction } from "../../../actions/newsfeedAction";
 
-const defaultValue = {
-  PostTitle: "",
-  PostDescription: "",
-};
 const AddPost = () => {
   const { user } = useSelector((state: RootState) => state.authReducer);
   const { message, status, postItems } = useSelector(
     (state: RootState) => state.post
   );
+  const defaultValue = {
+    PostTitle: "",
+    PostDescription: "",
+  };
 
-  const { result } = useSelector((state: RootState) => state.newsfeed);
+  // const { result } = useSelector((state: RootState) => state.newsfeed);
 
   const navigation = useNavigation();
   const dispatch: AppDispatch = useDispatch();
-  useEffect(() => {
-    dispatch(getAccessToken());
-    dispatch(getAllPostsAction());
-  }, []);
-
   const {
     handleSubmit,
     control,
@@ -51,6 +43,9 @@ const AddPost = () => {
     resolver: joiResolver(postSchema),
   });
 
+  useEffect(() => {
+    dispatch(getAccessToken());
+  }, []);
   const onSubmit = async (data: IPost) => {
     const { UserID, FirstName, LastName } = user;
 
@@ -74,18 +69,17 @@ const AddPost = () => {
 
     const newsfeedData = {
       ...postData,
-      PostID: postItems.length === 0 ? 1 : result?.[0].NewsfeedID! + 1,
     };
     dispatch(postUserAction(postData));
     dispatch(getPostAction(user.UserID));
     dispatch(createPostInFeedAction(newsfeedData));
-    console.log("post message", result?.[0].NewsfeedID!);
+    console.log("add pressed", data);
+    // console.log("post message", result?.[0].NewsfeedID!);
     DisplayAlert("Success message", message);
+    navigation.goBack();
     reset();
-    if (status === 200 && !isLoading) {
-      // navigation.goBack();
-    }
   };
+
   return (
     <ScrollView>
       <Image source={postDefault} style={{ height: 200, width: 345 }} />
@@ -137,7 +131,7 @@ const AddPost = () => {
                 multiline={true}
                 textAlignVertical="top"
                 placeholder="Enter the description"
-                placeholderTextColor={"#202020"}
+                placeholderTextColor={"#c2c2c2"}
                 onBlur={onBlur}
                 onChangeText={onChange}
                 value={value}
@@ -163,7 +157,9 @@ const AddPost = () => {
       <Button
         title="Add Post"
         color={"#ff2e00"}
-        onPress={handleSubmit(onSubmit)}
+        onPress={handleSubmit(onSubmit, (error: FieldErrors<IPost>) =>
+          console.log(error)
+        )}
       />
     </ScrollView>
   );

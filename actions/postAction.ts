@@ -17,7 +17,7 @@ const postUserAction = createAsyncThunk(
       if (!error.response) {
         throw error;
       }
-      rejectWithValue(error.response.data);
+      return rejectWithValue(error.response.data);
     }
   }
 );
@@ -34,7 +34,7 @@ const getPostAction = createAsyncThunk(
       if (!error.response) {
         throw error;
       }
-      rejectWithValue(error.response.data);
+      return rejectWithValue(error.response.data);
     }
   }
 );
@@ -51,7 +51,7 @@ const deletePostAction = createAsyncThunk(
       if (!error.response) {
         throw error;
       }
-      rejectWithValue(error.response.data);
+      return rejectWithValue(error.response.data);
     }
   }
 );

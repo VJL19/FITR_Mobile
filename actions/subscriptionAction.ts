@@ -57,7 +57,7 @@ const processPayment = createAsyncThunk(
       if (!error.response) {
         throw error;
       }
-      rejectWithValue(error.response.data);
+      return rejectWithValue(error.response.data);
     }
   }
 );

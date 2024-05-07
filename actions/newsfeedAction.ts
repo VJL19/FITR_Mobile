@@ -16,7 +16,7 @@ const createPostInFeedAction = createAsyncThunk(
       if (!error.response) {
         throw error;
       }
-      rejectWithValue(error.response.data);
+      return rejectWithValue(error.response.data);
     }
   }
 );
@@ -33,7 +33,7 @@ const deletePostinFeedAction = createAsyncThunk(
       if (!error.response) {
         throw error;
       }
-      rejectWithValue(error.response.data);
+      return rejectWithValue(error.response.data);
     }
   }
 );
@@ -50,7 +50,7 @@ const getAllPostsAction = createAsyncThunk(
       if (!error.response) {
         throw error;
       }
-      rejectWithValue(error.response.data);
+      return rejectWithValue(error.response.data);
     }
   }
 );
@@ -67,7 +67,7 @@ const likePostAction = createAsyncThunk(
       if (!error.response) {
         throw error;
       }
-      rejectWithValue(error.response.data);
+      return rejectWithValue(error.response.data);
     }
   }
 );
@@ -84,7 +84,7 @@ const unlikePostAction = createAsyncThunk(
       if (!error.response) {
         throw error;
       }
-      rejectWithValue(error.response.data);
+      return rejectWithValue(error.response.data);
     }
   }
 );
@@ -101,7 +101,7 @@ const checkLikepostAction = createAsyncThunk(
       if (!error.response) {
         throw error;
       }
-      rejectWithValue(error.response.data);
+      return rejectWithValue(error.response.data);
     }
   }
 );

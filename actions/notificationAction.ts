@@ -22,7 +22,7 @@ const notifyLikeAction = createAsyncThunk(
       if (!error.response) {
         throw error;
       }
-      rejectWithValue(error.response.data);
+      return rejectWithValue(error.response.data);
     }
   }
 );
@@ -51,7 +51,7 @@ const notifyCommentAction = createAsyncThunk(
       if (!error.response) {
         throw error;
       }
-      rejectWithValue(error.response.data);
+      return rejectWithValue(error.response.data);
     }
   }
 );
@@ -72,7 +72,7 @@ const getNotificationAction = createAsyncThunk(
       if (!error.response) {
         throw error;
       }
-      rejectWithValue(error.response.data);
+      return rejectWithValue(error.response.data);
     }
   }
 );
@@ -92,7 +92,7 @@ const removeNotificationAction = createAsyncThunk(
       if (!error.response) {
         throw error;
       }
-      rejectWithValue(error.response.data);
+      return rejectWithValue(error.response.data);
     }
   }
 );
@@ -115,7 +115,7 @@ const removeNotificationCommentAction = createAsyncThunk(
       if (!error.response) {
         throw error;
       }
-      rejectWithValue(error.response.data);
+      return rejectWithValue(error.response.data);
     }
   }
 );

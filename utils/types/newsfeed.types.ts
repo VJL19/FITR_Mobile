@@ -1,6 +1,5 @@
 export interface INewsFeed {
   UserID: number;
-  PostID: number;
   NewsfeedID: number;
   PostImage: string;
   PostTitle: string;

@@ -28,7 +28,7 @@ const RootApp = () => {
   const { isReady } = useIsReady();
   const { token, isAuthenticated } = useContext(AuthContext);
 
-  console.log("auth context", rs);
+  // console.log("auth context", rs);
   // console.log("auth tokens", token);
 
   useEffect(() => {
