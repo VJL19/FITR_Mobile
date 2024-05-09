@@ -39,6 +39,7 @@ const ViewPost = () => {
   const handleDelete = async () => {
     dispatch(deletePostAction(PostID || 0));
     dispatch(deletePostinFeedAction(PostID || 0));
+    dispatch(getPostAction(user.UserID));
 
     if (status === 200) {
       DisplayAlert("Success message", "Post deleted successfully!");

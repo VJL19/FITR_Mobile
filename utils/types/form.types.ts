@@ -10,7 +10,7 @@ interface IForm {
   Username: string;
   Password: string;
   ConfirmPassword: string;
-  ProfilePic: string;
+  ProfilePic: string | undefined;
   Gender: string;
 }
 

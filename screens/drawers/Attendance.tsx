@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Text, View, StyleSheet, Button } from "react-native";
 import { CameraView, Camera } from "expo-camera/next";
 import { BarCodeScanningResult } from "expo-camera";
-import { Dropdown } from "react-native-element-dropdown";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
 import IAttendance from "../../utils/types/attendance.types";
@@ -18,17 +17,25 @@ import getCurrentDate, {
 } from "../../utils/helpers/formatDate";
 import LoadingIndicator from "../../components/LoadingIndicator";
 import { useNavigation } from "@react-navigation/native";
-import { DrawerStackNavigationProp } from "../../utils/types/navigators/DrawerStackNavigators";
+import {
+  DrawerStackNavigationProp,
+  DrawerStackParamList,
+} from "../../utils/types/navigators/DrawerStackNavigators";
 import DropdownComponent from "../../components/DropdownComponent";
 import SubscriptionEnum from "../../utils/enums/Subscription";
 import { setRoute } from "../../reducers/routeReducer";
-
+import QRCode from "react-native-qrcode-svg";
+import { encryptUserRecord } from "../../utils/helpers/hashQrData";
 const Attendance = () => {
   const [hasPermission, setHasPermission] = useState<boolean>();
   const [scanned, setScanned] = useState(false);
   const [toggleScan, setToggleScan] = useState(false);
   const [selectedSubscription, setSelectedSubscription] = useState("");
+  const [hashData, setHashData] = useState<string | unknown>("");
   const navigation = useNavigation<DrawerStackNavigationProp>();
+
+  // console.log(qrRef.current.toDataURL);
+
   // const [userRecord, setUserRecord] = useState<IAttendance>({
   //   UserID: 0,
   //   ProfilePic: "",
@@ -60,6 +67,22 @@ const Attendance = () => {
   console.log("status att", status);
   // console.log("error att", error);
   // console.log("current att", user);
+  const userRecord: IAttendance = {
+    UserID: user.UserID,
+    ProfilePic: user.ProfilePic,
+    LastName: user.LastName,
+    FirstName: user.FirstName,
+    SubscriptionType:
+      selectedSubscription == "1"
+        ? SubscriptionEnum.Session
+        : SubscriptionEnum.Monthly,
+    DateScanned: getCurrentDate(),
+    SubscriptionExpectedEnd:
+      selectedSubscription == "1" ? advanceSessionEnd() : advanceMonthlyEnd(),
+    IsPaid: false,
+    IsScanQR: true,
+    Username: `MJESHTER USER - ${user.Username} ${user.UserID}`,
+  };
 
   useEffect(() => {
     const getCameraPermissions = async () => {
@@ -87,23 +110,16 @@ const Attendance = () => {
     dispatch(getAccessToken());
     dispatch(checkUserScanQr(user));
     dispatch(setRoute("Attendance"));
+
+    const encryptRecord = async () => {
+      const res = await encryptUserRecord(userRecord?.Username!);
+      setHashData(res);
+    };
+
+    encryptRecord();
   }, []);
 
-  const userRecord: IAttendance = {
-    UserID: user.UserID,
-    ProfilePic: user.ProfilePic,
-    LastName: user.LastName,
-    FirstName: user.FirstName,
-    SubscriptionType:
-      selectedSubscription == "1"
-        ? SubscriptionEnum.Session
-        : SubscriptionEnum.Monthly,
-    DateScanned: getCurrentDate(),
-    SubscriptionExpectedEnd:
-      selectedSubscription == "1" ? advanceSessionEnd() : advanceMonthlyEnd(),
-    IsPaid: false,
-    IsScanQR: true,
-  };
+  console.log(user.Username);
   const handleBarCodeScanned = async ({
     type,
     data,
@@ -124,6 +140,10 @@ const Attendance = () => {
     return <Text>No access to camera</Text>;
   }
 
+  if (isLoading) {
+    return <LoadingIndicator />;
+  }
+
   if (!isAuthenticated) {
     return (
       <View>
@@ -131,19 +151,27 @@ const Attendance = () => {
       </View>
     );
   }
-  if (isLoading) {
-    return <LoadingIndicator />;
-  }
 
   return (
     <View style={styles.container}>
       <View style={{ justifyContent: "center", alignItems: "center" }}>
-        <Text style={styles.textTitle}>Scan Me!</Text>
-        {IsScanQR === "false" && (
+        <Text style={styles.textTitle}>Tap Me!</Text>
+        {/* {IsScanQR === "false" && (
           <Text style={styles.description}>
             Please select between the types of subscription you wanna inquire in
             the gym.
           </Text>
+        )} */}
+        {hashData && (
+          <View style={{ borderWidth: 15, borderColor: "white" }}>
+            <QRCode
+              value={hashData}
+              size={250}
+              color="black"
+              backgroundColor="white"
+              logoBackgroundColor="transparent"
+            />
+          </View>
         )}
       </View>
       {IsScanQR === "false" && (
@@ -172,7 +200,7 @@ const Attendance = () => {
       {IsScanQR === "true" && (
         <View>
           <Text style={{ fontSize: 20, color: "#f5f5f5" }}>
-            You have already scanned the qr code.
+            You have already tapped the qr code.
           </Text>
         </View>
       )}
@@ -191,7 +219,7 @@ export default Attendance;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#202020",
+    backgroundColor: "#f5f5f5",
     flex: 1,
     flexDirection: "column",
     justifyContent: "center",
@@ -201,7 +229,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textTransform: "uppercase",
     textAlign: "center",
-    color: "#F5F5F5",
+    color: "#202020",
   },
   dropdown: {
     margin: 16,

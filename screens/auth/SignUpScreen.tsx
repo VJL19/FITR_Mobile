@@ -26,6 +26,7 @@ import * as ImagePicker from "expo-image-picker";
 import DropdownComponent from "../../components/DropdownComponent";
 import CustomTextInput from "../../components/CustomTextInput";
 import DisplayFormError from "../../components/DisplayFormError";
+import avatar from "../../assets/avatar_default.jpeg";
 
 const initialFormState: IForm = {
   LastName: "",
@@ -62,6 +63,7 @@ const SignUpScreen = () => {
 
   const hasUnsavedChanges = Boolean();
 
+  interface IFormData extends File {}
   const { status, details } = useSelector((state: RootState) => state.register);
 
   const dispatch: AppDispatch = useDispatch();
@@ -69,24 +71,37 @@ const SignUpScreen = () => {
     const newObj: IForm = {
       ...data,
       Gender: data.Gender === "1" ? "Male" : "Female",
+      ProfilePic: image,
     };
 
+    // const ext = newObj?.ProfilePic?.split(".");
+    // console.log(ext?.[ext?.length - 1]);
     console.log("data", newObj);
 
-    // dispatch(registerUser(data));
+    dispatch(registerUser(newObj));
     // navigation.navigate("DashboardScreen");
     // reset();
     // await new Promise((resolve) => setTimeout(resolve, 2500));
   };
 
   console.log("status", status);
-  console.log("details", details?.error);
+  console.log("details", details);
 
   useEffect(() => {
     //if the status code of request is 400, then alert something!
 
+    if (status === 200 && isSubmitted) {
+      Alert.alert("Success message", details?.message, [
+        {
+          text: "Cancel",
+          onPress: () => {},
+          style: "cancel",
+        },
+        { text: "OK", onPress: () => {} },
+      ]);
+    }
     if (status === 400 && isSubmitted) {
-      Alert.alert("Alert Title", details?.message, [
+      Alert.alert("Error message", details?.message, [
         {
           text: "Cancel",
           onPress: () => {},
@@ -134,13 +149,12 @@ const SignUpScreen = () => {
       quality: 1,
     });
 
-    console.log(result);
-
     if (!result.canceled) {
       setImage(result.assets[0].uri);
     }
+    console.log(result);
   };
-  console.log("hey", image === undefined);
+  // console.log("hey", image == undefined);
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#f5f5f5" }}>
       <View
@@ -151,14 +165,10 @@ const SignUpScreen = () => {
         }}
       >
         <Button title="Pick an image from camera roll" onPress={pickImage} />
-        {image ? (
-          <Image source={{ uri: image }} style={styles.image} />
-        ) : (
-          <Image
-            source={require("../../assets/avatar_default.jpeg")}
-            style={styles.image}
-          />
-        )}
+        <Image
+          source={image === undefined ? avatar : { uri: image }}
+          style={styles.image}
+        />
       </View>
       <ScrollView style={{ padding: 25, flex: 1, height: "100%" }}>
         <Controller

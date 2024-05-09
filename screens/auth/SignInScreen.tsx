@@ -168,6 +168,7 @@ const SignInScreen = () => {
               onPress={handleSubmit(onSubmit)}
             />
           </View>
+
           <CustomButton
             buttonStyle={styles.btnSecondary}
             textStyle={styles.btnSecondaryText}

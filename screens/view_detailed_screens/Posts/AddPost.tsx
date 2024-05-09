@@ -16,7 +16,6 @@ import { useNavigation } from "@react-navigation/native";
 import DisplayAlert from "../../../components/CustomAlert";
 import postDefault from "../../../assets/post_default.webp";
 import { ScrollView } from "react-native-gesture-handler";
-import { createPostInFeedAction } from "../../../actions/newsfeedAction";
 
 const AddPost = () => {
   const { user } = useSelector((state: RootState) => state.authReducer);
@@ -27,8 +26,6 @@ const AddPost = () => {
     PostTitle: "",
     PostDescription: "",
   };
-
-  // const { result } = useSelector((state: RootState) => state.newsfeed);
 
   const navigation = useNavigation();
   const dispatch: AppDispatch = useDispatch();
@@ -45,6 +42,9 @@ const AddPost = () => {
 
   useEffect(() => {
     dispatch(getAccessToken());
+    navigation.addListener("blur", () => {
+      dispatch(getPostAction(user.UserID));
+    });
   }, []);
   const onSubmit = async (data: IPost) => {
     const { UserID, FirstName, LastName } = user;
@@ -67,12 +67,9 @@ const AddPost = () => {
       PostAuthor: fullName,
     };
 
-    const newsfeedData = {
-      ...postData,
-    };
     dispatch(postUserAction(postData));
     dispatch(getPostAction(user.UserID));
-    dispatch(createPostInFeedAction(newsfeedData));
+
     console.log("add pressed", data);
     // console.log("post message", result?.[0].NewsfeedID!);
     DisplayAlert("Success message", message);

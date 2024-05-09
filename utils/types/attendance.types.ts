@@ -10,6 +10,7 @@ interface IAttendance {
   DateScanned: string;
   IsPaid: boolean;
   IsScanQR: boolean;
+  Username?: string;
 }
 
 export default IAttendance;

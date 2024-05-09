@@ -26,6 +26,7 @@ const MyPosts = () => {
   useEffect(() => {
     dispatch(getAccessToken());
     dispatch(setRoute("My posts"));
+    dispatch(getPostAction(user.UserID));
 
     navigation.addListener("focus", () => {
       dispatch(getPostAction(user.UserID));
@@ -51,7 +52,7 @@ const MyPosts = () => {
 
   if (postItems?.length === 0) {
     return (
-      <View>
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <Text>My posts is empty!</Text>
         <Pressable
           onPress={handlePress}
