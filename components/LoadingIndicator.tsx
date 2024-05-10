@@ -8,7 +8,7 @@ const LoadingIndicator = () => {
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "#202020",
+        backgroundColor: "rgba(0,0,0,.25)",
       }}
     >
       <View
@@ -17,7 +17,7 @@ const LoadingIndicator = () => {
           justifyContent: "center",
           alignItems: "center",
           width: 120,
-          backgroundColor: "rgba(0,0,0,.75)",
+          backgroundColor: "rgba(0,0,0,.65)",
           borderRadius: 8,
           borderWidth: 1,
           borderColor: "#f5f5f5",

@@ -10,75 +10,99 @@ import {
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
-import { SafeAreaView } from "react-native-safe-area-context";
-
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
-import IForm from "../../utils/types/form.types";
+import IForm, { IPersonalDetails } from "../../utils/types/form.types";
 import registerUser from "../../actions/registerAction";
-import { formSchema } from "../../utils/validations";
+import { formSchema, personalDetailsSchema } from "../../utils/validations";
 import { joiResolver } from "@hookform/resolvers/joi";
 import LoadingIndicator from "../../components/LoadingIndicator";
 import { RootStackNavigationProp } from "../../utils/types/navigators/RootStackNavigators";
-import * as ImagePicker from "expo-image-picker";
-import DropdownComponent from "../../components/DropdownComponent";
 import CustomTextInput from "../../components/CustomTextInput";
 import DisplayFormError from "../../components/DisplayFormError";
-import avatar from "../../assets/avatar_default.jpeg";
+import RadioGroup from "react-native-radio-buttons-group";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const initialFormState: IForm = {
-  LastName: "",
-  FirstName: "",
-  MiddleName: "",
-  Age: "",
-  ContactNumber: "",
-  Email: "",
-  Height: "",
-  Weight: "",
-  Username: "",
-  Password: "",
-  ConfirmPassword: "",
-  ProfilePic: "profile_pic.jpeg",
-  Gender: "",
-};
 const SignUpScreen = () => {
   const navigation = useNavigation<RootStackNavigationProp>();
   const [image, setImage] = useState<string | undefined>();
+  const [initialField, setInitialField] = useState<string | undefined>();
+
   const {
     control,
     handleSubmit,
+    getValues,
+    setValue,
     formState: { errors, isSubmitting, isValid, isSubmitted },
     reset,
-  } = useForm<IForm>({
-    defaultValues: initialFormState,
-    resolver: joiResolver(formSchema),
+  } = useForm<IPersonalDetails>({
+    resolver: joiResolver(personalDetailsSchema),
   });
 
+  useEffect(() => {
+    const loadFormFields = async () => {
+      try {
+        const value = await AsyncStorage.getItem("form");
+        if (value != null) {
+          const parseValue = JSON.parse(value);
+          setInitialField(parseValue);
+        }
+      } catch (e) {
+        console.log("error in getting the item", e);
+      }
+    };
+    loadFormFields();
+  }, []);
+
+  useEffect(() => {
+    if (initialField !== undefined) {
+      setValue("LastName", initialField?.LastName);
+      setValue("FirstName", initialField?.FirstName);
+      setValue("Age", initialField?.Age);
+      setValue("MiddleName", initialField?.MiddleName);
+    }
+  }, [initialField]);
+
   const gender = [
-    { label: "Male", value: "1" },
-    { label: "Female", value: "2" },
+    { id: "1", label: "Male", value: "1" },
+    { id: "2", label: "Female", value: "2" },
   ];
 
-  const hasUnsavedChanges = Boolean();
-
-  interface IFormData extends File {}
-  const { status, details } = useSelector((state: RootState) => state.register);
+  const { status, details, isLoading } = useSelector(
+    (state: RootState) => state.register
+  );
 
   const dispatch: AppDispatch = useDispatch();
-  const onSubmit = async (data: IForm) => {
-    const newObj: IForm = {
-      ...data,
-      Gender: data.Gender === "1" ? "Male" : "Female",
-      ProfilePic: image,
-    };
 
+  const onSubmit = async (data: IPersonalDetails) => {
+    // const newObj: IForm = {
+    //   ...data,
+    //   Gender: data.Gender === "1" ? "Male" : "Female",
+    //   ProfilePic: "avatar_default.jpeg",
+    // };
+
+    // console.log(data.Gender);
     // const ext = newObj?.ProfilePic?.split(".");
     // console.log(ext?.[ext?.length - 1]);
-    console.log("data", newObj);
+    console.log("data", data);
 
-    dispatch(registerUser(newObj));
+    try {
+      await AsyncStorage.setItem("form", JSON.stringify(data));
+    } catch (e) {
+      console.log("error in setting the item", e);
+    }
+    navigation.navigate("DetailedScreens", {
+      screen: "ContactInformation",
+      params: {
+        LastName: getValues("LastName"),
+        FirstName: getValues("FirstName"),
+        MiddleName: getValues("MiddleName"),
+        Age: getValues("Age"),
+      },
+    });
+    // dispatch(registerUser(newObj));
     // navigation.navigate("DashboardScreen");
     // reset();
     // await new Promise((resolve) => setTimeout(resolve, 2500));
@@ -91,7 +115,7 @@ const SignUpScreen = () => {
     //if the status code of request is 400, then alert something!
 
     if (status === 200 && isSubmitted) {
-      Alert.alert("Success message", details?.message, [
+      Alert.alert("Success message", details, [
         {
           text: "Cancel",
           onPress: () => {},
@@ -101,7 +125,7 @@ const SignUpScreen = () => {
       ]);
     }
     if (status === 400 && isSubmitted) {
-      Alert.alert("Error message", details?.message, [
+      Alert.alert("Error message", details, [
         {
           text: "Cancel",
           onPress: () => {},
@@ -114,63 +138,47 @@ const SignUpScreen = () => {
   useEffect(
     () =>
       navigation.addListener("beforeRemove", (e) => {
-        // if (!hasUnsavedChanges) {
-        //   // If we don't have unsaved changes, then we don't need to do anything
-        //   return;
-        // }
-        // // Prevent default behavior of leaving the screen
-        // e.preventDefault();
-        // // Prompt the user before leaving the screen
-        // Alert.alert(
-        //   "Discard changes?",
-        //   "You have unsaved changes. Are you sure to discard them and leave the screen?",
-        //   [
-        //     { text: "Don't leave", style: "cancel", onPress: () => {} },
-        //     {
-        //       text: "Discard",
-        //       style: "destructive",
-        //       // If the user confirmed, then we dispatch the action we blocked earlier
-        //       // This will continue the action that had triggered the removal of the screen
-        //       onPress: () => navigation.dispatch(e.data.action),
-        //     },
-        //   ]
-        // );
+        if (
+          getValues("LastName")?.length !== 0 ||
+          getValues("FirstName")?.length !== 0 ||
+          getValues("MiddleName")?.length !== 0 ||
+          getValues("Age")?.length !== 0
+        ) {
+          e.preventDefault();
+          // Prompt the user before leaving the screen
+          Alert.alert(
+            "Discard signup?",
+            "The values in the fiels will not be saved. Are you sure to discard them and leave the screen?",
+            [
+              { text: "Don't leave", style: "cancel", onPress: () => {} },
+              {
+                text: "Discard",
+                style: "destructive",
+                // If the user confirmed, then we dispatch the action we blocked earlier
+                // This will continue the action that had triggered the removal of the screen
+                onPress: async () => {
+                  navigation.dispatch(e.data.action);
+                  await AsyncStorage.multiRemove([
+                    "form",
+                    "contactForm",
+                    "accountForm",
+                  ]);
+                },
+              },
+            ]
+          );
+        }
       }),
-    [navigation, hasUnsavedChanges]
+    [navigation]
   );
 
-  const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      cameraType: ImagePicker.CameraType.back,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      setImage(result.assets[0].uri);
-    }
-    console.log(result);
-  };
-  // console.log("hey", image == undefined);
+  if (isLoading) {
+    return <LoadingIndicator />;
+  }
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#f5f5f5" }}>
-      <View
-        style={{
-          justifyContent: "center",
-          alignItems: "center",
-          width: "100%",
-        }}
-      >
-        <Button title="Pick an image from camera roll" onPress={pickImage} />
-        <Image
-          source={image === undefined ? avatar : { uri: image }}
-          style={styles.image}
-        />
-      </View>
-      <ScrollView style={{ padding: 25, flex: 1, height: "100%" }}>
+    <View style={{ flex: 1, padding: 20, backgroundColor: "#f5f5f5" }}>
+      <ScrollView style={{ flex: 1, height: "100%" }}>
+        <Text style={styles.labelStyle}>Last Name</Text>
         <Controller
           control={control}
           render={({ field: { onChange, onBlur, value } }) => (
@@ -185,7 +193,7 @@ const SignUpScreen = () => {
           name="LastName"
         />
         <DisplayFormError errors={errors.LastName} />
-
+        <Text style={styles.labelStyle}>First Name</Text>
         <Controller
           control={control}
           render={({ field: { onChange, onBlur, value } }) => (
@@ -200,7 +208,7 @@ const SignUpScreen = () => {
           name="FirstName"
         />
         <DisplayFormError errors={errors.FirstName} />
-
+        <Text style={styles.labelStyle}>Middle Name</Text>
         <Controller
           control={control}
           render={({ field: { onChange, onBlur, value } }) => (
@@ -215,7 +223,7 @@ const SignUpScreen = () => {
           name="MiddleName"
         />
         <DisplayFormError errors={errors.MiddleName} />
-
+        <Text style={styles.labelStyle}>Age</Text>
         <Controller
           control={control}
           render={({ field: { onChange, onBlur, value } }) => (
@@ -231,7 +239,7 @@ const SignUpScreen = () => {
           name="Age"
         />
         <DisplayFormError errors={errors.Age} />
-
+        {/* 
         <Controller
           control={control}
           render={({ field: { onChange, onBlur, value } }) => (
@@ -304,7 +312,7 @@ const SignUpScreen = () => {
               onBlur={onBlur}
               onChange={onChange}
               value={value}
-              placeholder="Enter your username"
+              placeholder="Enter your Username"
             />
           )}
           name="Username"
@@ -348,29 +356,28 @@ const SignUpScreen = () => {
           <Controller
             control={control}
             render={({ field: { onChange, onBlur, value } }) => (
-              <DropdownComponent
-                data={gender}
-                value={value}
-                handleChange={onChange}
+              <RadioGroup
+                radioButtons={gender}
+                onPress={onChange}
+                selectedId={value}
+                containerStyle={{ flex: 1, flexDirection: "row" }}
               />
             )}
             name="Gender"
           />
           <DisplayFormError errors={errors.Gender} />
-        </View>
+        </View> */}
       </ScrollView>
-      <View style={{ padding: 15 }}>
+      <View>
         {isSubmitting && <LoadingIndicator />}
 
-        {!isSubmitting && (
-          <Button
-            title="Sign Up"
-            color={"#ff2e00"}
-            onPress={handleSubmit(onSubmit)}
-          />
-        )}
+        <Button
+          title="Proceed 1 out of 4"
+          color={"#ff2e00"}
+          onPress={handleSubmit(onSubmit)}
+        />
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -394,8 +401,12 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
     borderRadius: 150,
-    borderWidth: 3,
+    borderWidth: 1.5,
     borderColor: "#ff2e00",
+  },
+  labelStyle: {
+    fontSize: 22,
+    fontWeight: "bold",
   },
 });
 

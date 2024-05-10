@@ -7,7 +7,7 @@ const DisplayFormError = ({ errors }: { errors: FieldError | undefined }) => {
   return (
     <View>
       {errors && (
-        <Text style={{ color: "#d9534f", fontSize: 13 }}>{errors.message}</Text>
+        <Text style={{ color: "#d9534f", fontSize: 14 }}>{errors.message}</Text>
       )}
     </View>
   );

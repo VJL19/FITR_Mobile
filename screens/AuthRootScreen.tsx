@@ -14,6 +14,7 @@ const AuthRootScreen = () => {
       screenOptions={{
         headerStyle: { backgroundColor: "#ff2e00" },
         headerTintColor: "#f5f5f5",
+        headerTitle: "Personal Information",
       }}
     >
       <AuthStack.Screen

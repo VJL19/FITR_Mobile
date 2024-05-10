@@ -37,6 +37,38 @@ export type DetailedRootStackNavigatorsParamList = {
   "Gym Equipments": undefined;
   Workouts: undefined;
   Exercises: undefined;
+  "Change Account": undefined;
+  ContactInformation: {
+    LastName: string;
+    FirstName: string;
+    MiddleName: string;
+    Age: string;
+  };
+  AccountSetup: {
+    LastName: string;
+    FirstName: string;
+    MiddleName: string;
+    Age: string;
+    ContactNumber: string;
+    Email: string;
+    Height: string;
+    Weight: string;
+  };
+  TermsAndCondition: {
+    LastName: string;
+    FirstName: string;
+    MiddleName: string;
+    Age: string;
+    ContactNumber: string;
+    Email: string;
+    Height: string;
+    Weight: string;
+    Username: string;
+    Password: string;
+    ConfirmPassword: string;
+    ProfilePic?: string;
+    Gender: string;
+  };
 };
 
 export type DetailedRootStackScreenProp = StackScreenProps<
@@ -52,6 +84,10 @@ export type DetailedRootStackScreenProp = StackScreenProps<
   | "Gym Equipments"
   | "Workouts"
   | "Exercises"
+  | "Change Account"
+  | "ContactInformation"
+  | "AccountSetup"
+  | "TermsAndCondition"
 >;
 export type DetailedRootStackNavigationProp = StackNavigationProp<
   DetailedRootStackNavigatorsParamList,
@@ -66,4 +102,8 @@ export type DetailedRootStackNavigationProp = StackNavigationProp<
   | "Gym Equipments"
   | "Workouts"
   | "Exercises"
+  | "Change Account"
+  | "ContactInformation"
+  | "AccountSetup"
+  | "TermsAndCondition"
 >;

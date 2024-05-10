@@ -15,6 +15,10 @@ import Notifications from "./view_detailed_screens/Notifications/Notifications";
 import GymEquipments from "./view_detailed_screens/Tutorials/GymEquipments/GymEquipments";
 import Workouts from "./view_detailed_screens/Tutorials/Workouts/Workouts";
 import Exercises from "./view_detailed_screens/Tutorials/Exercises/Exercises";
+import ChangeAccount from "./view_detailed_screens/MyAccount/ChangeAccount";
+import ContactInformation from "./view_detailed_screens/SignUp/ContactInformation";
+import AccountSetup from "./view_detailed_screens/SignUp/AccountSetup";
+import TermsAndConditions from "./view_detailed_screens/SignUp/TermsAndConditions";
 
 const DetailedRootScreen = () => {
   const config = {
@@ -158,6 +162,52 @@ const DetailedRootScreen = () => {
       <DetailedScreenStacks.Screen
         name="Exercises"
         component={Exercises}
+        options={{
+          cardOverlayEnabled: true,
+          presentation: "card",
+          gestureEnabled: true,
+          gestureDirection: "horizontal",
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+      />
+      <DetailedScreenStacks.Screen
+        name="Change Account"
+        component={ChangeAccount}
+        options={{
+          cardOverlayEnabled: true,
+          presentation: "card",
+          gestureEnabled: true,
+          gestureDirection: "horizontal",
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+      />
+      <DetailedScreenStacks.Screen
+        name="ContactInformation"
+        component={ContactInformation}
+        options={{
+          headerTitle: "Contact Information",
+          cardOverlayEnabled: true,
+          presentation: "card",
+          gestureEnabled: true,
+          gestureDirection: "horizontal",
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+      />
+      <DetailedScreenStacks.Screen
+        name="AccountSetup"
+        component={AccountSetup}
+        options={{
+          headerTitle: "Account Setup",
+          cardOverlayEnabled: true,
+          presentation: "card",
+          gestureEnabled: true,
+          gestureDirection: "horizontal",
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+      />
+      <DetailedScreenStacks.Screen
+        name="TermsAndCondition"
+        component={TermsAndConditions}
         options={{
           cardOverlayEnabled: true,
           presentation: "card",

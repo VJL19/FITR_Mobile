@@ -1,4 +1,5 @@
 import IAttendance from "./attendance.types";
+import IForm from "./form.types";
 
 interface IUser extends IAttendance {
   UserID: number;
@@ -15,6 +16,7 @@ interface IUser extends IAttendance {
   ConfirmPassword: string;
   ProfilePic: string;
   Gender: string;
+  SubscriptionType: string;
 }
 
 export interface ILoginForm {
@@ -25,6 +27,8 @@ export interface ILoginForm {
 export interface IRegisterState {
   status: number | undefined;
   details: object | undefined | unknown;
+  isLoading: boolean;
+  form: IForm;
 }
 
 export interface RegisterPayload {
@@ -55,6 +59,14 @@ export interface IAuthState {
 export interface LoginPayload {
   Username: string;
   Password: string;
+}
+
+export interface IChangeAccount {
+  Username: string;
+  Email: string;
+  ContactNumber: string;
+  Password: string;
+  ConfirmPassword: string;
 }
 
 export default IUser;

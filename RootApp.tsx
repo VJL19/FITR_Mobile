@@ -66,6 +66,10 @@ const RootApp = () => {
             component={AuthRootScreen}
           />
           <RootStack.Screen name="SplashScreen" component={SplashScreen} />
+          <RootStack.Screen
+            name="DetailedScreens"
+            component={DetailedRootScreen}
+          />
         </RootStack.Group>
       ) : (
         <RootStack.Group>

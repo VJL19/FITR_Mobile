@@ -26,6 +26,7 @@ import SubscriptionEnum from "../../utils/enums/Subscription";
 import { setRoute } from "../../reducers/routeReducer";
 import QRCode from "react-native-qrcode-svg";
 import { encryptUserRecord } from "../../utils/helpers/hashQrData";
+import { RadioGroup } from "react-native-radio-buttons-group";
 const Attendance = () => {
   const [hasPermission, setHasPermission] = useState<boolean>();
   const [scanned, setScanned] = useState(false);
@@ -49,8 +50,8 @@ const Attendance = () => {
   // });
 
   const subscription_types = [
-    { label: "Session", value: "1" },
-    { label: "Monthly", value: "2" },
+    { id: "1", label: "Session", value: "1" },
+    { id: "2", label: "Monthly", value: "2" },
   ];
 
   const dispatch: AppDispatch = useDispatch();
@@ -175,11 +176,17 @@ const Attendance = () => {
         )}
       </View>
       {IsScanQR === "false" && (
-        <DropdownComponent
-          data={subscription_types}
-          value={selectedSubscription}
-          handleChange={setSelectedSubscription}
-        />
+        <View style={{ flex: 1 }}>
+          <Text style={{ textAlign: "center", fontSize: 16 }}>
+            Select a subscription you wanna inquire in the gym.
+          </Text>
+          <RadioGroup
+            radioButtons={subscription_types}
+            selectedId={selectedSubscription}
+            onPress={setSelectedSubscription}
+            containerStyle={{ flex: 1, flexDirection: "row" }}
+          />
+        </View>
       )}
       {toggleScan && (
         <View style={{ flex: 1, backgroundColor: "#ccc" }}>

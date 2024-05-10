@@ -12,36 +12,36 @@ export type KnownError = {
 const registerUser = createAsyncThunk(
   "user/register",
   async (registerPayload: RegisterPayload, { rejectWithValue }) => {
-    const newObj = {
-      ...registerPayload,
-    };
-
-    const profile_ext = newObj?.ProfilePic?.split(".");
-    const formData = new FormData();
-    formData.append("LastName", newObj.LastName);
-    formData.append("FirstName", newObj.FirstName);
-    formData.append("MiddleName", newObj.MiddleName);
-    formData.append("Age", newObj.Age);
-    formData.append("ContactNumber", newObj.ContactNumber);
-    formData.append("Email", newObj.Email);
-    formData.append("Height", newObj.Height);
-    formData.append("Weight", newObj.Weight);
-    formData.append("Username", newObj.Username);
-    formData.append("Password", newObj.Password);
-    formData.append("ConfirmPassword", newObj.ConfirmPassword);
-    formData.append("Gender", newObj.Gender);
-    formData.append("ProfilePic", {
-      uri: newObj.ProfilePic,
-      type: "image/jpeg",
-      name: new Date() + `_${profile_ext?.[profile_ext?.length - 1]}`,
-    });
+    // const profile_ext = newObj?.ProfilePic?.split(".");
+    // const formData = new FormData();
+    // formData.append("LastName", newObj.LastName);
+    // formData.append("FirstName", newObj.FirstName);
+    // formData.append("MiddleName", newObj.MiddleName);
+    // formData.append("Age", newObj.Age);
+    // formData.append("ContactNumber", newObj.ContactNumber);
+    // formData.append("Email", newObj.Email);
+    // formData.append("Height", newObj.Height);
+    // formData.append("Weight", newObj.Weight);
+    // formData.append("Username", newObj.Username);
+    // formData.append("Password", newObj.Password);
+    // formData.append("ConfirmPassword", newObj.ConfirmPassword);
+    // formData.append("Gender", newObj.Gender);
+    // formData.append("ProfilePic", {
+    //   uri: newObj.ProfilePic,
+    //   type: "image/jpeg",
+    //   name: new Date() + `_${profile_ext?.[profile_ext?.length - 1]}`,
+    // });
+    // {
+    //   headers: {
+    //     Accept: "application/json",
+    //     "Content-Type": "multipart/form-data",
+    //   },
+    // }
     try {
-      const res = await global_axios.post("/user/register_account", formData, {
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const res = await global_axios.post(
+        "/user/register_account",
+        registerPayload
+      );
 
       const data = res.data;
 

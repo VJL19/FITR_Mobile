@@ -1,19 +1,38 @@
-import { StyleSheet, Text, View, Image } from "react-native";
+import { StyleSheet, Text, View, Image, ActivityIndicator } from "react-native";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../store/store";
 import getAccessToken from "../actions/homeAction";
 import IUser from "../utils/types/user.types";
 import IAttendance from "../utils/types/attendance.types";
+import LoadingIndicator from "./LoadingIndicator";
 
 const Avatar = () => {
   const dispatch: AppDispatch = useDispatch();
 
-  const { user } = useSelector((state: RootState) => state.authReducer);
+  const { user, isLoading } = useSelector(
+    (state: RootState) => state.authReducer
+  );
 
   useEffect(() => {
     dispatch(getAccessToken());
   }, []);
+  if (isLoading) {
+    return (
+      <View
+        style={{
+          justifyContent: "center",
+          alignSelf: "center",
+          backgroundColor: "rgba(0,0,0,.25)",
+          width: 100,
+          height: 80,
+          borderRadius: 8,
+        }}
+      >
+        <ActivityIndicator size={"large"} color={"white"} />
+      </View>
+    );
+  }
   return (
     <View style={styles.container}>
       <Image

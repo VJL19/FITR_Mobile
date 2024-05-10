@@ -7,9 +7,11 @@ import CustomTextInput from "../../components/CustomTextInput";
 import DisplayFormError from "../../components/DisplayFormError";
 import calculateBMI from "../../utils/helpers/getBmi";
 import getClassification from "../../utils/helpers/getClassification";
-import { AppDispatch } from "../../store/store";
-import { useDispatch } from "react-redux";
+import { AppDispatch, RootState } from "../../store/store";
+import { useDispatch, useSelector } from "react-redux";
 import { setRoute } from "../../reducers/routeReducer";
+import getAccessToken from "../../actions/homeAction";
+import LoadingIndicator from "../../components/LoadingIndicator";
 export interface IBMIField {
   Height: string;
   Weight: string;
@@ -25,19 +27,27 @@ const CalculateBMI = () => {
 
   const dispatch: AppDispatch = useDispatch();
 
-  useEffect(() => {
-    dispatch(setRoute("Calculate BMI"));
-  }, []);
+  const { user, isAuthenticated, isLoading } = useSelector(
+    (state: RootState) => state.authReducer
+  );
 
   const {
     handleSubmit,
     reset,
     control,
-    formState: { isLoading, errors, isSubmitted },
+    setValue,
+    formState: { errors, isSubmitted },
   } = useForm<IBMIField>({
     defaultValues: IDefaultValue,
     resolver: joiResolver(bmiSchema),
   });
+  useEffect(() => {
+    dispatch(setRoute("Calculate BMI"));
+    dispatch(getAccessToken());
+
+    setValue("Height", user.Height.toString());
+    setValue("Weight", user.Weight.toString());
+  }, []);
 
   const onCalculate = async (data: IBMIField) => {
     const res = calculateBMI(+data.Height, +data.Weight);
@@ -45,6 +55,17 @@ const CalculateBMI = () => {
     setBMI(res.toFixed(2));
     setClassificiation(getClassification(res));
   };
+
+  if (isLoading) {
+    return <LoadingIndicator />;
+  }
+  if (!isAuthenticated) {
+    return (
+      <View>
+        <Text>You are not authenticated! please login again</Text>
+      </View>
+    );
+  }
   return (
     <View style={styles.container}>
       <Text>CalculateBMI</Text>
@@ -136,9 +157,9 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#202020",
+    backgroundColor: "#f5f5f5",
   },
   textStyle: {
-    color: "#f5f5f5",
+    color: "#202020",
   },
 });

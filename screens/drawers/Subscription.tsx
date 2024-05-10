@@ -17,6 +17,7 @@ import processPayment, {
 import { useNavigation } from "@react-navigation/native";
 import { RootStackNavigationProp } from "../../utils/types/navigators/RootStackNavigators";
 import { setRoute } from "../../reducers/routeReducer";
+import getAccessToken from "../../actions/homeAction";
 
 const Subscription = () => {
   const [paymentMethod, setPaymentMethod] = useState("");
@@ -31,15 +32,17 @@ const Subscription = () => {
     (state: RootState) => state.attendance
   );
 
-  const { details, error, status, checkout_url, isLoading } = useSelector(
+  const { details, error, status, checkout_url } = useSelector(
     (state: RootState) => state.subscription
   );
 
   console.log("details subs", details);
   console.log("details error", error);
   console.log("details status", status);
-  console.log("loading", isLoading);
-  const { user } = useSelector((state: RootState) => state.authReducer);
+  // console.log("loading", isLoading);
+  const { user, isLoading, isAuthenticated } = useSelector(
+    (state: RootState) => state.authReducer
+  );
   const subscription_types = [
     { label: "Cash", value: "1" },
     { label: "Bank Transfer", value: "2" },
@@ -57,6 +60,7 @@ const Subscription = () => {
   useEffect(() => {
     dispatch(checkUserScanQr(user));
     dispatch(setRoute("Subscription"));
+    dispatch(getAccessToken());
   }, []);
 
   console.log(subscription, "current subscription");
@@ -91,6 +95,13 @@ const Subscription = () => {
     }
   };
 
+  if (!isAuthenticated) {
+    return (
+      <View>
+        <Text>You are not authenticated! Please login again!</Text>
+      </View>
+    );
+  }
   if (isLoading) {
     return <LoadingIndicator />;
   }

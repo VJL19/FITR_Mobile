@@ -14,4 +14,38 @@ interface IForm {
   Gender: string;
 }
 
+export interface IPersonalDetails {
+  LastName: string;
+  FirstName: string;
+  MiddleName: string;
+  Age: string;
+}
+
+export interface IContactDetails {
+  LastName: string;
+  FirstName: string;
+  MiddleName: string;
+  Age: string;
+  ContactNumber: string;
+  Email: string;
+  Height: string;
+  Weight: string;
+}
+
+export interface IAccountSetup {
+  LastName: string;
+  FirstName: string;
+  MiddleName: string;
+  Age: string;
+  ContactNumber: string;
+  Email: string;
+  Height: string;
+  Weight: string;
+  Username: string;
+  Password: string;
+  ConfirmPassword: string;
+  Gender: string;
+  ProfilePic?: string;
+}
+
 export default IForm;
