@@ -209,6 +209,7 @@ const DetailedRootScreen = () => {
         name="TermsAndCondition"
         component={TermsAndConditions}
         options={{
+          headerTitle: "Terms and Conditions",
           cardOverlayEnabled: true,
           presentation: "card",
           gestureEnabled: true,

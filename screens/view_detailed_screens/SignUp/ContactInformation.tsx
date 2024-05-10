@@ -104,9 +104,7 @@ const ContactInformation = () => {
     if (e.id === 1) {
       navigation.goBack();
     } else if (e.id === 2) {
-      navigation.replace("DetailedScreens", { screen: e.navigateTo });
-    } else {
-      navigation.navigate("DetailedScreens", { screen: e.navigateTo });
+    } else if (e.id === 3) {
     }
   };
 

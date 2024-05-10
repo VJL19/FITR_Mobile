@@ -2,27 +2,21 @@ import {
   View,
   Text,
   Alert,
-  TextInput,
   Button,
   StyleSheet,
   ScrollView,
-  Image,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { useNavigation } from "@react-navigation/native";
-import { useDispatch } from "react-redux";
-import { useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../store/store";
+
 import IForm, { IPersonalDetails } from "../../utils/types/form.types";
-import registerUser from "../../actions/registerAction";
 import { formSchema, personalDetailsSchema } from "../../utils/validations";
 import { joiResolver } from "@hookform/resolvers/joi";
 import LoadingIndicator from "../../components/LoadingIndicator";
 import { RootStackNavigationProp } from "../../utils/types/navigators/RootStackNavigators";
 import CustomTextInput from "../../components/CustomTextInput";
 import DisplayFormError from "../../components/DisplayFormError";
-import RadioGroup from "react-native-radio-buttons-group";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const SignUpScreen = () => {
@@ -65,17 +59,6 @@ const SignUpScreen = () => {
     }
   }, [initialField]);
 
-  const gender = [
-    { id: "1", label: "Male", value: "1" },
-    { id: "2", label: "Female", value: "2" },
-  ];
-
-  const { status, details, isLoading } = useSelector(
-    (state: RootState) => state.register
-  );
-
-  const dispatch: AppDispatch = useDispatch();
-
   const onSubmit = async (data: IPersonalDetails) => {
     // const newObj: IForm = {
     //   ...data,
@@ -108,33 +91,6 @@ const SignUpScreen = () => {
     // await new Promise((resolve) => setTimeout(resolve, 2500));
   };
 
-  console.log("status", status);
-  console.log("details", details);
-
-  useEffect(() => {
-    //if the status code of request is 400, then alert something!
-
-    if (status === 200 && isSubmitted) {
-      Alert.alert("Success message", details, [
-        {
-          text: "Cancel",
-          onPress: () => {},
-          style: "cancel",
-        },
-        { text: "OK", onPress: () => {} },
-      ]);
-    }
-    if (status === 400 && isSubmitted) {
-      Alert.alert("Error message", details, [
-        {
-          text: "Cancel",
-          onPress: () => {},
-          style: "cancel",
-        },
-        { text: "OK", onPress: () => {} },
-      ]);
-    }
-  }, [status, details]);
   useEffect(
     () =>
       navigation.addListener("beforeRemove", (e) => {
@@ -172,9 +128,6 @@ const SignUpScreen = () => {
     [navigation]
   );
 
-  if (isLoading) {
-    return <LoadingIndicator />;
-  }
   return (
     <View style={{ flex: 1, padding: 20, backgroundColor: "#f5f5f5" }}>
       <ScrollView style={{ flex: 1, height: "100%" }}>
@@ -239,134 +192,6 @@ const SignUpScreen = () => {
           name="Age"
         />
         <DisplayFormError errors={errors.Age} />
-        {/* 
-        <Controller
-          control={control}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <CustomTextInput
-              inputMode="tel"
-              error={errors.ContactNumber}
-              onBlur={onBlur}
-              onChange={onChange}
-              value={value}
-              placeholder="Enter your Contact number"
-            />
-          )}
-          name="ContactNumber"
-        />
-        <DisplayFormError errors={errors.ContactNumber} />
-
-        <Controller
-          control={control}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <CustomTextInput
-              inputMode="email"
-              error={errors.Email}
-              onBlur={onBlur}
-              onChange={onChange}
-              value={value}
-              placeholder="Enter your Email"
-            />
-          )}
-          name="Email"
-        />
-        <DisplayFormError errors={errors.Email} />
-
-        <Controller
-          control={control}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <CustomTextInput
-              inputMode="numeric"
-              error={errors.Height}
-              onBlur={onBlur}
-              onChange={onChange}
-              value={value}
-              placeholder="Enter your Height in cm"
-            />
-          )}
-          name="Height"
-        />
-        <DisplayFormError errors={errors.Height} />
-
-        <Controller
-          control={control}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <CustomTextInput
-              inputMode="numeric"
-              error={errors.Weight}
-              onBlur={onBlur}
-              onChange={onChange}
-              value={value}
-              placeholder="Enter your Weight in kg"
-            />
-          )}
-          name="Weight"
-        />
-        <DisplayFormError errors={errors.Weight} />
-
-        <Controller
-          control={control}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <CustomTextInput
-              error={errors.Username}
-              onBlur={onBlur}
-              onChange={onChange}
-              value={value}
-              placeholder="Enter your Username"
-            />
-          )}
-          name="Username"
-        />
-        <DisplayFormError errors={errors.Username} />
-
-        <Controller
-          control={control}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <CustomTextInput
-              secureTextEntry={true}
-              error={errors.Password}
-              onBlur={onBlur}
-              onChange={onChange}
-              value={value}
-              placeholder="Enter your Password"
-            />
-          )}
-          name="Password"
-        />
-        <DisplayFormError errors={errors.Password} />
-
-        <Controller
-          control={control}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <CustomTextInput
-              secureTextEntry={true}
-              error={errors.ConfirmPassword}
-              onBlur={onBlur}
-              onChange={onChange}
-              value={value}
-              placeholder="Enter your Confirm Password"
-            />
-          )}
-          name="ConfirmPassword"
-        />
-        <DisplayFormError errors={errors.ConfirmPassword} />
-
-        <View style={{ marginBottom: 25, padding: 5 }}>
-          <Text>Gender</Text>
-          <Controller
-            control={control}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <RadioGroup
-                radioButtons={gender}
-                onPress={onChange}
-                selectedId={value}
-                containerStyle={{ flex: 1, flexDirection: "row" }}
-              />
-            )}
-            name="Gender"
-          />
-          <DisplayFormError errors={errors.Gender} />
-        </View> */}
       </ScrollView>
       <View>
         {isSubmitting && <LoadingIndicator />}

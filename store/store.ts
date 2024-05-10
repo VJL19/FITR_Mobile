@@ -9,6 +9,7 @@ import routeReducer from "../reducers/routeReducer";
 import newsfeedReducer from "../reducers/newsfeedReducer";
 import commentReducer from "../reducers/commentReducer";
 import notificationReducer from "../reducers/notificationReducer";
+import uploadImageReducer from "../reducers/uploadImageReducer";
 export const store = configureStore({
   reducer: {
     counter: counterReducer,
@@ -21,6 +22,7 @@ export const store = configureStore({
     newsfeed: newsfeedReducer,
     comment: commentReducer,
     notification: notificationReducer,
+    uploadImage: uploadImageReducer,
   },
 });
 
