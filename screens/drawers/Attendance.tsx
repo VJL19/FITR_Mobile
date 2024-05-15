@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Text, View, StyleSheet, Button } from "react-native";
-import { CameraView, Camera } from "expo-camera/next";
-import { BarCodeScanningResult } from "expo-camera";
+import { CameraView, Camera } from "expo-camera";
+import BarCodeScanningResult from "expo-camera";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
 import IAttendance from "../../utils/types/attendance.types";

@@ -51,7 +51,7 @@ const Newsfeed = () => {
         alwaysBounceVertical={true}
         data={result}
         renderItem={({ item }: { item: INewsFeed }) => <Postsfeed {...item} />}
-        keyExtractor={(item) => item.NewsfeedID?.toString()}
+        keyExtractor={(item) => item?.NewsfeedID?.toString()}
       />
     </View>
   );

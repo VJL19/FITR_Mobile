@@ -1,4 +1,4 @@
-import { loginUser } from "../actions/authAction";
+import { getToken, loginUser } from "../actions/authAction";
 import { createSlice } from "@reduxjs/toolkit";
 import IUser, { IAuthState } from "../utils/types/user.types";
 import { useEffect } from "react";
@@ -42,7 +42,7 @@ const authSlice = createSlice({
       state.status = action.payload.status;
       state.accessToken = action.payload.accessToken;
       state.user = action.payload.user;
-      state.message = action.payload?.details;
+      state.message = action?.payload?.details;
       state.isAuthenticated = true;
       state.isLoading = false;
     }),
@@ -59,7 +59,8 @@ const authSlice = createSlice({
       state.isLoading = false;
     });
     builder.addCase(testToken.fulfilled, (state, action) => {
-      state.message = action?.payload?.payload;
+      state.message = action?.payload?.message;
+      state.user = action?.payload?.user;
       state.isAuthenticated = action.payload?.isAuthenticated;
       state.status = 200;
       state.isLoading = false;
@@ -74,6 +75,23 @@ const authSlice = createSlice({
       state.message = { details: "You are unauthorized!" };
       state.isAuthenticated = false;
       state.isLoading = false;
+    });
+    builder.addCase(getToken.fulfilled, (state, action) => {
+      state.isAuthenticated = true;
+      state.isLoading = false;
+      state.accessToken = action?.payload;
+      state.status = 200;
+    });
+    builder.addCase(getToken.pending, (state, action) => {
+      state.accessToken = "Loading access token...";
+      state.isLoading = true;
+      state.status = 202;
+    });
+    builder.addCase(getToken.rejected, (state, action) => {
+      state.isLoading = false;
+      state.isAuthenticated = false;
+      state.accessToken = "";
+      state.status = 400;
     });
   },
 });

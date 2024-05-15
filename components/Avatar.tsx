@@ -10,7 +10,7 @@ import LoadingIndicator from "./LoadingIndicator";
 const Avatar = () => {
   const dispatch: AppDispatch = useDispatch();
 
-  const { user, isLoading } = useSelector(
+  const { user, isLoading, isAuthenticated } = useSelector(
     (state: RootState) => state.authReducer
   );
 
@@ -30,6 +30,16 @@ const Avatar = () => {
         }}
       >
         <ActivityIndicator size={"large"} color={"white"} />
+      </View>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <View style={{ width: "100%" }}>
+        <Text style={[styles.avatarNameStyle, { textAlign: "center" }]}>
+          You are not authenticated! Please login again!
+        </Text>
       </View>
     );
   }

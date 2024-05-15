@@ -41,15 +41,16 @@ const ViewPost = () => {
     dispatch(deletePostinFeedAction(PostID || 0));
     dispatch(getPostAction(user.UserID));
 
+    DisplayAlert("Success message", "Post deleted successfully!");
+    await new Promise((resolve) => setTimeout(resolve, 1500));
     if (status === 200) {
-      DisplayAlert("Success message", "Post deleted successfully!");
       navigation.goBack();
     }
     console.log("deleted pressed");
   };
-  console.log("delete message", message);
-  console.log("delete message", postItems);
-  console.log("delete message", isLoading);
+  // console.log("delete message", message);
+  // console.log("delete message", postItems);
+  // console.log("delete message", isLoading);
 
   if (isLoading) {
     return <LoadingIndicator />;

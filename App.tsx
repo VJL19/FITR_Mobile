@@ -23,16 +23,14 @@ export default function App() {
   return (
     <Provider store={store}>
       <PaperProvider theme={theme}>
-        <AuthContextProvider>
-          <NavigationContainer>
-            <StatusBar style="light" />
-            <RootApp />
-            {/* <View style={styles.container}>
+        <NavigationContainer>
+          <StatusBar style="light" />
+          <RootApp />
+          {/* <View style={styles.container}>
         <Text>Open up App.jsx to start working on your app!</Text>
         <Button title="Click Me" onPress={handleClick} />
       </View> */}
-          </NavigationContainer>
-        </AuthContextProvider>
+        </NavigationContainer>
       </PaperProvider>
     </Provider>
   );

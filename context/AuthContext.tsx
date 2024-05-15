@@ -72,9 +72,9 @@ const AuthContextProvider = ({ children }: any) => {
       if (accessTokenStored) {
         setToken(accessTokenStored);
         setIsAuthenticated(true);
-        // global_axios.defaults.headers.common[
-        //   "Authorization"
-        // ] = `Bearer ${accessTokenStored}`;
+        global_axios.defaults.headers.common[
+          "Authorization"
+        ] = `Bearer ${accessTokenStored}`;
       }
     };
     loadAccessToken();

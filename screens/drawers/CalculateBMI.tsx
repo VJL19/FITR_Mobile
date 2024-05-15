@@ -45,8 +45,8 @@ const CalculateBMI = () => {
     dispatch(setRoute("Calculate BMI"));
     dispatch(getAccessToken());
 
-    setValue("Height", user.Height.toString());
-    setValue("Weight", user.Weight.toString());
+    setValue("Height", user?.Height?.toString());
+    setValue("Weight", user?.Weight?.toString());
   }, []);
 
   const onCalculate = async (data: IBMIField) => {
@@ -68,7 +68,6 @@ const CalculateBMI = () => {
   }
   return (
     <View style={styles.container}>
-      <Text>CalculateBMI</Text>
       <View style={{ width: "90%" }}>
         <Controller
           control={control}
@@ -76,7 +75,7 @@ const CalculateBMI = () => {
             <React.Fragment>
               <Text
                 style={{
-                  color: "#f5f5f5",
+                  color: "#202020",
                   fontSize: 18,
                   fontFamily: "Inter-Bold",
                   letterSpacing: 1,
@@ -106,7 +105,7 @@ const CalculateBMI = () => {
             <React.Fragment>
               <Text
                 style={{
-                  color: "#f5f5f5",
+                  color: "#202020",
                   fontSize: 18,
                   fontFamily: "Inter-Bold",
                   letterSpacing: 1,

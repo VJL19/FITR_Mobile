@@ -7,9 +7,9 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/fitr_logo3.png",
+      "image": "./assets/fitr_logo4.png",
       "resizeMode": "contain",
-      "backgroundColor": "#25292e"
+      "backgroundColor": "#D5D5D5"
     },
     "assetBundlePatterns": [
       "**/*"

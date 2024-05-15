@@ -95,10 +95,10 @@ const SignUpScreen = () => {
     () =>
       navigation.addListener("beforeRemove", (e) => {
         if (
-          getValues("LastName")?.length !== 0 ||
-          getValues("FirstName")?.length !== 0 ||
-          getValues("MiddleName")?.length !== 0 ||
-          getValues("Age")?.length !== 0
+          getValues("LastName")?.length >= 1 ||
+          getValues("FirstName")?.length >= 1 ||
+          getValues("MiddleName")?.length >= 1 ||
+          getValues("Age")?.length >= 1
         ) {
           e.preventDefault();
           // Prompt the user before leaving the screen
@@ -129,8 +129,20 @@ const SignUpScreen = () => {
   );
 
   return (
-    <View style={{ flex: 1, padding: 20, backgroundColor: "#f5f5f5" }}>
-      <ScrollView style={{ flex: 1, height: "100%" }}>
+    <View
+      style={{
+        flex: 1,
+        padding: 20,
+        backgroundColor: "#f5f5f5",
+      }}
+    >
+      <ScrollView
+        style={{ flex: 1, height: "100%" }}
+        contentContainerStyle={{
+          flex: 1,
+          justifyContent: "center",
+        }}
+      >
         <Text style={styles.labelStyle}>Last Name</Text>
         <Controller
           control={control}

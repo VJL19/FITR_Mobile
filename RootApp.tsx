@@ -6,8 +6,8 @@ import BottomRootScreen from "./screens/BottomRootScreen";
 import DashboardScreen from "./screens/DashboardScreen";
 import SplashScreen from "./screens/SplashScreen";
 import { useEffect } from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "./store/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "./store/store";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import {
   RootStackNavigationProp,
@@ -17,21 +17,29 @@ import AuthContextProvider, { AuthContext } from "./context/AuthContext";
 import LoadingIndicator from "./components/LoadingIndicator";
 import DetailedRootScreen from "./screens/DetailedRootScreen";
 import useIsReady from "./hooks/useIsReady";
+import { getToken } from "./actions/authAction";
+import global_axios from "./global/axios";
 
 const RootApp = () => {
-  const { isAuthenticated: rs } = useSelector(
+  const { isAuthenticated, accessToken, status } = useSelector(
     (state: RootState) => state.authReducer
   );
 
   const navigation = useNavigation<RootStackNavigationProp>();
 
+  const dispatch: AppDispatch = useDispatch();
   const { isReady } = useIsReady();
-  const { token, isAuthenticated } = useContext(AuthContext);
 
   // console.log("auth context", rs);
   // console.log("auth tokens", token);
 
+  console.log("double e", accessToken);
   useEffect(() => {
+    dispatch(getToken());
+    console.log("nag run ");
+    global_axios.defaults.headers.common[
+      "Authorization"
+    ] = `Bearer ${accessToken}`;
     // InteractionManager.runAfterInteractions(() => {
     //   setIsReady(true);
     // });
@@ -59,7 +67,7 @@ const RootApp = () => {
     <RootStack.Navigator
       screenOptions={{ headerShown: false, freezeOnBlur: true }}
     >
-      {!token || !isAuthenticated ? (
+      {!accessToken || !isAuthenticated ? (
         <RootStack.Group>
           <RootStack.Screen
             name="AuthStackScreens"

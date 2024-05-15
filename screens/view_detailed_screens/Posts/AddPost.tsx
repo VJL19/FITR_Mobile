@@ -72,7 +72,9 @@ const AddPost = () => {
 
     console.log("add pressed", data);
     // console.log("post message", result?.[0].NewsfeedID!);
+
     DisplayAlert("Success message", message);
+    await new Promise((resolve) => setTimeout(resolve, 1500));
     navigation.goBack();
     reset();
   };

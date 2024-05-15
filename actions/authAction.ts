@@ -5,16 +5,34 @@ import global_axios from "../global/axios";
 import { LoginPayload } from "../utils/types/user.types";
 import * as SecureStore from "expo-secure-store";
 import { useEffect } from "react";
-
 const ACCESS_TOKEN = "accessToken";
 
 const setToken = async (token: string) => {
   await SecureStore.setItemAsync(ACCESS_TOKEN, token);
 };
 
-export const getToken = async () => {
-  await SecureStore.getItemAsync(ACCESS_TOKEN);
-};
+const getToken = createAsyncThunk(
+  "/user/loadToken",
+  async (_, { rejectWithValue }) => {
+    try {
+      const accessTokenStored = await SecureStore.getItemAsync(ACCESS_TOKEN);
+      return accessTokenStored;
+    } catch (err) {
+      const error = err as AxiosError<KnownError>;
+      if (!error.response) {
+        throw error;
+      }
+      return rejectWithValue(error?.response?.data);
+    }
+    // if (accessTokenStored) {
+    //   // setToken(accessTokenStored);
+    //   // setIsAuthenticated(true);
+    //   global_axios.defaults.headers.common[
+    //     "Authorization"
+    //   ] = `Bearer ${accessTokenStored}`;
+    // }
+  }
+);
 
 const loginUser = createAsyncThunk(
   "/user/login_user",
@@ -61,4 +79,4 @@ const logoutUser = createAsyncThunk(
   }
 );
 
-export { loginUser, logoutUser };
+export { loginUser, logoutUser, getToken };
