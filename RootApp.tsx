@@ -36,7 +36,6 @@ const RootApp = () => {
   console.log("double e", accessToken);
   useEffect(() => {
     dispatch(getToken());
-    console.log("nag run ");
     global_axios.defaults.headers.common[
       "Authorization"
     ] = `Bearer ${accessToken}`;
@@ -67,7 +66,7 @@ const RootApp = () => {
     <RootStack.Navigator
       screenOptions={{ headerShown: false, freezeOnBlur: true }}
     >
-      {!accessToken || !isAuthenticated ? (
+      {!accessToken ? (
         <RootStack.Group>
           <RootStack.Screen
             name="AuthStackScreens"

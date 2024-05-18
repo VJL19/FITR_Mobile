@@ -1,7 +1,9 @@
 import axios from "axios";
+import loadConfig from "./config";
 
+const config = loadConfig();
 const global_axios = axios.create({
-  baseURL: "http://192.168.1.15:8082/api/v1/",
+  baseURL: config.BASE_URL,
   withCredentials: true,
 });
 

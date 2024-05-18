@@ -10,8 +10,10 @@ import newsfeedReducer from "../reducers/newsfeedReducer";
 import commentReducer from "../reducers/commentReducer";
 import notificationReducer from "../reducers/notificationReducer";
 import uploadImageReducer from "../reducers/uploadImageReducer";
+import { authslice } from "../reducers/authReducer";
 export const store = configureStore({
   reducer: {
+    [authslice.reducerPath]: authslice.reducer,
     counter: counterReducer,
     register: registerReducer,
     authReducer: authReducer,
@@ -24,6 +26,8 @@ export const store = configureStore({
     notification: notificationReducer,
     uploadImage: uploadImageReducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(authslice.middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

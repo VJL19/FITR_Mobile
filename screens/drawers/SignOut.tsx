@@ -32,8 +32,8 @@ const SignOut = () => {
     dispatch(testToken());
     navigation.addListener("focus", async () => {
       // await logOut();
-      // await SecureStore.deleteItemAsync("accessToken");
-      // global_axios.defaults.headers.common["Authorization"] = "";
+      await SecureStore.deleteItemAsync("accessToken");
+      global_axios.defaults.headers.common["Authorization"] = "";
     });
 
     const logOutUser = async () => {

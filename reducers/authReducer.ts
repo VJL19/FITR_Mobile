@@ -1,10 +1,12 @@
 import { getToken, loginUser } from "../actions/authAction";
 import { createSlice } from "@reduxjs/toolkit";
-import IUser, { IAuthState } from "../utils/types/user.types";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import IUser, { IAuthState, LoginPayload } from "../utils/types/user.types";
 import { useEffect } from "react";
 import global_axios from "../global/axios";
 import SecureStore from "expo-secure-store";
 import testToken from "../actions/homeAction";
+import loadConfig from "../global/config";
 
 const initialState: IAuthState = {
   status: 0,
@@ -14,6 +16,23 @@ const initialState: IAuthState = {
   isAuthenticated: false,
   isLoading: false,
 };
+const config = loadConfig();
+
+export const authslice = createApi({
+  reducerPath: "authApi",
+  baseQuery: fetchBaseQuery({ baseUrl: config.BASE_URL }),
+  endpoints: (builder) => ({
+    loginUser: builder.mutation({
+      query: (loginPayload: LoginPayload) => ({
+        url: "/user/login_account",
+        method: "POST",
+        body: loginPayload,
+      }),
+    }),
+  }),
+});
+
+export const { useLoginUserMutation } = authslice;
 
 const authSlice = createSlice({
   name: "auth",

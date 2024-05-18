@@ -16,12 +16,12 @@ import { ILoginForm } from "../../utils/types/user.types";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { loginSchema } from "../../utils/validations";
 import { useDispatch, useSelector } from "react-redux";
-import { loginUser } from "../../actions/authAction";
 import { AppDispatch, RootState } from "../../store/store";
 import CustomTextInput from "../../components/CustomTextInput";
 import DisplayFormError from "../../components/DisplayFormError";
 import DisplayAlert from "../../components/CustomAlert";
 import logo from "../../assets/fitr_logo4.png";
+import { authslice, useLoginUserMutation } from "../../reducers/authReducer";
 const SignInScreen = () => {
   const navigation = useNavigation<RootStackNavigationProp>();
 
@@ -32,6 +32,11 @@ const SignInScreen = () => {
   const { message, status } = useSelector(
     (state: RootState) => state.authReducer
   );
+
+  const [
+    loginUser,
+    { isLoading: rtkLoading, status: rtkStatus, data: res, error },
+  ] = useLoginUserMutation();
 
   const dispatch: AppDispatch = useDispatch();
   const {
@@ -48,8 +53,11 @@ const SignInScreen = () => {
   // console.log("message", message);
   const onSubmit = async (data: ILoginForm) => {
     // console.log("in sign in screen", data);
-
-    dispatch(loginUser(data));
+    await loginUser(data);
+    console.log("rtk! status", rtkStatus);
+    console.log("rtk! error", error?.data?.details);
+    console.log("rtk! res", res);
+    console.log("rtk! res", rtkLoading);
   };
 
   // useEffect(() => {
