@@ -29,14 +29,12 @@ const SignInScreen = () => {
     Username: "",
     Password: "",
   };
-  const { message, status } = useSelector(
-    (state: RootState) => state.authReducer
-  );
+  // const { message, status } = useSelector(
+  //   (state: RootState) => state.authReducer
+  // );
 
-  const [
-    loginUser,
-    { isLoading: rtkLoading, status: rtkStatus, data: res, error },
-  ] = useLoginUserMutation();
+  const [loginUser, { isLoading: rtkLoading, status, data: res, error }] =
+    useLoginUserMutation();
 
   const dispatch: AppDispatch = useDispatch();
   const {
@@ -54,7 +52,7 @@ const SignInScreen = () => {
   const onSubmit = async (data: ILoginForm) => {
     // console.log("in sign in screen", data);
     await loginUser(data);
-    console.log("rtk! status", rtkStatus);
+    console.log("rtk! status", status);
     console.log("rtk! error", error?.data?.details);
     console.log("rtk! res", res);
     console.log("rtk! res", rtkLoading);
@@ -76,14 +74,14 @@ const SignInScreen = () => {
   //   });
   // }, []);
   useEffect(() => {
-    if (status === 400 && isSubmitted) {
-      DisplayAlert("Error, message", message);
+    if (status === "rejected" && isSubmitted) {
+      DisplayAlert("Error, message", error?.data?.details);
     }
-    if (status === 200 && isSubmitted) {
-      DisplayAlert("Success, message", message);
+    if (status === "fulfilled" && isSubmitted) {
+      DisplayAlert("Success, message", res?.details);
       reset();
     }
-  }, [status, message]);
+  }, [status, res?.details]);
   return (
     <ImageBackground style={styles.container}>
       <ScrollView
