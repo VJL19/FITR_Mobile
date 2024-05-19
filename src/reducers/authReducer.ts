@@ -7,6 +7,7 @@ import global_axios from "../global/axios";
 import SecureStore from "expo-secure-store";
 import testToken from "../actions/homeAction";
 import loadConfig from "../global/config";
+import { RootState } from "store/store";
 
 const initialState: IAuthState = {
   status: 0,
@@ -19,10 +20,20 @@ const initialState: IAuthState = {
 const config = loadConfig();
 
 export const authslice = createApi({
-  reducerPath: "authApi",
-  baseQuery: fetchBaseQuery({ baseUrl: config.BASE_URL }),
+  reducerPath: "/authUsers",
+  baseQuery: fetchBaseQuery({
+    baseUrl: config.BASE_URL,
+    prepareHeaders: (headers: Headers, { getState }) => {
+      const token = (getState() as RootState)?.authReducer?.accessToken;
+
+      if (token) {
+        headers.set("authorization", `Bearer ${token}`);
+      }
+      return headers;
+    },
+  }),
   endpoints: (builder) => ({
-    loginUser: builder.mutation({
+    loginUser: builder.mutation<IAuthState, LoginPayload>({
       query: (loginPayload: LoginPayload) => ({
         url: "/user/login_account",
         method: "POST",
@@ -32,12 +43,13 @@ export const authslice = createApi({
   }),
 });
 
-export const { useLoginUserMutation } = authslice;
-
 const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
+    setToken: (state, { payload }) => {
+      state.accessToken = payload;
+    },
     loadToken: (state) => {
       // const ACCESS_TOKEN = "accessToken";
       // useEffect(() => {
@@ -116,4 +128,5 @@ const authSlice = createSlice({
 });
 
 export const { loadToken } = authSlice.actions;
+export const { useLoginUserMutation } = authslice;
 export default authSlice.reducer;

@@ -4,6 +4,6 @@ interface IConfig {
 
 export default function loadConfig(): IConfig {
   return {
-    BASE_URL: process.env.EXPO_PUBLIC_BASE_URL,
+    BASE_URL: process.env.EXPO_PUBLIC_BASE_SERVER_URL,
   };
 }

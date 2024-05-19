@@ -66,7 +66,7 @@ const RootApp = () => {
     <RootStack.Navigator
       screenOptions={{ headerShown: false, freezeOnBlur: true }}
     >
-      {!accessToken ? (
+      {!accessToken || !isAuthenticated ? (
         <RootStack.Group>
           <RootStack.Screen
             name="AuthStackScreens"

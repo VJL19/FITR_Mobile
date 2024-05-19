@@ -19,9 +19,11 @@ import { AppDispatch, RootState } from "store/store";
 import CustomTextInput from "components/CustomTextInput";
 import DisplayFormError from "components/DisplayFormError";
 import DisplayAlert from "components/CustomAlert";
-import { useLoginUserMutation } from "reducers/authReducer";
 import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
+import * as SecureStore from "expo-secure-store";
+
 import logo from "assets/fitr_logo4.png";
+import { useLoginUserMutation } from "reducers/authReducer";
 const SignInScreen = () => {
   const navigation = useNavigation<RootStackNavigationProp>();
 
@@ -49,9 +51,16 @@ const SignInScreen = () => {
 
   // console.log("status", status);
   // console.log("message", message);
+  const ACCESS_TOKEN = "accessToken";
   const onSubmit = async (data: ILoginForm) => {
     // console.log("in sign in screen", data);
     await loginUser(data);
+
+    // if(status === "fulfilled"){
+    //   await SecureStore.setItemAsync(ACCESS_TOKEN, token);
+
+    // }
+
     console.log("rtk! status", status);
     console.log("rtk! error", error?.data?.details);
     console.log("rtk! res", res);

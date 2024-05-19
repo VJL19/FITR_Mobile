@@ -10,8 +10,8 @@ import React, { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { useNavigation } from "@react-navigation/native";
 
-import IForm, { IPersonalDetails } from "../../utils/types/form.types";
-import { formSchema, personalDetailsSchema } from "../../utils/validations";
+import IForm, { IPersonalDetails } from "utils/types/form.types";
+import { formSchema, personalDetailsSchema } from "utils/validations";
 import { joiResolver } from "@hookform/resolvers/joi";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
