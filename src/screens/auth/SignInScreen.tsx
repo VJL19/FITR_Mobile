@@ -9,19 +9,19 @@ import {
 import { Controller } from "react-hook-form";
 import React, { useContext, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { RootStackNavigationProp } from "../../utils/types/navigators/RootStackNavigators";
-import CustomButton from "../../components/CustomButton";
+import CustomButton from "components/CustomButton";
 import { useForm } from "react-hook-form";
-import { ILoginForm } from "../../utils/types/user.types";
+import { ILoginForm } from "utils/types/user.types";
 import { joiResolver } from "@hookform/resolvers/joi";
-import { loginSchema } from "../../utils/validations";
+import { loginSchema } from "utils/validations";
 import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../store/store";
-import CustomTextInput from "../../components/CustomTextInput";
-import DisplayFormError from "../../components/DisplayFormError";
-import DisplayAlert from "../../components/CustomAlert";
-import logo from "../../assets/fitr_logo4.png";
-import { authslice, useLoginUserMutation } from "../../reducers/authReducer";
+import { AppDispatch, RootState } from "store/store";
+import CustomTextInput from "components/CustomTextInput";
+import DisplayFormError from "components/DisplayFormError";
+import DisplayAlert from "components/CustomAlert";
+import { useLoginUserMutation } from "reducers/authReducer";
+import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
+import logo from "assets/fitr_logo4.png";
 const SignInScreen = () => {
   const navigation = useNavigation<RootStackNavigationProp>();
 

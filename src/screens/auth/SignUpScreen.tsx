@@ -13,11 +13,11 @@ import { useNavigation } from "@react-navigation/native";
 import IForm, { IPersonalDetails } from "../../utils/types/form.types";
 import { formSchema, personalDetailsSchema } from "../../utils/validations";
 import { joiResolver } from "@hookform/resolvers/joi";
-import LoadingIndicator from "../../components/LoadingIndicator";
-import { RootStackNavigationProp } from "../../utils/types/navigators/RootStackNavigators";
-import CustomTextInput from "../../components/CustomTextInput";
-import DisplayFormError from "../../components/DisplayFormError";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
+import CustomTextInput from "components/CustomTextInput";
+import DisplayFormError from "components/DisplayFormError";
+import LoadingIndicator from "components/LoadingIndicator";
 
 const SignUpScreen = () => {
   const navigation = useNavigation<RootStackNavigationProp>();

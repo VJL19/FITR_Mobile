@@ -2,16 +2,16 @@ import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View, Button } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { Provider } from "react-redux";
-import { store } from "./store/store";
-import RootApp from "./RootApp";
-import AuthContextProvider from "./context/AuthContext";
+import { store } from "./src/store/store";
+import RootApp from "src/RootApp";
+import AuthContextProvider from "./src/context/AuthContext";
 import "react-native-gesture-handler";
 import { useFonts } from "expo-font";
-import LoadingIndicator from "./components/LoadingIndicator";
-import useFontsLoaded from "./hooks/useFontsLoaded";
+import LoadingIndicator from "./src/components/LoadingIndicator";
+import useFontsLoaded from "./src/hooks/useFontsLoaded";
 import * as SplashScreen from "expo-splash-screen";
 import { PaperProvider } from "react-native-paper";
-import theme from "./assets/themes/theme";
+import theme from "assets/themes/theme";
 
 export default function App() {
   const fontsLoaded = useFontsLoaded();

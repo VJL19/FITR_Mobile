@@ -4,10 +4,10 @@
     "slug": "FitrMobile",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./src/assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/fitr_logo4.png",
+      "image": "./src/assets/fitr_logo4.png",
       "resizeMode": "contain",
       "backgroundColor": "#D5D5D5"
     },
@@ -22,12 +22,12 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./src/assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       }
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./src/assets/favicon.png"
     },
     "plugins": [
       "expo-secure-store",
@@ -47,7 +47,7 @@
       ],
       [
         "expo-font", {
-          "fonts": ["./assets/fonts/static"]
+          "fonts": ["./src/assets/fonts/static"]
         }
       ]
     ]
