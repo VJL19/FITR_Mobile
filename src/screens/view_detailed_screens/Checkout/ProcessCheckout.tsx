@@ -1,10 +1,10 @@
 import { StyleSheet, Text, View } from "react-native";
 import React, { useState, useRef, Ref } from "react";
 import { RouteProp, useRoute } from "@react-navigation/native";
-import { DetailedRootStackNavigatorsParamList } from "../../../utils/types/detailed_screens/DetailedRootStackNavigators";
+import { DetailedRootStackNavigatorsParamList } from "utils/types/detailed_screens/DetailedRootStackNavigators";
 import WebView from "react-native-webview";
 import { useSelector } from "react-redux";
-import { RootState } from "../../../store/store";
+import { RootState } from "store/store";
 
 const ProcessCheckout = () => {
   const { details, error, checkout_url } = useSelector(

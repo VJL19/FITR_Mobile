@@ -1,13 +1,13 @@
 import { StyleSheet, Text, TouchableOpacity, View, Image } from "react-native";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../../store/store";
-import { getAllCommentsAction } from "../../../actions/commentAction";
-import LoadingIndicator from "../../../components/LoadingIndicator";
+import { AppDispatch, RootState } from "store/store";
+import { getAllCommentsAction } from "actions/commentAction";
+import LoadingIndicator from "components/LoadingIndicator";
 import { useNavigation } from "@react-navigation/native";
-import { RootStackNavigationProp } from "../../../utils/types/navigators/RootStackNavigators";
-import { INewsFeed } from "../../../utils/types/newsfeed.types";
-import getAccessToken from "../../../actions/homeAction";
+import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
+import { INewsFeed } from "utils/types/newsfeed.types";
+import getAccessToken from "actions/homeAction";
 
 const Postsfeed = ({
   PostTitle,

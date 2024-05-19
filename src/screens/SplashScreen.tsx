@@ -1,8 +1,8 @@
 import { Image, ImageBackground, View, StyleSheet } from "react-native";
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
-import { RootStackNavigationProp } from "../utils/types/navigators/RootStackNavigators";
-import CustomButton from "../components/CustomButton";
+import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
+import CustomButton from "components/CustomButton";
 import { enableFreeze } from "react-native-screens";
 
 const SplashScreen = () => {
@@ -11,11 +11,11 @@ const SplashScreen = () => {
   return (
     <ImageBackground
       style={styles.background}
-      source={require("../assets/bg_fitr.jpeg")}
+      source={require("assets/bg_fitr.jpeg")}
     >
       <View style={styles.blur}>
         <Image
-          source={require("../assets/fitr_logo3.png")}
+          source={require("assets/fitr_logo3.png")}
           style={{ height: "50%", width: "100%" }}
         />
 

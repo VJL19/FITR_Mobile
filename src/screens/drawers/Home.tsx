@@ -1,16 +1,16 @@
 import { Text, SafeAreaView, Button } from "react-native";
 import React, { useEffect, useState } from "react";
-import LoadingIndicator from "../../components/LoadingIndicator";
+import LoadingIndicator from "components/LoadingIndicator";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../store/store";
-import { increment, incrementByAmount } from "../../reducers/counterReducer";
-import getAccessToken from "../../actions/homeAction";
-import { setRoute } from "../../reducers/routeReducer";
+import { AppDispatch, RootState } from "store/store";
+import { increment, incrementByAmount } from "reducers/counterReducer";
+import getAccessToken from "actions/homeAction";
+import { setRoute } from "reducers/routeReducer";
 import { useRoute } from "@react-navigation/native";
-import useIsReady from "../../hooks/useIsReady";
+import useIsReady from "hooks/useIsReady";
 import * as Speech from "expo-speech";
-// import { fetchUsers } from "../../reducers/authReducer";
+// import { fetchUsers } from "reducers/authReducer";
 const Home = () => {
   // console.log("TTT", auth);
   const { isReady } = useIsReady();

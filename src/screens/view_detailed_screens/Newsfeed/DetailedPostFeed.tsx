@@ -1,28 +1,28 @@
 import { Button, StyleSheet, Text, View } from "react-native";
 import React, { useEffect } from "react";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
-import { DetailedRootStackNavigatorsParamList } from "../../../utils/types/detailed_screens/DetailedRootStackNavigators";
+import { DetailedRootStackNavigatorsParamList } from "utils/types/detailed_screens/DetailedRootStackNavigators";
 import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../../store/store";
-import getAccessToken from "../../../actions/homeAction";
-import { RootStackNavigationProp } from "../../../utils/types/navigators/RootStackNavigators";
-import { getAllCommentsAction } from "../../../actions/commentAction";
+import { AppDispatch, RootState } from "store/store";
+import getAccessToken from "actions/homeAction";
+import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
+import { getAllCommentsAction } from "actions/commentAction";
 import { FlatList } from "react-native-gesture-handler";
-import { IComments } from "../../../utils/types/newsfeed.types";
+import { IComments } from "utils/types/newsfeed.types";
 import Comments from "./Comments";
-import LoadingIndicator from "../../../components/LoadingIndicator";
+import LoadingIndicator from "components/LoadingIndicator";
 import {
   checkLikepostAction,
   getAllPostsAction,
   likePostAction,
   unlikePostAction,
-} from "../../../actions/newsfeedAction";
-import DisplayAlert from "../../../components/CustomAlert";
+} from "actions/newsfeedAction";
+import DisplayAlert from "components/CustomAlert";
 import {
   notifyLikeAction,
   removeNotificationAction,
-} from "../../../actions/notificationAction";
-import getCurrentDate from "../../../utils/helpers/formatDate";
+} from "actions/notificationAction";
+import getCurrentDate from "utils/helpers/formatDate";
 
 const DetailedPostFeed = () => {
   const route =

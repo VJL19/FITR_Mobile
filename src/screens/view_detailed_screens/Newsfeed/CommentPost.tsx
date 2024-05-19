@@ -1,21 +1,18 @@
 import { Alert, Button, StyleSheet, Text, TextInput, View } from "react-native";
 import React, { useEffect } from "react";
-import { DetailedRootStackNavigatorsParamList } from "../../../utils/types/detailed_screens/DetailedRootStackNavigators";
+import { DetailedRootStackNavigatorsParamList } from "utils/types/detailed_screens/DetailedRootStackNavigators";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { Controller, useForm } from "react-hook-form";
-import DisplayFormError from "../../../components/DisplayFormError";
+import DisplayFormError from "components/DisplayFormError";
 import { joiResolver } from "@hookform/resolvers/joi";
-import { IComments } from "../../../utils/types/newsfeed.types";
-import { commentSchema } from "../../../utils/validations";
-import {
-  commentPostAction,
-  getAllCommentsAction,
-} from "../../../actions/commentAction";
-import { AppDispatch, RootState } from "../../../store/store";
+import { IComments } from "utils/types/newsfeed.types";
+import { commentSchema } from "utils/validations";
+import { commentPostAction, getAllCommentsAction } from "actions/commentAction";
+import { AppDispatch, RootState } from "store/store";
 import { useDispatch, useSelector } from "react-redux";
-import DisplayAlert from "../../../components/CustomAlert";
-import getAccessToken from "../../../actions/homeAction";
-import { notifyCommentAction } from "../../../actions/notificationAction";
+import DisplayAlert from "components/CustomAlert";
+import getAccessToken from "actions/homeAction";
+import { notifyCommentAction } from "actions/notificationAction";
 
 const CommentPost = () => {
   const route =

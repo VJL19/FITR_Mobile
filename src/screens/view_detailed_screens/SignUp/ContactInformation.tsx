@@ -8,16 +8,16 @@ import {
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
-import { DetailedRootStackNavigatorsParamList } from "../../../utils/types/detailed_screens/DetailedRootStackNavigators";
+import { DetailedRootStackNavigatorsParamList } from "utils/types/detailed_screens/DetailedRootStackNavigators";
 import { Controller, useForm } from "react-hook-form";
-import { IContactDetails } from "../../../utils/types/form.types";
+import { IContactDetails } from "utils/types/form.types";
 import { joiResolver } from "@hookform/resolvers/joi";
-import { contactDetailsSchema } from "../../../utils/validations";
-import CustomTextInput from "../../../components/CustomTextInput";
-import DisplayFormError from "../../../components/DisplayFormError";
-import LoadingIndicator from "../../../components/LoadingIndicator";
+import { contactDetailsSchema } from "utils/validations";
+import CustomTextInput from "components/CustomTextInput";
+import DisplayFormError from "components/DisplayFormError";
+import LoadingIndicator from "components/LoadingIndicator";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { RootStackNavigationProp } from "../../../utils/types/navigators/RootStackNavigators";
+import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const ContactInformation = () => {

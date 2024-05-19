@@ -1,8 +1,8 @@
 import { StyleSheet, Text, View } from "react-native";
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../store/store";
-import { setRoute } from "../../reducers/routeReducer";
+import { AppDispatch } from "store/store";
+import { setRoute } from "reducers/routeReducer";
 
 const About = () => {
   const dispatch: AppDispatch = useDispatch();

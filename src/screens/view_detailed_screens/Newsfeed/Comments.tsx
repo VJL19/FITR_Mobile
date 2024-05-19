@@ -1,14 +1,14 @@
 import { Button, StyleSheet, Text, View } from "react-native";
 import React, { useEffect } from "react";
-import { IComments } from "../../../utils/types/newsfeed.types";
-import { AppDispatch, RootState } from "../../../store/store";
-import getAccessToken from "../../../actions/homeAction";
+import { IComments } from "utils/types/newsfeed.types";
+import { AppDispatch, RootState } from "store/store";
+import getAccessToken from "actions/homeAction";
 import { useDispatch, useSelector } from "react-redux";
 import {
   getAllCommentsAction,
   removeUserCommentAction,
-} from "../../../actions/commentAction";
-import LoadingIndicator from "../../../components/LoadingIndicator";
+} from "actions/commentAction";
+import LoadingIndicator from "components/LoadingIndicator";
 
 const Comments = ({
   UserID,

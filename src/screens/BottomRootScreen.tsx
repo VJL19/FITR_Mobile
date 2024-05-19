@@ -1,11 +1,11 @@
 import { StyleSheet, Text, InteractionManager, View } from "react-native";
 import React, { useEffect, useState } from "react";
-import BottomTab from "../navigators/BottomTab";
+import BottomTab from "navigators/BottomTab";
 import { Favorites, Home, Programs, Tutorials } from "./bottom_tabs";
 import {
   DrawerStackNavigationProp,
   DrawerStackScreenProp,
-} from "../utils/types/navigators/DrawerStackNavigators";
+} from "utils/types/navigators/DrawerStackNavigators";
 import {
   About,
   Announcements,
@@ -19,10 +19,10 @@ import {
 } from "./drawers";
 import { useNavigation } from "@react-navigation/native";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import CustomTabBar from "../components/CustomTabBar";
+import CustomTabBar from "components/CustomTabBar";
 import { useDispatch } from "react-redux";
-import { AppDispatch } from "../store/store";
-import { setRoute } from "../reducers/routeReducer";
+import { AppDispatch } from "store/store";
+import { setRoute } from "reducers/routeReducer";
 
 const BottomRootScreen = ({
   route,

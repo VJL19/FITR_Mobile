@@ -6,11 +6,11 @@ import {
   View,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import LoadingIndicator from "../../components/LoadingIndicator";
+import LoadingIndicator from "components/LoadingIndicator";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { useNavigation } from "@react-navigation/native";
-import { RootStackNavigationProp } from "../../utils/types/navigators/RootStackNavigators";
+import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
 
 const Tutorials = () => {
   const [isReady, setIsReady] = useState(false);

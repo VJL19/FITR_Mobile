@@ -1,13 +1,13 @@
 import { StyleSheet, Text, View } from "react-native";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../../store/store";
-import { getNotificationAction } from "../../../actions/notificationAction";
-import getAccessToken from "../../../actions/homeAction";
+import { AppDispatch, RootState } from "store/store";
+import { getNotificationAction } from "actions/notificationAction";
+import getAccessToken from "actions/homeAction";
 import { FlatList } from "react-native-gesture-handler";
 import Notification from "./Notification";
-import { INotifications } from "../../../utils/types/notifications.types";
-import LoadingIndicator from "../../../components/LoadingIndicator";
+import { INotifications } from "utils/types/notifications.types";
+import LoadingIndicator from "components/LoadingIndicator";
 
 const Notifications = () => {
   const dispatch: AppDispatch = useDispatch();

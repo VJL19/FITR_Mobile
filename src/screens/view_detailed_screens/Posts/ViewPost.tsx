@@ -1,14 +1,14 @@
 import { Button, StyleSheet, Text, View } from "react-native";
 import React, { useEffect } from "react";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
-import { DetailedRootStackNavigatorsParamList } from "../../../utils/types/detailed_screens/DetailedRootStackNavigators";
+import { DetailedRootStackNavigatorsParamList } from "utils/types/detailed_screens/DetailedRootStackNavigators";
 import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../../store/store";
-import { deletePostAction, getPostAction } from "../../../actions/postAction";
-import { deletePostinFeedAction } from "../../../actions/newsfeedAction";
-import DisplayAlert from "../../../components/CustomAlert";
-import getAccessToken from "../../../actions/homeAction";
-import LoadingIndicator from "../../../components/LoadingIndicator";
+import { AppDispatch, RootState } from "store/store";
+import { deletePostAction, getPostAction } from "actions/postAction";
+import { deletePostinFeedAction } from "actions/newsfeedAction";
+import DisplayAlert from "components/CustomAlert";
+import getAccessToken from "actions/homeAction";
+import LoadingIndicator from "components/LoadingIndicator";
 
 const ViewPost = () => {
   const route =

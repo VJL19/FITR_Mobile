@@ -3,18 +3,18 @@ import React, { useEffect } from "react";
 import { FieldErrors, SubmitHandler, useForm } from "react-hook-form";
 import { Controller } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
-import { IPost } from "../../../utils/types/post.types";
-import { postSchema } from "../../../utils/validations";
-import CustomTextInput from "../../../components/CustomTextInput";
-import DisplayFormError from "../../../components/DisplayFormError";
+import { IPost } from "utils/types/post.types";
+import { postSchema } from "utils/validations";
+import CustomTextInput from "components/CustomTextInput";
+import DisplayFormError from "components/DisplayFormError";
 import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../../store/store";
-import getAccessToken from "../../../actions/homeAction";
-import getCurrentDate from "../../../utils/helpers/formatDate";
-import { getPostAction, postUserAction } from "../../../actions/postAction";
+import { AppDispatch, RootState } from "store/store";
+import getAccessToken from "actions/homeAction";
+import getCurrentDate from "utils/helpers/formatDate";
+import { getPostAction, postUserAction } from "actions/postAction";
 import { useNavigation } from "@react-navigation/native";
-import DisplayAlert from "../../../components/CustomAlert";
-import postDefault from "../../../assets/post_default.webp";
+import DisplayAlert from "components/CustomAlert";
+import postDefault from "assets/post_default.webp";
 import { ScrollView } from "react-native-gesture-handler";
 
 const AddPost = () => {

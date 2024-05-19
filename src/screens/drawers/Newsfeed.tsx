@@ -1,14 +1,14 @@
 import { StyleSheet, Text, View } from "react-native";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../store/store";
-import { setRoute } from "../../reducers/routeReducer";
-import { getAllPostsAction } from "../../actions/newsfeedAction";
+import { AppDispatch, RootState } from "store/store";
+import { setRoute } from "reducers/routeReducer";
+import { getAllPostsAction } from "actions/newsfeedAction";
 import { FlatList } from "react-native-gesture-handler";
 import Postsfeed from "../view_detailed_screens/Newsfeed/Postsfeed";
-import LoadingIndicator from "../../components/LoadingIndicator";
-import getAccessToken from "../../actions/homeAction";
-import { INewsFeed } from "../../utils/types/newsfeed.types";
+import LoadingIndicator from "components/LoadingIndicator";
+import getAccessToken from "actions/homeAction";
+import { INewsFeed } from "utils/types/newsfeed.types";
 import { useNavigation } from "@react-navigation/native";
 
 const Newsfeed = () => {

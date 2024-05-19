@@ -1,23 +1,23 @@
 import { Button, StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Dropdown } from "react-native-element-dropdown";
-import DropdownComponent from "../../components/DropdownComponent";
+import DropdownComponent from "components/DropdownComponent";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../store/store";
-import { checkUserScanQr } from "../../actions/attendanceAction";
-import LoadingIndicator from "../../components/LoadingIndicator";
+import { AppDispatch, RootState } from "store/store";
+import { checkUserScanQr } from "actions/attendanceAction";
+import LoadingIndicator from "components/LoadingIndicator";
 import SubscriptionTypeEnum, {
   SubscriptionAmount,
-} from "../../utils/enums/Subscription";
+} from "utils/enums/Subscription";
 import processPayment, {
   CheckoutPayload,
   ILineItems,
-} from "../../actions/subscriptionAction";
+} from "actions/subscriptionAction";
 import { useNavigation } from "@react-navigation/native";
-import { RootStackNavigationProp } from "../../utils/types/navigators/RootStackNavigators";
-import { setRoute } from "../../reducers/routeReducer";
-import getAccessToken from "../../actions/homeAction";
+import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
+import { setRoute } from "reducers/routeReducer";
+import getAccessToken from "actions/homeAction";
 
 const Subscription = () => {
   const [paymentMethod, setPaymentMethod] = useState("");

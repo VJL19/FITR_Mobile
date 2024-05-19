@@ -1,16 +1,16 @@
 import { StyleSheet, Text, View, Pressable } from "react-native";
 import React, { useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { RootStackNavigationProp } from "../../utils/types/navigators/RootStackNavigators";
+import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
 import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../store/store";
-import getAccessToken from "../../actions/homeAction";
-import { getPostAction } from "../../actions/postAction";
-import LoadingIndicator from "../../components/LoadingIndicator";
+import { AppDispatch, RootState } from "store/store";
+import getAccessToken from "actions/homeAction";
+import { getPostAction } from "actions/postAction";
+import LoadingIndicator from "components/LoadingIndicator";
 import Posts from "../view_detailed_screens/Posts/Posts";
 import { FlatList } from "react-native-gesture-handler";
-import { IPost } from "../../utils/types/post.types";
-import { setRoute } from "../../reducers/routeReducer";
+import { IPost } from "utils/types/post.types";
+import { setRoute } from "reducers/routeReducer";
 
 const MyPosts = () => {
   const navigation = useNavigation<RootStackNavigationProp>();

@@ -1,6 +1,6 @@
 import { Button, StyleSheet, Text, View } from "react-native";
 import React from "react";
-import { INotifications } from "../../../utils/types/notifications.types";
+import { INotifications } from "utils/types/notifications.types";
 
 const Notification = ({
   UserID,

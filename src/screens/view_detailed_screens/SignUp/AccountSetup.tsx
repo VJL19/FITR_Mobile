@@ -1,20 +1,17 @@
 import { Button, ScrollView, StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useRoute, RouteProp, useNavigation } from "@react-navigation/native";
-import { DetailedRootStackNavigatorsParamList } from "../../../utils/types/detailed_screens/DetailedRootStackNavigators";
+import { DetailedRootStackNavigatorsParamList } from "utils/types/detailed_screens/DetailedRootStackNavigators";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { Controller, useForm } from "react-hook-form";
-import {
-  IAccountSetup,
-  IContactDetails,
-} from "../../../utils/types/form.types";
-import { RootStackNavigationProp } from "../../../utils/types/navigators/RootStackNavigators";
-import { accountDetailsSchema } from "../../../utils/validations";
-import CustomTextInput from "../../../components/CustomTextInput";
-import DisplayFormError from "../../../components/DisplayFormError";
-import LoadingIndicator from "../../../components/LoadingIndicator";
+import { IAccountSetup, IContactDetails } from "utils/types/form.types";
+import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
+import { accountDetailsSchema } from "utils/validations";
+import CustomTextInput from "components/CustomTextInput";
+import DisplayFormError from "components/DisplayFormError";
+import LoadingIndicator from "components/LoadingIndicator";
 import { RadioGroup } from "react-native-radio-buttons-group";
-import avatar from "../../../assets/avatar_default.jpeg";
+import avatar from "assets/avatar_default.jpeg";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const AccountSetup = () => {

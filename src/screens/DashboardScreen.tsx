@@ -1,14 +1,14 @@
 import React, { useContext, useEffect, useState } from "react";
-import DrawerStack from "../navigators/DrawerStack";
+import DrawerStack from "navigators/DrawerStack";
 import BottomRootScreen from "./BottomRootScreen";
-import CustomDrawer from "../components/CustomDrawer";
-import drawerIcon from "../components/drawerIcon";
+import CustomDrawer from "components/CustomDrawer";
+import drawerIcon from "components/drawerIcon";
 import { Alert, Button, TouchableNativeFeedback, View } from "react-native";
-import CustomNotification from "../components/CustomNotification";
+import CustomNotification from "components/CustomNotification";
 import { useSelector } from "react-redux";
-import { RootState } from "../store/store";
+import { RootState } from "store/store";
 import * as SecureStore from "expo-secure-store";
-import global_axios from "../global/axios";
+import global_axios from "global/axios";
 import {
   getFocusedRouteNameFromRoute,
   useNavigation,
@@ -16,8 +16,8 @@ import {
 import {
   RootStackNavigationProp,
   RootStackScreenProp,
-} from "../utils/types/navigators/RootStackNavigators";
-import { AuthContext } from "../context/AuthContext";
+} from "utils/types/navigators/RootStackNavigators";
+import { AuthContext } from "context/AuthContext";
 
 const DashboardScreen = ({ navigation }: RootStackScreenProp) => {
   const { isAuthenticated, accessToken, status } = useSelector(

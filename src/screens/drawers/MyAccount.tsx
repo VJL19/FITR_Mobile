@@ -1,22 +1,22 @@
 import { Button, StyleSheet, Text, View, Image } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setRoute } from "../../reducers/routeReducer";
-import { AppDispatch, RootState } from "../../store/store";
+import { setRoute } from "reducers/routeReducer";
+import { AppDispatch, RootState } from "store/store";
 import * as ImagePicker from "expo-image-picker";
-import avatar from "../../assets/avatar_default.jpeg";
+import avatar from "assets/avatar_default.jpeg";
 import { Controller, useForm } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
-import CustomTextInput from "../../components/CustomTextInput";
-import DisplayFormError from "../../components/DisplayFormError";
-import { IChangeAccount } from "../../utils/types/user.types";
-import { myAccountSchema } from "../../utils/validations";
+import CustomTextInput from "components/CustomTextInput";
+import DisplayFormError from "components/DisplayFormError";
+import { IChangeAccount } from "utils/types/user.types";
+import { myAccountSchema } from "utils/validations";
 import { ScrollView } from "react-native-gesture-handler";
 import Ionicon from "react-native-vector-icons/Ionicons";
-import getAccessToken from "../../actions/homeAction";
+import getAccessToken from "actions/homeAction";
 import { useNavigation } from "@react-navigation/native";
-import { RootStackNavigationProp } from "../../utils/types/navigators/RootStackNavigators";
-import LoadingIndicator from "../../components/LoadingIndicator";
+import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
+import LoadingIndicator from "components/LoadingIndicator";
 
 const MyAccount = () => {
   const dispatch: AppDispatch = useDispatch();

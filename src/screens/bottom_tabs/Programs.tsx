@@ -1,18 +1,18 @@
 import { InteractionManager, StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
-import LoadingIndicator from "../../components/LoadingIndicator";
+import LoadingIndicator from "components/LoadingIndicator";
 import { useNavigation } from "@react-navigation/native";
 import {
   RootStackNavigationProp,
   RootStackParamList,
-} from "../../utils/types/navigators/RootStackNavigators";
-import { DashboardStackNavigationProp } from "../../utils/types/navigators/DashboardStackNavigator";
-import { setBottomRoute, setRoute } from "../../reducers/routeReducer";
-import { AppDispatch } from "../../store/store";
+} from "utils/types/navigators/RootStackNavigators";
+import { DashboardStackNavigationProp } from "utils/types/navigators/DashboardStackNavigator";
+import { setBottomRoute, setRoute } from "reducers/routeReducer";
+import { AppDispatch } from "store/store";
 import { useDispatch } from "react-redux";
 import { useRoute } from "@react-navigation/native";
-import useIsReady from "../../hooks/useIsReady";
-import { DrawerStackNavigationProp } from "../../utils/types/navigators/DrawerStackNavigators";
+import useIsReady from "hooks/useIsReady";
+import { DrawerStackNavigationProp } from "utils/types/navigators/DrawerStackNavigators";
 
 const Programs = () => {
   const { isReady } = useIsReady();

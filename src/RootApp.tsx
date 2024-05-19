@@ -1,24 +1,24 @@
 import { InteractionManager, StyleSheet, Text, View } from "react-native";
 import React, { useContext, useState } from "react";
-import RootStack from "./navigators/RootStack";
-import AuthRootScreen from "./screens/AuthRootScreen";
-import BottomRootScreen from "./screens/BottomRootScreen";
-import DashboardScreen from "./screens/DashboardScreen";
-import SplashScreen from "./screens/SplashScreen";
+import RootStack from "navigators/RootStack";
+import AuthRootScreen from "screens/AuthRootScreen";
+import BottomRootScreen from "screens/BottomRootScreen";
+import DashboardScreen from "screens/DashboardScreen";
+import SplashScreen from "screens/SplashScreen";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "./store/store";
+import { AppDispatch, RootState } from "store/store";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import {
   RootStackNavigationProp,
   RootStackScreenProp,
-} from "./utils/types/navigators/RootStackNavigators";
-import AuthContextProvider, { AuthContext } from "./context/AuthContext";
-import LoadingIndicator from "./components/LoadingIndicator";
-import DetailedRootScreen from "./screens/DetailedRootScreen";
-import useIsReady from "./hooks/useIsReady";
-import { getToken } from "./actions/authAction";
-import global_axios from "./global/axios";
+} from "utils/types/navigators/RootStackNavigators";
+import AuthContextProvider, { AuthContext } from "context/AuthContext";
+import LoadingIndicator from "components/LoadingIndicator";
+import DetailedRootScreen from "screens/DetailedRootScreen";
+import useIsReady from "hooks/useIsReady";
+import { getToken } from "actions/authAction";
+import global_axios from "global/axios";
 
 const RootApp = () => {
   const { isAuthenticated, accessToken, status } = useSelector(

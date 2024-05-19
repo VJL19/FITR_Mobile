@@ -1,32 +1,32 @@
 import React, { useState, useEffect } from "react";
 import { Text, View, StyleSheet, Button } from "react-native";
 import { CameraView, Camera } from "expo-camera";
-import BarCodeScanningResult from "expo-camera";
 import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../store/store";
-import IAttendance from "../../utils/types/attendance.types";
-import getAccessToken from "../../actions/homeAction";
+import { AppDispatch, RootState } from "store/store";
+import IAttendance from "utils/types/attendance.types";
+import getAccessToken from "actions/homeAction";
 import {
   getSecretCode,
   attendanceUser,
   checkUserScanQr,
-} from "../../actions/attendanceAction";
+} from "actions/attendanceAction";
 import getCurrentDate, {
   advanceMonthlyEnd,
   advanceSessionEnd,
-} from "../../utils/helpers/formatDate";
-import LoadingIndicator from "../../components/LoadingIndicator";
+} from "utils/helpers/formatDate";
+import LoadingIndicator from "components/LoadingIndicator";
 import { useNavigation } from "@react-navigation/native";
 import {
   DrawerStackNavigationProp,
   DrawerStackParamList,
-} from "../../utils/types/navigators/DrawerStackNavigators";
-import DropdownComponent from "../../components/DropdownComponent";
-import SubscriptionEnum from "../../utils/enums/Subscription";
-import { setRoute } from "../../reducers/routeReducer";
+} from "utils/types/navigators/DrawerStackNavigators";
+import DropdownComponent from "components/DropdownComponent";
+import SubscriptionEnum from "utils/enums/Subscription";
+import { setRoute } from "reducers/routeReducer";
 import QRCode from "react-native-qrcode-svg";
-import { encryptUserRecord } from "../../utils/helpers/hashQrData";
+import { encryptUserRecord } from "utils/helpers/hashQrData";
 import { RadioGroup } from "react-native-radio-buttons-group";
+import { BarCodeScanningResult } from "expo-camera/build/legacy/Camera.types";
 const Attendance = () => {
   const [hasPermission, setHasPermission] = useState<boolean>();
   const [scanned, setScanned] = useState(false);

@@ -1,6 +1,6 @@
 import { View, Text } from "react-native";
 import React from "react";
-import AuthStack from "../navigators/AuthStack";
+import AuthStack from "navigators/AuthStack";
 import { SignUpScreen, SignInScreen } from "screens/auth/index";
 import { RootState } from "store/store";
 import { useSelector } from "react-redux";

@@ -8,19 +8,19 @@ import {
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import CustomTextInput from "../../../components/CustomTextInput";
-import DisplayFormError from "../../../components/DisplayFormError";
+import CustomTextInput from "components/CustomTextInput";
+import DisplayFormError from "components/DisplayFormError";
 import Ionicon from "react-native-vector-icons/Ionicons";
 import { joiResolver } from "@hookform/resolvers/joi";
-import { IChangeAccount } from "../../../utils/types/user.types";
-import { myAccountSchema } from "../../../utils/validations";
-import getAccessToken from "../../../actions/homeAction";
-import { setRoute } from "../../../reducers/routeReducer";
+import { IChangeAccount } from "utils/types/user.types";
+import { myAccountSchema } from "utils/validations";
+import getAccessToken from "actions/homeAction";
+import { setRoute } from "reducers/routeReducer";
 import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../../store/store";
+import { AppDispatch, RootState } from "store/store";
 import * as ImagePicker from "expo-image-picker";
-import avatar from "../../../assets/avatar_default.jpeg";
-import uploadImageAction from "../../../actions/uploadImageAction";
+import avatar from "assets/avatar_default.jpeg";
+import uploadImageAction from "actions/uploadImageAction";
 
 const initialState: IChangeAccount = {
   Username: "",

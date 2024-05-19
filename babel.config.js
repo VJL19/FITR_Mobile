@@ -22,6 +22,7 @@ module.exports = function (api) {
             actions: "./src/actions",
             navigators: "./src/navigators",
             reducers: "./src/reducers",
+            context: "./src/context",
           },
         },
       ],

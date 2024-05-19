@@ -1,17 +1,17 @@
 import { Alert, Button, StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useRoute, RouteProp, useNavigation } from "@react-navigation/native";
-import { DetailedRootStackNavigatorsParamList } from "../../../utils/types/detailed_screens/DetailedRootStackNavigators";
-import { RootStackNavigationProp } from "../../../utils/types/navigators/RootStackNavigators";
+import { DetailedRootStackNavigatorsParamList } from "utils/types/detailed_screens/DetailedRootStackNavigators";
+import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { useForm } from "react-hook-form";
-import IForm, { IAccountSetup } from "../../../utils/types/form.types";
-import { formSchema } from "../../../utils/validations";
+import IForm, { IAccountSetup } from "utils/types/form.types";
+import { formSchema } from "utils/validations";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { AppDispatch, RootState } from "../../../store/store";
+import { AppDispatch, RootState } from "store/store";
 import { useDispatch, useSelector } from "react-redux";
 import Checkbox from "expo-checkbox";
-import registerUser from "../../../actions/registerAction";
+import registerUser from "actions/registerAction";
 
 const TermsAndConditions = () => {
   const route =
