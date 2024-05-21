@@ -4,16 +4,19 @@ import registerReducer from "../reducers/registerReducer";
 import authReducer from "../reducers/authReducer";
 import attendanceReducer from "../reducers/attendanceReducer";
 import subscriptionReducer from "../reducers/subscriptionReducer";
-import postReducer from "../reducers/postReducer";
+import postReducer, { postslice } from "../reducers/postReducer";
 import routeReducer from "../reducers/routeReducer";
-import newsfeedReducer from "../reducers/newsfeedReducer";
+import newsfeedReducer, { newsfeedslice } from "../reducers/newsfeedReducer";
 import commentReducer from "../reducers/commentReducer";
 import notificationReducer from "../reducers/notificationReducer";
 import uploadImageReducer from "../reducers/uploadImageReducer";
 import { authslice } from "../reducers/authReducer";
+import { setupListeners } from "@reduxjs/toolkit/query";
 export const store = configureStore({
   reducer: {
     [authslice.reducerPath]: authslice.reducer,
+    [postslice.reducerPath]: postslice.reducer,
+    [newsfeedslice.reducerPath]: newsfeedslice.reducer,
     counter: counterReducer,
     register: registerReducer,
     authReducer: authReducer,
@@ -27,8 +30,12 @@ export const store = configureStore({
     uploadImage: uploadImageReducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(authslice.middleware),
+    getDefaultMiddleware().concat([
+      authslice.middleware,
+      postslice.middleware,
+      newsfeedslice.middleware,
+    ]),
 });
-
+setupListeners(store.dispatch);
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

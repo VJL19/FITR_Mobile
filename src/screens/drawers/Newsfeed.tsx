@@ -10,32 +10,35 @@ import LoadingIndicator from "components/LoadingIndicator";
 import getAccessToken from "actions/homeAction";
 import { INewsFeed } from "utils/types/newsfeed.types";
 import { useNavigation } from "@react-navigation/native";
+import { useGetAccessTokenQuery } from "reducers/authReducer";
+import { useGetAllPostInFeedQuery } from "reducers/newsfeedReducer";
 
 const Newsfeed = () => {
-  const { isAuthenticated, message } = useSelector(
-    (state: RootState) => state.authReducer
-  );
+  // const { isAuthenticated, message } = useSelector(
+  //   (state: RootState) => state.authReducer
+  // );
 
-  const { result, isLoading } = useSelector(
-    (state: RootState) => state.newsfeed
-  );
+  const { isError } = useGetAccessTokenQuery();
+  // const { result, isLoading } = useSelector(
+  //   (state: RootState) => state.newsfeed
+  // );
+
+  const {
+    isFetching,
+    isUninitialized,
+    data: posts,
+  } = useGetAllPostInFeedQuery(undefined, { refetchOnMountOrArgChange: true });
 
   const navigation = useNavigation();
   const dispatch: AppDispatch = useDispatch();
   useEffect(() => {
-    dispatch(getAccessToken());
-    dispatch(getAllPostsAction());
     dispatch(setRoute("Newsfeed"));
-
-    navigation.addListener("focus", () => {
-      dispatch(getAllPostsAction());
-    });
   }, []);
 
-  if (isLoading) {
+  if (isFetching || isUninitialized) {
     return <LoadingIndicator />;
   }
-  if (!isAuthenticated) {
+  if (isError) {
     return (
       <View>
         <Text>You are not authenticated! Please Login again!</Text>
@@ -49,7 +52,7 @@ const Newsfeed = () => {
     <View style={styles.container}>
       <FlatList
         alwaysBounceVertical={true}
-        data={result}
+        data={posts?.result}
         renderItem={({ item }: { item: INewsFeed }) => <Postsfeed {...item} />}
         keyExtractor={(item) => item?.NewsfeedID?.toString()}
       />

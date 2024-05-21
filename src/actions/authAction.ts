@@ -11,6 +11,11 @@ const setToken = async (token: string) => {
   await SecureStore.setItemAsync(ACCESS_TOKEN, token);
 };
 
+export const getToken1 = async () => {
+  const accessTokenStored = await SecureStore.getItemAsync(ACCESS_TOKEN);
+  return accessTokenStored;
+};
+
 const getToken = createAsyncThunk(
   "/user/loadToken",
   async (_, { rejectWithValue }) => {

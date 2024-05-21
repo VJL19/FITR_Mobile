@@ -16,31 +16,33 @@ import { AppDispatch, RootState } from "store/store";
 import testToken from "actions/homeAction";
 import { AuthContext } from "context/AuthContext";
 import { logoutUser } from "actions/authAction";
+import { deleteToken } from "reducers/authReducer";
 const SignOut = () => {
   const navigation = useNavigation<DrawerStackNavigationProp>();
   const signOut = useNavigation<RootStackNavigationProp>();
 
   const { token, isAuthenticated } = useContext(AuthContext);
 
-  const { logOut } = useContext(AuthContext);
   const dispatch: AppDispatch = useDispatch();
 
   useEffect(() => {
     dispatch(testToken());
-  }, []);
-  useEffect(() => {
-    dispatch(testToken());
+    dispatch(deleteToken());
+    const deleteTokenAsync = async () => {
+      await SecureStore.deleteItemAsync("accessToken");
+    };
+    deleteTokenAsync();
     navigation.addListener("focus", async () => {
       // await logOut();
-      await SecureStore.deleteItemAsync("accessToken");
-      global_axios.defaults.headers.common["Authorization"] = "";
+      dispatch(deleteToken());
+      const deleteTokenAsync = async () => {
+        await SecureStore.deleteItemAsync("accessToken");
+      };
+      deleteTokenAsync();
+      // await SecureStore.deleteItemAsync("accessToken");
+      // global_axios.defaults.headers.common["Authorization"] = "";
     });
-
-    const logOutUser = async () => {
-      await logOut();
-    };
     Alert.alert("Message!", "Log out successfully!");
-    logOutUser();
     console.log("deleted successfully!");
   }, [isAuthenticated, token]);
 

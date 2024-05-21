@@ -8,6 +8,9 @@ import {
   unlikePostAction,
 } from "../actions/newsfeedAction";
 import { INewsFeed } from "../utils/types/newsfeed.types";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import loadConfig from "global/config";
+import * as SecureStore from "expo-secure-store";
 
 interface INewsfeedState {
   message: string;
@@ -24,6 +27,46 @@ const initialState: INewsfeedState = {
   isLoading: false,
   result: [],
 };
+
+const config = loadConfig();
+export const newsfeedslice = createApi({
+  reducerPath: "user/newsfeed",
+  tagTypes: ["newsfeed"],
+  baseQuery: fetchBaseQuery({
+    baseUrl: config.BASE_URL,
+    prepareHeaders: async (headers: Headers) => {
+      // const token = (getState() as RootState).authReducer.accessToken;
+      const token = await SecureStore.getItemAsync("accessToken");
+      // console.log("state", getState());
+      if (token) {
+        headers.set("authorization", `Bearer ${token}`);
+      }
+      return headers;
+    },
+  }),
+  endpoints: (builder) => ({
+    addPostInFeed: builder.mutation<INewsfeedState, INewsFeed>({
+      query: (arg) => ({
+        url: "/user/create_postfeed",
+        method: "POST",
+        body: arg,
+      }),
+      invalidatesTags: ["newsfeed"],
+    }),
+    deletePostInFeed: builder.mutation<INewsfeedState, number | undefined>({
+      query: (PostID) => ({
+        url: `/user/remove_postfeed/:${PostID}`,
+        params: { PostID },
+        method: "DELETE",
+      }),
+      invalidatesTags: ["newsfeed"],
+    }),
+    getAllPostInFeed: builder.query<INewsfeedState, void>({
+      query: () => "/user/all_posts",
+      providesTags: ["newsfeed"],
+    }),
+  }),
+});
 
 const newsfeedSlice = createSlice({
   name: "newsfeed",
@@ -146,4 +189,9 @@ const newsfeedSlice = createSlice({
   },
 });
 
+export const {
+  useAddPostInFeedMutation,
+  useDeletePostInFeedMutation,
+  useGetAllPostInFeedQuery,
+} = newsfeedslice;
 export default newsfeedSlice.reducer;

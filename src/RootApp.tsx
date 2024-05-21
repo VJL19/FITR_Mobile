@@ -17,11 +17,9 @@ import AuthContextProvider, { AuthContext } from "context/AuthContext";
 import LoadingIndicator from "components/LoadingIndicator";
 import DetailedRootScreen from "screens/DetailedRootScreen";
 import useIsReady from "hooks/useIsReady";
-import { getToken } from "actions/authAction";
-import global_axios from "global/axios";
 
 const RootApp = () => {
-  const { isAuthenticated, accessToken, status } = useSelector(
+  const { isAuthenticated, accessToken } = useSelector(
     (state: RootState) => state.authReducer
   );
 
@@ -33,12 +31,12 @@ const RootApp = () => {
   // console.log("auth context", rs);
   // console.log("auth tokens", token);
 
-  console.log("double e", accessToken);
+  // console.log("double e", accessToken);
   useEffect(() => {
-    dispatch(getToken());
-    global_axios.defaults.headers.common[
-      "Authorization"
-    ] = `Bearer ${accessToken}`;
+    // dispatch(getToken());
+    // global_axios.defaults.headers.common[
+    //   "Authorization"
+    // ] = `Bearer ${accessToken}`;
     // InteractionManager.runAfterInteractions(() => {
     //   setIsReady(true);
     // });

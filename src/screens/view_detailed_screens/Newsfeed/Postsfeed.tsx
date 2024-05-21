@@ -44,8 +44,6 @@ const Postsfeed = ({
     });
   };
 
-  console.log("hey", Username);
-
   return (
     <TouchableOpacity activeOpacity={0.8} onPress={handlePress}>
       <View style={styles.box}>

@@ -23,12 +23,14 @@ import CustomTabBar from "components/CustomTabBar";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "store/store";
 import { setRoute } from "reducers/routeReducer";
+import { useGetAccessTokenQuery } from "reducers/authReducer";
 
 const BottomRootScreen = ({
   route,
 }: DrawerStackScreenProp | { route: any }) => {
   const navigation = useNavigation<DrawerStackNavigationProp>();
   const dispatch: AppDispatch = useDispatch();
+
   useEffect(() => {
     dispatch(setRoute(route.name));
     // navigation.setOptions({ headerTitle: route.name });

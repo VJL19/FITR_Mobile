@@ -28,7 +28,7 @@ const Home = () => {
   // console.log("user: ", user);
   // console.log(value);
   useEffect(() => {
-    dispatch(getAccessToken());
+    // dispatch(getAccessToken());
     dispatch(setRoute("Home"));
 
     const loadVoices = async () => {

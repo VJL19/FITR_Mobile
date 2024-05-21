@@ -1,23 +1,26 @@
 import { StyleSheet, Text, View, Image, ActivityIndicator } from "react-native";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../store/store";
-import getAccessToken from "../actions/homeAction";
+import { RootState } from "../store/store";
 import IUser from "../utils/types/user.types";
 import IAttendance from "../utils/types/attendance.types";
 import LoadingIndicator from "./LoadingIndicator";
+import { useGetAccessTokenQuery } from "reducers/authReducer";
 
 const Avatar = () => {
-  const dispatch: AppDispatch = useDispatch();
-
-  const { user, isLoading, isAuthenticated } = useSelector(
+  const { user, accessToken } = useSelector(
     (state: RootState) => state.authReducer
   );
 
-  useEffect(() => {
-    dispatch(getAccessToken());
-  }, []);
-  if (isLoading) {
+  const { isUninitialized, isFetching, data, status, isError } =
+    useGetAccessTokenQuery(undefined, {
+      refetchOnMountOrArgChange: true,
+      refetchOnFocus: true,
+    });
+
+  useEffect(() => {}, []);
+
+  if (isUninitialized || isFetching) {
     return (
       <View
         style={{
@@ -34,7 +37,7 @@ const Avatar = () => {
     );
   }
 
-  if (!isAuthenticated) {
+  if (isError) {
     return (
       <View style={{ width: "100%" }}>
         <Text style={[styles.avatarNameStyle, { textAlign: "center" }]}>
@@ -50,9 +53,9 @@ const Avatar = () => {
         style={styles.avatarStyle}
       />
       <Text style={styles.avatarNameStyle}>
-        {user.LastName}, {user.FirstName}
+        {data?.user.LastName}, {data?.user.FirstName}
       </Text>
-      <Text style={styles.avatarInfoStyle}>{user.Email}</Text>
+      <Text style={styles.avatarInfoStyle}>{data?.user?.Email}</Text>
     </View>
   );
 };

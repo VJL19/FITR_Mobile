@@ -11,38 +11,39 @@ import Posts from "../view_detailed_screens/Posts/Posts";
 import { FlatList } from "react-native-gesture-handler";
 import { IPost } from "utils/types/post.types";
 import { setRoute } from "reducers/routeReducer";
+import { useGetAccessTokenQuery } from "reducers/authReducer";
+import { useGetPostsQuery } from "reducers/postReducer";
 
 const MyPosts = () => {
   const navigation = useNavigation<RootStackNavigationProp>();
+  const { isError, data: user } = useGetAccessTokenQuery();
 
-  const { user, isAuthenticated } = useSelector(
-    (state: RootState) => state.authReducer
-  );
-  const { postItems, isLoading, message, status } = useSelector(
-    (state: RootState) => state.post
-  );
+  const {
+    data,
+    error: errorPst,
+    isFetching,
+    isUninitialized,
+  } = useGetPostsQuery(user?.user.UserID, {
+    refetchOnMountOrArgChange: true,
+  });
   const dispatch: AppDispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(getAccessToken());
     dispatch(setRoute("My posts"));
-    dispatch(getPostAction(user.UserID));
-
-    navigation.addListener("focus", () => {
-      dispatch(getPostAction(user.UserID));
-    });
+    // console.log("posts err", posterr);
   }, []);
+  console.log("posts data", data);
   // console.log("user post", postItems);
 
   const handlePress = () => {
     navigation.navigate("DetailedScreens", { screen: "Add Post" });
   };
 
-  if (isLoading) {
+  if (isFetching || isUninitialized) {
     return <LoadingIndicator />;
   }
 
-  if (!isAuthenticated) {
+  if (isError) {
     return (
       <View>
         <Text>You are not authenticated!</Text>
@@ -50,7 +51,7 @@ const MyPosts = () => {
     );
   }
 
-  if (postItems?.length === 0) {
+  if (data?.result.length === 0) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <Text>My posts is empty!</Text>
@@ -77,14 +78,14 @@ const MyPosts = () => {
   return (
     <View style={styles.container}>
       <View>
-        <Text style={{ color: "#f5f5f5", fontSize: 20, fontWeight: "bold" }}>
-          What's on your mind? {user.FirstName}
+        <Text style={{ color: "#131313", fontSize: 20, fontWeight: "bold" }}>
+          What's on your mind? {user?.user?.FirstName}
         </Text>
       </View>
 
       <FlatList
         alwaysBounceVertical={true}
-        data={postItems}
+        data={data?.result}
         renderItem={({ item }) => <Posts {...item} />}
         keyExtractor={(item: IPost) => item?.PostID?.toString()}
       />

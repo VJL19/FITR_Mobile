@@ -16,19 +16,20 @@ import { useNavigation } from "@react-navigation/native";
 import DisplayAlert from "components/CustomAlert";
 import postDefault from "assets/post_default.webp";
 import { ScrollView } from "react-native-gesture-handler";
+import { useAddPostMutation } from "reducers/postReducer";
+import { useGetAccessTokenQuery } from "reducers/authReducer";
 
 const AddPost = () => {
-  const { user } = useSelector((state: RootState) => state.authReducer);
-  const { message, status, postItems } = useSelector(
-    (state: RootState) => state.post
-  );
+  const { data: user } = useGetAccessTokenQuery();
+
+  const [postUser, { data: postResult, status }] = useAddPostMutation();
+
   const defaultValue = {
     PostTitle: "",
     PostDescription: "",
   };
 
   const navigation = useNavigation();
-  const dispatch: AppDispatch = useDispatch();
   const {
     handleSubmit,
     control,
@@ -40,14 +41,9 @@ const AddPost = () => {
     resolver: joiResolver(postSchema),
   });
 
-  useEffect(() => {
-    dispatch(getAccessToken());
-    navigation.addListener("blur", () => {
-      dispatch(getPostAction(user.UserID));
-    });
-  }, []);
+  useEffect(() => {}, []);
   const onSubmit = async (data: IPost) => {
-    const { UserID, FirstName, LastName } = user;
+    const { UserID, FirstName, LastName } = user?.user!;
 
     console.log(data);
     const fullName = FirstName + " " + LastName;
@@ -67,13 +63,14 @@ const AddPost = () => {
       PostAuthor: fullName,
     };
 
-    dispatch(postUserAction(postData));
-    dispatch(getPostAction(user.UserID));
+    postUser(postData);
+    // console.log("add posts", data);
+    // dispatch(getPostAction(user.UserID));
 
-    console.log("add pressed", data);
+    console.log("add pressed", postResult?.message);
     // console.log("post message", result?.[0].NewsfeedID!);
 
-    DisplayAlert("Success message", message);
+    DisplayAlert("Success message", "Post added successfully!");
     await new Promise((resolve) => setTimeout(resolve, 1500));
     navigation.goBack();
     reset();

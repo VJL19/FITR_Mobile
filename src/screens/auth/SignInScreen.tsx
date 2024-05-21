@@ -20,10 +20,15 @@ import CustomTextInput from "components/CustomTextInput";
 import DisplayFormError from "components/DisplayFormError";
 import DisplayAlert from "components/CustomAlert";
 import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
+import logo from "assets/fitr_logo4.png";
+import {
+  setToken,
+  useGetAccessTokenQuery,
+  useLoginUserMutation,
+} from "reducers/authReducer";
+import { getToken1 } from "actions/authAction";
 import * as SecureStore from "expo-secure-store";
 
-import logo from "assets/fitr_logo4.png";
-import { useLoginUserMutation } from "reducers/authReducer";
 const SignInScreen = () => {
   const navigation = useNavigation<RootStackNavigationProp>();
 
@@ -31,12 +36,12 @@ const SignInScreen = () => {
     Username: "",
     Password: "",
   };
-  // const { message, status } = useSelector(
-  //   (state: RootState) => state.authReducer
-  // );
+  // const { accessToken } = useSelector((state: RootState) => state.authReducer);
 
-  const [loginUser, { isLoading: rtkLoading, status, data: res, error }] =
-    useLoginUserMutation();
+  const [
+    loginUser,
+    { isLoading: rtkLoading, status, data: res, error, isSuccess },
+  ] = useLoginUserMutation();
 
   const dispatch: AppDispatch = useDispatch();
   const {
@@ -51,20 +56,9 @@ const SignInScreen = () => {
 
   // console.log("status", status);
   // console.log("message", message);
-  const ACCESS_TOKEN = "accessToken";
   const onSubmit = async (data: ILoginForm) => {
     // console.log("in sign in screen", data);
     await loginUser(data);
-
-    // if(status === "fulfilled"){
-    //   await SecureStore.setItemAsync(ACCESS_TOKEN, token);
-
-    // }
-
-    console.log("rtk! status", status);
-    console.log("rtk! error", error?.data?.details);
-    console.log("rtk! res", res);
-    console.log("rtk! res", rtkLoading);
   };
 
   // useEffect(() => {
@@ -82,15 +76,23 @@ const SignInScreen = () => {
   //     console.log("run", isAuthenticated);
   //   });
   // }, []);
+
   useEffect(() => {
     if (status === "rejected" && isSubmitted) {
       DisplayAlert("Error, message", error?.data?.details);
     }
     if (status === "fulfilled" && isSubmitted) {
       DisplayAlert("Success, message", res?.details);
+      // console.log("rtk res", res?.accessToken);
+      dispatch(setToken(res?.accessToken));
+      const setTokenAsync = async () => {
+        await SecureStore.setItemAsync("accessToken", res?.accessToken!);
+      };
+      setTokenAsync();
       reset();
     }
   }, [status, res?.details]);
+
   return (
     <ImageBackground style={styles.container}>
       <ScrollView

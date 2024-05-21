@@ -5,6 +5,11 @@ import {
   postUserAction,
 } from "../actions/postAction";
 import { IPost } from "../utils/types/post.types";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import loadConfig from "global/config";
+import { IAuthState } from "utils/types/user.types";
+import { RootState } from "store/store";
+import * as SecureStore from "expo-secure-store";
 
 interface IPostState {
   error: string;
@@ -12,6 +17,7 @@ interface IPostState {
   isLoading: boolean;
   message: string;
   postItems: IPost[];
+  result: IPost[];
 }
 
 const initialState: IPostState = {
@@ -20,7 +26,49 @@ const initialState: IPostState = {
   isLoading: false,
   message: "",
   postItems: [],
+  result: [],
 };
+
+const config = loadConfig();
+export const postslice = createApi({
+  reducerPath: "user/create_post",
+  tagTypes: ["posts"],
+
+  baseQuery: fetchBaseQuery({
+    baseUrl: config.BASE_URL,
+    prepareHeaders: async (headers: Headers, { getState }) => {
+      // const token = (getState() as RootState).authReducer.accessToken;
+      const token = await SecureStore.getItemAsync("accessToken");
+      // console.log("state", getState());
+      if (token) {
+        headers.set("authorization", `Bearer ${token}`);
+      }
+      return headers;
+    },
+  }),
+  endpoints: (builder) => ({
+    addPost: builder.mutation<IPostState, IPost>({
+      query: (postData) => ({
+        url: "/user/create_post",
+        method: "POST",
+        body: postData,
+      }),
+      invalidatesTags: ["posts"],
+    }),
+    getPosts: builder.query<IPostState, number | undefined>({
+      query: (UserID) => `/user/specific_post/:${UserID}`,
+      providesTags: ["posts"],
+    }),
+    deletePosts: builder.mutation<IPostState, number | undefined>({
+      query: (PostID) => ({
+        url: `/user/delete_post/:${PostID}`,
+        params: { PostID },
+        method: "DELETE",
+      }),
+      invalidatesTags: ["posts"],
+    }),
+  }),
+});
 
 const postSlice = createSlice({
   name: "post",
@@ -79,4 +127,6 @@ const postSlice = createSlice({
     });
   },
 });
+export const { useAddPostMutation, useGetPostsQuery, useDeletePostsMutation } =
+  postslice;
 export default postSlice.reducer;

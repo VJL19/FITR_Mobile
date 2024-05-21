@@ -4,7 +4,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import IUser, { IAuthState, LoginPayload } from "../utils/types/user.types";
 import { useEffect } from "react";
 import global_axios from "../global/axios";
-import SecureStore from "expo-secure-store";
+import * as SecureStore from "expo-secure-store";
 import testToken from "../actions/homeAction";
 import loadConfig from "../global/config";
 import { RootState } from "store/store";
@@ -19,13 +19,20 @@ const initialState: IAuthState = {
 };
 const config = loadConfig();
 
+async function simulateLoading(delay: number) {
+  return new Promise((resolve) => setTimeout(resolve, delay));
+}
+
 export const authslice = createApi({
   reducerPath: "/authUsers",
+  tagTypes: ["auth"],
   baseQuery: fetchBaseQuery({
     baseUrl: config.BASE_URL,
-    prepareHeaders: (headers: Headers, { getState }) => {
-      const token = (getState() as RootState)?.authReducer?.accessToken;
-
+    prepareHeaders: async (headers: Headers, { getState }) => {
+      // const token = (getState() as RootState).authReducer.accessToken;
+      const token = await SecureStore.getItemAsync("accessToken");
+      // console.log("state", getState());
+      console.log("in auth slice", token);
       if (token) {
         headers.set("authorization", `Bearer ${token}`);
       }
@@ -40,6 +47,9 @@ export const authslice = createApi({
         body: loginPayload,
       }),
     }),
+    getAccessToken: builder.query<IAuthState, void>({
+      query: () => "/user/dashboard",
+    }),
   }),
 });
 
@@ -48,7 +58,29 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     setToken: (state, { payload }) => {
+      // const storeToken = async () => {
+      //   await SecureStore.setItemAsync("accessToken", payload);
+      // };
+      // storeToken();
       state.accessToken = payload;
+      state.isAuthenticated = true;
+    },
+    getStoredToken: (state) => {
+      // const getStoreToken = async () => {
+      //   const token = await SecureStore.getItemAsync("accessToken");
+      //   if (token) {
+      //     state.accessToken = token ? token : "";
+      //   }
+      // };
+      // getStoreToken();
+    },
+    deleteToken: (state) => {
+      // const deleteStoreToken = async () => {
+      //   await SecureStore.deleteItemAsync("accessToken");
+      // };
+      // deleteStoreToken();
+      state.accessToken = "";
+      state.isAuthenticated = false;
     },
     loadToken: (state) => {
       // const ACCESS_TOKEN = "accessToken";
@@ -127,6 +159,7 @@ const authSlice = createSlice({
   },
 });
 
-export const { loadToken } = authSlice.actions;
-export const { useLoginUserMutation } = authslice;
+export const { loadToken, setToken, deleteToken, getStoredToken } =
+  authSlice.actions;
+export const { useLoginUserMutation, useGetAccessTokenQuery } = authslice;
 export default authSlice.reducer;
