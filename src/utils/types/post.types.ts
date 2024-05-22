@@ -6,4 +6,5 @@ export interface IPost {
   PostDescription: string;
   PostDate: string;
   PostAuthor: string;
+  Username: string;
 }

@@ -16,6 +16,7 @@ export type DetailedRootStackNavigatorsParamList = {
     NewsfeedID: number;
     UserID: number;
     Username: string;
+    PostID: number;
   };
   "View Post": {
     PostImage: string;
@@ -32,6 +33,7 @@ export type DetailedRootStackNavigatorsParamList = {
     CommentDate: string;
     Username: string;
     PostAuthor: string;
+    PostID: number;
   };
   Notifications: undefined;
   "Gym Equipments": undefined;

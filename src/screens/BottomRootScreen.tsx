@@ -31,6 +31,10 @@ const BottomRootScreen = ({
   const navigation = useNavigation<DrawerStackNavigationProp>();
   const dispatch: AppDispatch = useDispatch();
 
+  const { isUninitialized, isFetching, data, status, isError } =
+    useGetAccessTokenQuery(undefined, {
+      refetchOnMountOrArgChange: 15,
+    });
   useEffect(() => {
     dispatch(setRoute(route.name));
     // navigation.setOptions({ headerTitle: route.name });

@@ -43,7 +43,7 @@ const AddPost = () => {
 
   useEffect(() => {}, []);
   const onSubmit = async (data: IPost) => {
-    const { UserID, FirstName, LastName } = user?.user!;
+    const { UserID, FirstName, LastName, Username } = user?.user!;
 
     console.log(data);
     const fullName = FirstName + " " + LastName;
@@ -53,6 +53,7 @@ const AddPost = () => {
     setValue("PostDescription", data.PostDescription);
     setValue("PostDate", getCurrentDate());
     setValue("PostAuthor", fullName);
+    setValue("Username", Username);
 
     const postData = {
       UserID: UserID,
@@ -61,6 +62,7 @@ const AddPost = () => {
       PostDate: getCurrentDate(),
       PostDescription: data.PostDescription,
       PostAuthor: fullName,
+      Username: Username,
     };
 
     postUser(postData);

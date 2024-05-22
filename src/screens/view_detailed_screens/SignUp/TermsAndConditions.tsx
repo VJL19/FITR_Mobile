@@ -12,6 +12,8 @@ import { AppDispatch, RootState } from "store/store";
 import { useDispatch, useSelector } from "react-redux";
 import Checkbox from "expo-checkbox";
 import registerUser from "actions/registerAction";
+import { useRegisterUserMutation } from "reducers/registerReducer";
+import DisplayAlert from "components/CustomAlert";
 
 const TermsAndConditions = () => {
   const route =
@@ -21,6 +23,8 @@ const TermsAndConditions = () => {
   const dispatch: AppDispatch = useDispatch();
   const [IsChecked, setIsChecked] = useState<boolean>();
 
+  const [registerUser, { isSuccess, status, error, data }] =
+    useRegisterUserMutation();
   const navigation = useNavigation<RootStackNavigationProp>();
   const {
     LastName,
@@ -46,14 +50,14 @@ const TermsAndConditions = () => {
     resolver: joiResolver(formSchema),
   });
 
-  const { status, details, isLoading } = useSelector(
-    (state: RootState) => state.register
-  );
+  // const { status, details, isLoading } = useSelector(
+  //   (state: RootState) => state.register
+  // );
   useEffect(() => {
     //if the status code of request is 400, then alert something!
 
-    if (status === 200 && isSubmitted) {
-      Alert.alert("Success message", details, [
+    if (status === "fulfilled" && isSubmitted) {
+      Alert.alert("Success message", "", [
         {
           text: "Cancel",
           onPress: () => {},
@@ -66,8 +70,8 @@ const TermsAndConditions = () => {
       };
       deleteItems();
     }
-    if (status === 400 && isSubmitted) {
-      Alert.alert("Error message", details, [
+    if (status === "rejected" && isSubmitted) {
+      Alert.alert("Error message", "something went wrong!", [
         {
           text: "Cancel",
           onPress: () => {},
@@ -76,7 +80,7 @@ const TermsAndConditions = () => {
         { text: "OK", onPress: () => {} },
       ]);
     }
-  }, [status, details]);
+  }, [status, error]);
   useEffect(() => {
     setValue("LastName", LastName);
     setValue("FirstName", FirstName);
@@ -98,10 +102,19 @@ const TermsAndConditions = () => {
       Gender: data.Gender === "1" ? "Male" : "Female",
       ProfilePic: "avatar_default.jpeg",
     };
-    dispatch(registerUser(newObj));
+    // dispatch(registerUser(newObj));
+
+    if (isSuccess) {
+      DisplayAlert("Success message", "Successfully register!");
+    }
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+
+    registerUser(newObj);
+
     // navigation.navigate("AuthStackScreens", { screen: "Sign In" });
     console.log("status", status);
-    console.log("details", details);
+    console.log("error", error);
+    console.log("data", data);
   };
   return (
     <View style={styles.container}>

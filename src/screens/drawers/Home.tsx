@@ -23,7 +23,7 @@ const Home = () => {
 
   const route = useRoute();
   const dispatch: AppDispatch = useDispatch();
-  console.log("message: ", message);
+  // console.log("message: ", message);
   // console.log("isAuthenticated: ", isAuthenticated);
   // console.log("user: ", user);
   // console.log(value);

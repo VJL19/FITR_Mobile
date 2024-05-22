@@ -1,8 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
 import counterReducer from "../reducers/counterReducer";
-import registerReducer from "../reducers/registerReducer";
+import registerReducer, { registerslice } from "../reducers/registerReducer";
 import authReducer from "../reducers/authReducer";
-import attendanceReducer from "../reducers/attendanceReducer";
+import attendanceReducer, {
+  attendanceslice,
+} from "../reducers/attendanceReducer";
 import subscriptionReducer from "../reducers/subscriptionReducer";
 import postReducer, { postslice } from "../reducers/postReducer";
 import routeReducer from "../reducers/routeReducer";
@@ -17,6 +19,8 @@ export const store = configureStore({
     [authslice.reducerPath]: authslice.reducer,
     [postslice.reducerPath]: postslice.reducer,
     [newsfeedslice.reducerPath]: newsfeedslice.reducer,
+    [attendanceslice.reducerPath]: attendanceslice.reducer,
+    [registerslice.reducerPath]: registerslice.reducer,
     counter: counterReducer,
     register: registerReducer,
     authReducer: authReducer,
@@ -34,6 +38,8 @@ export const store = configureStore({
       authslice.middleware,
       postslice.middleware,
       newsfeedslice.middleware,
+      attendanceslice.middleware,
+      registerslice.middleware,
     ]),
 });
 setupListeners(store.dispatch);

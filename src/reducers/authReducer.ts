@@ -65,20 +65,24 @@ const authSlice = createSlice({
       state.accessToken = payload;
       state.isAuthenticated = true;
     },
+    setAuthenticated: (state) => {
+      state.isAuthenticated = true;
+    },
     getStoredToken: (state) => {
       // const getStoreToken = async () => {
       //   const token = await SecureStore.getItemAsync("accessToken");
       //   if (token) {
-      //     state.accessToken = token ? token : "";
+      //     state.accessToken = token;
+      //     state.isAuthenticated = true;
       //   }
       // };
       // getStoreToken();
     },
     deleteToken: (state) => {
-      // const deleteStoreToken = async () => {
-      //   await SecureStore.deleteItemAsync("accessToken");
-      // };
-      // deleteStoreToken();
+      const deleteStoreToken = async () => {
+        await SecureStore.deleteItemAsync("accessToken");
+      };
+      deleteStoreToken();
       state.accessToken = "";
       state.isAuthenticated = false;
     },
@@ -159,7 +163,12 @@ const authSlice = createSlice({
   },
 });
 
-export const { loadToken, setToken, deleteToken, getStoredToken } =
-  authSlice.actions;
+export const {
+  loadToken,
+  setToken,
+  deleteToken,
+  getStoredToken,
+  setAuthenticated,
+} = authSlice.actions;
 export const { useLoginUserMutation, useGetAccessTokenQuery } = authslice;
 export default authSlice.reducer;

@@ -17,6 +17,14 @@ import AuthContextProvider, { AuthContext } from "context/AuthContext";
 import LoadingIndicator from "components/LoadingIndicator";
 import DetailedRootScreen from "screens/DetailedRootScreen";
 import useIsReady from "hooks/useIsReady";
+import {
+  getStoredToken,
+  setAuthenticated,
+  setToken,
+  useGetAccessTokenQuery,
+} from "reducers/authReducer";
+import { tokens } from "react-native-paper/lib/typescript/styles/themes/v3/tokens";
+import * as SecureStore from "expo-secure-store";
 
 const RootApp = () => {
   const { isAuthenticated, accessToken } = useSelector(
@@ -33,6 +41,15 @@ const RootApp = () => {
 
   // console.log("double e", accessToken);
   useEffect(() => {
+    const loadToken = async () => {
+      const token = await SecureStore.getItemAsync("accessToken");
+      if (token) {
+        dispatch(setToken(token));
+        dispatch(setAuthenticated());
+      }
+    };
+    loadToken();
+
     // dispatch(getToken());
     // global_axios.defaults.headers.common[
     //   "Authorization"
@@ -52,19 +69,16 @@ const RootApp = () => {
     //   }
     //   console.log("run", isAuthenticated);
     // });
-  }, []);
+  }, [accessToken, isAuthenticated]);
   // console.log(
   //   "T headers: ",
   //   global_axios.defaults.headers.common["Authorization"]
   // );
-  if (!isReady) {
-    return <LoadingIndicator />;
-  }
   return (
     <RootStack.Navigator
       screenOptions={{ headerShown: false, freezeOnBlur: true }}
     >
-      {!accessToken || !isAuthenticated ? (
+      {!accessToken ? (
         <RootStack.Group>
           <RootStack.Screen
             name="AuthStackScreens"

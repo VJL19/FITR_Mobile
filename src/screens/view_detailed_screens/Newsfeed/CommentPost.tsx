@@ -13,6 +13,11 @@ import { useDispatch, useSelector } from "react-redux";
 import DisplayAlert from "components/CustomAlert";
 import getAccessToken from "actions/homeAction";
 import { notifyCommentAction } from "actions/notificationAction";
+import { useGetAccessTokenQuery } from "reducers/authReducer";
+import {
+  useCommentPostInFeedMutation,
+  useNotifyCommentPostInFeedMutation,
+} from "reducers/newsfeedReducer";
 
 const CommentPost = () => {
   const route =
@@ -20,6 +25,11 @@ const CommentPost = () => {
       RouteProp<DetailedRootStackNavigatorsParamList, "Comment on Post">
     >();
 
+  const { data } = useGetAccessTokenQuery();
+  const { user } = data!;
+
+  const [commentPost, {}] = useCommentPostInFeedMutation();
+  const [notifyComment, {}] = useNotifyCommentPostInFeedMutation();
   const {
     handleSubmit,
     control,
@@ -30,9 +40,7 @@ const CommentPost = () => {
   });
 
   const dispatch: AppDispatch = useDispatch();
-  useEffect(() => {
-    dispatch(getAccessToken());
-  }, []);
+  useEffect(() => {}, []);
   const {
     UserID,
     PostTitle,
@@ -41,13 +49,13 @@ const CommentPost = () => {
     Username,
     NotificationDate,
     CommentDate,
+    PostID,
   } = route.params;
 
   // const { message, status } = useSelector((state: RootState) => state.comment);
   const { message, status } = useSelector(
     (state: RootState) => state.notification
   );
-  const { user } = useSelector((state: RootState) => state.authReducer);
 
   const onInvalid = (errors) => {
     console.log(errors);
@@ -56,27 +64,30 @@ const CommentPost = () => {
 
   const notify_arg = {
     UserID: UserID,
+    PostID: PostID,
     PostAuthor: PostAuthor,
     Username: Username,
     NotificationDate: NotificationDate,
+    PostTitle: PostTitle,
   };
-  const onComment = (data: IComments) => {
+  const onComment = async (data: IComments) => {
     const arg = {
       CommentText: data.CommentText,
       UserID: user.UserID,
       NewsfeedID: NewsfeedID,
       CommentDate: CommentDate,
     };
-    dispatch(commentPostAction(arg));
-    dispatch(getAllCommentsAction(NewsfeedID || 0));
-    dispatch(notifyCommentAction(notify_arg));
+    commentPost(arg);
+    notifyComment(notify_arg);
+    // dispatch(commentPostAction(arg));
+    // dispatch(getAllCommentsAction(NewsfeedID || 0));
+    // dispatch(notifyCommentAction(notify_arg));
+    // console.log("notif comment res", message);
+    // console.log("notif comment status", status);
 
-    console.log("notif comment res", message);
-    console.log("notif comment status", status);
-    if (status === 200 && !isLoading) {
-      DisplayAlert("Success message", "Successfully commented on this post.");
-      // navigation.goBack();
-    }
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+    DisplayAlert("Success message", "Successfully commented on this post.");
+    navigation.goBack();
     reset();
   };
   return (

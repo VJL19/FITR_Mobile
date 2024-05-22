@@ -11,6 +11,7 @@ import { INewsFeed } from "../utils/types/newsfeed.types";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import loadConfig from "global/config";
 import * as SecureStore from "expo-secure-store";
+import { INotifications } from "utils/types/notifications.types";
 
 interface INewsfeedState {
   message: string;
@@ -61,12 +62,139 @@ export const newsfeedslice = createApi({
       }),
       invalidatesTags: ["newsfeed"],
     }),
-    getAllPostInFeed: builder.query<INewsfeedState, void>({
-      query: () => "/user/all_posts",
+    getAllPostInFeed: builder.query<INewsfeedState, string | undefined>({
+      query: (SubscriptionType) => `/user/all_posts/:${SubscriptionType}`,
       providesTags: ["newsfeed"],
+    }),
+    likePostInFeed: builder.mutation<
+      INewsfeedState,
+      { UserID: number; NewsfeedID: number }
+    >({
+      query: (arg) => ({
+        url: "/user/like_post",
+        method: "POST",
+        body: arg,
+      }),
+      invalidatesTags: ["newsfeed"],
+    }),
+    notifyLikePostInFeed: builder.mutation<
+      INewsfeedState,
+      {
+        UserID: number;
+        PostID: number;
+        PostAuthor: string;
+        Username: string;
+        PostTitle: string;
+      }
+    >({
+      query: (arg) => ({
+        url: "/user/notifications/notify_like",
+        method: "POST",
+        body: arg,
+      }),
+      invalidatesTags: ["newsfeed"],
+    }),
+    unlikePostInFeed: builder.mutation<
+      INewsfeedState,
+      { UserID: number; NewsfeedID: number }
+    >({
+      query: (arg) => ({
+        url: "/user/unlike_post",
+        method: "POST",
+        body: arg,
+      }),
+      invalidatesTags: ["newsfeed"],
+    }),
+    removeNotificationLike: builder.mutation<
+      INewsfeedState,
+      { Username: string; PostID: number }
+    >({
+      query: (arg) => ({
+        url: "/user/notifications/remove_notification",
+        method: "POST",
+        body: arg,
+      }),
+      invalidatesTags: ["newsfeed"],
+    }),
+    checkLikePost: builder.mutation<
+      INewsfeedState,
+      { UserID: number; NewsfeedID: number }
+    >({
+      query: (arg) => ({
+        url: "/user/check_likepost",
+        method: "POST",
+        body: arg,
+      }),
+      invalidatesTags: ["newsfeed"],
+    }),
+    commentPostInFeed: builder.mutation<
+      INewsfeedState,
+      {
+        CommentText: string;
+        UserID: number;
+        NewsfeedID: number;
+        CommentDate: string;
+      }
+    >({
+      query: (arg) => ({
+        url: "/user/comment_post",
+        method: "POST",
+        body: arg,
+      }),
+      invalidatesTags: ["newsfeed"],
+    }),
+    getAllComments: builder.query<INewsfeedState, void>({
+      query: () => "/user/all_comments",
+      providesTags: ["newsfeed"],
+    }),
+    notifyCommentPostInFeed: builder.mutation<
+      INewsfeedState,
+      {
+        UserID: number;
+        PostID: number;
+        PostAuthor: string;
+        Username: string;
+        NotificationDate: string;
+        PostTitle: string;
+      }
+    >({
+      query: (arg) => ({
+        url: "/user/notifications/notify_comment",
+        method: "POST",
+        body: arg,
+      }),
+      invalidatesTags: ["newsfeed"],
+    }),
+    deleteLikes: builder.mutation<INewsfeedState, number | undefined>({
+      query: (NewsfeedID) => ({
+        url: `/user/remove_user_likes/:${NewsfeedID}`,
+        method: "DELETE",
+        params: { NewsfeedID },
+      }),
+      invalidatesTags: ["newsfeed"],
+    }),
+    deleteComments: builder.mutation<INewsfeedState, number | undefined>({
+      query: (NewsfeedID) => ({
+        url: `/user/remove_user_comments/:${NewsfeedID}`,
+        method: "DELETE",
+        params: { NewsfeedID },
+      }),
+      invalidatesTags: ["newsfeed"],
+    }),
+    deleteNotifications: builder.mutation<INewsfeedState, number | undefined>({
+      query: (PostID) => ({
+        url: `/user/notifications/remove_user_notifications/:${PostID}`,
+        method: "DELETE",
+        params: { PostID },
+      }),
+      invalidatesTags: ["newsfeed"],
+    }),
+    getAllNotifications: builder.query<INotifications[], number | undefined>({
+      query: (UserID) => `/user/notifications/getNotifications/:${UserID}`,
     }),
   }),
 });
+// /user/unlike_post
 
 const newsfeedSlice = createSlice({
   name: "newsfeed",
@@ -193,5 +321,17 @@ export const {
   useAddPostInFeedMutation,
   useDeletePostInFeedMutation,
   useGetAllPostInFeedQuery,
+  useLikePostInFeedMutation,
+  useNotifyLikePostInFeedMutation,
+  useUnlikePostInFeedMutation,
+  useRemoveNotificationLikeMutation,
+  useCheckLikePostMutation,
+  useCommentPostInFeedMutation,
+  useGetAllCommentsQuery,
+  useNotifyCommentPostInFeedMutation,
+  useDeleteLikesMutation,
+  useDeleteCommentsMutation,
+  useDeleteNotificationsMutation,
+  useGetAllNotificationsQuery,
 } = newsfeedslice;
 export default newsfeedSlice.reducer;

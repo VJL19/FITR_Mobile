@@ -1,6 +1,8 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { IRegisterState } from "../utils/types/user.types";
+import { IRegisterState, RegisterPayload } from "../utils/types/user.types";
 import registerUser from "../actions/registerAction";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import loadConfig from "global/config";
 
 const initialState: IRegisterState = {
   status: 0,
@@ -22,6 +24,24 @@ const initialState: IRegisterState = {
     Username: "",
   },
 };
+
+const config = loadConfig();
+export const registerslice = createApi({
+  reducerPath: "user/register",
+  baseQuery: fetchBaseQuery({
+    baseUrl: config.BASE_URL,
+    prepareHeaders: () => {},
+  }),
+  endpoints: (builder) => ({
+    registerUser: builder.mutation<IRegisterState, RegisterPayload>({
+      query: (arg) => ({
+        url: "/user/register_account",
+        method: "POST",
+        body: arg,
+      }),
+    }),
+  }),
+});
 
 const registerSlice = createSlice({
   name: "register",
@@ -55,4 +75,5 @@ const registerSlice = createSlice({
     //for log out api call.
   },
 });
+export const { useRegisterUserMutation } = registerslice;
 export default registerSlice.reducer;

@@ -12,22 +12,19 @@ import { INewsFeed } from "utils/types/newsfeed.types";
 import { useNavigation } from "@react-navigation/native";
 import { useGetAccessTokenQuery } from "reducers/authReducer";
 import { useGetAllPostInFeedQuery } from "reducers/newsfeedReducer";
+import { useGetUserRecordsQuery } from "reducers/attendanceReducer";
 
 const Newsfeed = () => {
-  // const { isAuthenticated, message } = useSelector(
-  //   (state: RootState) => state.authReducer
-  // );
-
-  const { isError } = useGetAccessTokenQuery();
-  // const { result, isLoading } = useSelector(
-  //   (state: RootState) => state.newsfeed
-  // );
+  const { isError, data: user } = useGetAccessTokenQuery();
+  const { data: userRecord } = useGetUserRecordsQuery(user?.user?.UserID);
 
   const {
     isFetching,
     isUninitialized,
     data: posts,
-  } = useGetAllPostInFeedQuery(undefined, { refetchOnMountOrArgChange: true });
+  } = useGetAllPostInFeedQuery(userRecord?.result[0]?.SubscriptionType, {
+    refetchOnMountOrArgChange: true,
+  });
 
   const navigation = useNavigation();
   const dispatch: AppDispatch = useDispatch();
@@ -45,6 +42,7 @@ const Newsfeed = () => {
       </View>
     );
   }
+
   // console.log("feed", result);
   // console.log("feed", isAuthenticated);
   // console.log("feed", message);

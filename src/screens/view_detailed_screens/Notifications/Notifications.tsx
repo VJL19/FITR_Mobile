@@ -8,34 +8,41 @@ import { FlatList } from "react-native-gesture-handler";
 import Notification from "./Notification";
 import { INotifications } from "utils/types/notifications.types";
 import LoadingIndicator from "components/LoadingIndicator";
+import { useGetAccessTokenQuery } from "reducers/authReducer";
+import { useGetAllNotificationsQuery } from "reducers/newsfeedReducer";
 
 const Notifications = () => {
   const dispatch: AppDispatch = useDispatch();
 
-  const { user, isAuthenticated } = useSelector(
-    (state: RootState) => state.authReducer
-  );
-  const { message, status, result, isLoading } = useSelector(
-    (state: RootState) => state.notification
-  );
+  const { data, isError } = useGetAccessTokenQuery();
 
-  const arg = {
-    UserID: user.UserID,
-  };
-  useEffect(() => {
-    dispatch(getAccessToken());
-    dispatch(getNotificationAction(arg));
-  }, []);
-  if (isLoading) {
+  const { user } = data!;
+
+  const {
+    data: result,
+    isFetching,
+    error,
+    status,
+    isUninitialized,
+  } = useGetAllNotificationsQuery(user.UserID);
+  // const { user, isAuthenticated } = useSelector(
+  //   (state: RootState) => state.authReducer
+  // );
+  // const { message, status, result, isLoading } = useSelector(
+  //   (state: RootState) => state.notification
+  // );
+
+  useEffect(() => {}, []);
+  if (isFetching || isUninitialized) {
     return <LoadingIndicator />;
   }
-  if (!isAuthenticated) {
+  if (isError) {
     return <Text>You are not authenticated please login again</Text>;
   }
   return (
     <View>
       <FlatList
-        data={result}
+        data={result?.result}
         renderItem={({ item }: { item: INotifications }) => (
           <Notification {...item} />
         )}

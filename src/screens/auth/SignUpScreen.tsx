@@ -139,7 +139,7 @@ const SignUpScreen = () => {
       <ScrollView
         style={{ flex: 1, height: "100%" }}
         contentContainerStyle={{
-          flex: 1,
+          flexGrow: 1,
           justifyContent: "center",
         }}
       >

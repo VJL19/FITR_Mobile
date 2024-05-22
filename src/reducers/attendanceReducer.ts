@@ -5,6 +5,9 @@ import {
   getSecretCode,
 } from "../actions/attendanceAction";
 import IAttendance from "../utils/types/attendance.types";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import loadConfig from "global/config";
+import * as SecureStore from "expo-secure-store";
 
 interface IAttendanceState {
   error: string;
@@ -14,6 +17,7 @@ interface IAttendanceState {
   IsScanQR: boolean;
   isLoading: boolean;
   user: IAttendance;
+  result: IAttendance[];
 }
 
 const initialState: IAttendanceState = {
@@ -34,7 +38,33 @@ const initialState: IAttendanceState = {
     IsPaid: false,
     IsScanQR: false,
   },
+  result: [],
 };
+
+const config = loadConfig();
+
+export const attendanceslice = createApi({
+  reducerPath: "user/attendance",
+  tagTypes: ["attendance"],
+  baseQuery: fetchBaseQuery({
+    baseUrl: config.BASE_URL,
+    prepareHeaders: async (headers: Headers) => {
+      // const token = (getState() as RootState).authReducer.accessToken;
+      const token = await SecureStore.getItemAsync("accessToken");
+      // console.log("state", getState());
+      if (token) {
+        headers.set("authorization", `Bearer ${token}`);
+      }
+      return headers;
+    },
+  }),
+  endpoints: (builder) => ({
+    getUserRecords: builder.query<IAttendanceState, number | undefined>({
+      query: (UserID) => `/user/specific_record/:${UserID}`,
+      providesTags: ["attendance"],
+    }),
+  }),
+});
 
 const attendanceSlice = createSlice({
   name: "attendance",
@@ -102,4 +132,5 @@ const attendanceSlice = createSlice({
   },
 });
 
+export const { useGetUserRecordsQuery } = attendanceslice;
 export default attendanceSlice.reducer;

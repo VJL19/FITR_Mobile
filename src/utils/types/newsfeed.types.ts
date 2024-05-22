@@ -7,6 +7,7 @@ export interface INewsFeed {
   PostDate: string;
   PostAuthor: string;
   Username: string;
+  PostID: number;
 }
 
 export interface IComments {
