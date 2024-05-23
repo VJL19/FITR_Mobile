@@ -1,4 +1,11 @@
-import { Alert, Button, StyleSheet, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  Alert,
+  Button,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import { useRoute, RouteProp, useNavigation } from "@react-navigation/native";
 import { DetailedRootStackNavigatorsParamList } from "utils/types/detailed_screens/DetailedRootStackNavigators";
@@ -11,20 +18,22 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AppDispatch, RootState } from "store/store";
 import { useDispatch, useSelector } from "react-redux";
 import Checkbox from "expo-checkbox";
-import registerUser from "actions/registerAction";
 import { useRegisterUserMutation } from "reducers/registerReducer";
-import DisplayAlert from "components/CustomAlert";
+import * as SecureStore from "expo-secure-store";
+import { setAuthenticated, setToken } from "reducers/authReducer";
+import LoadingIndicator from "components/LoadingIndicator";
 
 const TermsAndConditions = () => {
   const route =
     useRoute<
       RouteProp<DetailedRootStackNavigatorsParamList, "TermsAndCondition">
     >();
-  const dispatch: AppDispatch = useDispatch();
   const [IsChecked, setIsChecked] = useState<boolean>();
 
-  const [registerUser, { isSuccess, status, error, data }] =
-    useRegisterUserMutation();
+  const [
+    registerUser,
+    { isSuccess, isLoading, status, error, data: res, isError },
+  ] = useRegisterUserMutation();
   const navigation = useNavigation<RootStackNavigationProp>();
   const {
     LastName,
@@ -53,11 +62,32 @@ const TermsAndConditions = () => {
   // const { status, details, isLoading } = useSelector(
   //   (state: RootState) => state.register
   // );
+
+  useEffect(() => {
+    const loadToken = async () => {
+      const token = await SecureStore.getItemAsync("accessToken");
+      if (token) {
+        navigation.navigate("AuthStackScreens", { screen: "Sign In" });
+      }
+    };
+    loadToken();
+  }, [navigation]);
+  const dispatch: AppDispatch = useDispatch();
   useEffect(() => {
     //if the status code of request is 400, then alert something!
 
+    if (status === "rejected" && isSubmitted) {
+      Alert.alert("Error message", error?.data?.error?.sqlMessage, [
+        {
+          text: "Cancel",
+          onPress: () => {},
+          style: "cancel",
+        },
+        { text: "OK", onPress: () => {} },
+      ]);
+    }
     if (status === "fulfilled" && isSubmitted) {
-      Alert.alert("Success message", "", [
+      Alert.alert("Success message", "Successfully! register", [
         {
           text: "Cancel",
           onPress: () => {},
@@ -69,16 +99,14 @@ const TermsAndConditions = () => {
         await AsyncStorage.multiRemove(["form", "contactForm", "accountForm"]);
       };
       deleteItems();
-    }
-    if (status === "rejected" && isSubmitted) {
-      Alert.alert("Error message", "something went wrong!", [
-        {
-          text: "Cancel",
-          onPress: () => {},
-          style: "cancel",
-        },
-        { text: "OK", onPress: () => {} },
-      ]);
+
+      const setTokenAsync = async () => {
+        await SecureStore.setItemAsync("accessToken", res?.accessToken!);
+      };
+      setTokenAsync();
+      dispatch(setAuthenticated());
+      dispatch(setToken(res?.accessToken));
+      navigation.navigate("AuthStackScreens", { screen: "Sign In" });
     }
   }, [status, error]);
   useEffect(() => {
@@ -104,18 +132,21 @@ const TermsAndConditions = () => {
     };
     // dispatch(registerUser(newObj));
 
-    if (isSuccess) {
-      DisplayAlert("Success message", "Successfully register!");
-    }
     await new Promise((resolve) => setTimeout(resolve, 1500));
 
     registerUser(newObj);
-
-    // navigation.navigate("AuthStackScreens", { screen: "Sign In" });
-    console.log("status", status);
-    console.log("error", error);
-    console.log("data", data);
+    // if (!isError) {
+    //   navigation.navigate("AuthStackScreens", { screen: "Sign In" });
+    //   const removeAllFields = async () => {
+    //     await AsyncStorage.multiRemove(["form", "contactForm", "accountForm"]);
+    //     removeAllFields();
+    //   };
+    // }
   };
+  console.log("status", status);
+  console.log("error", error?.data?.error?.sqlMessage);
+  console.log("TOKEN", res?.accessToken);
+  console.log("status", status);
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Note:</Text>
@@ -140,11 +171,26 @@ const TermsAndConditions = () => {
       </View>
 
       <View style={{ width: "90%" }}>
-        <Button
-          title="Register"
-          onPress={handleSubmit(onSubmit)}
-          disabled={!IsChecked}
-        />
+        {!isLoading && (
+          <Button
+            title="Register"
+            onPress={handleSubmit(onSubmit)}
+            disabled={!IsChecked}
+          />
+        )}
+        {isLoading && (
+          <View
+            style={{
+              padding: 25,
+              width: 110,
+              borderRadius: 8,
+              alignSelf: "center",
+              backgroundColor: "#131313",
+            }}
+          >
+            <ActivityIndicator size="large" color="#f5f5f5" />
+          </View>
+        )}
       </View>
     </View>
   );

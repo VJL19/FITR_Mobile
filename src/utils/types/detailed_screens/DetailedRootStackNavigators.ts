@@ -6,35 +6,10 @@ export type DetailedRootStackNavigatorsParamList = {
   "Add Programs": undefined;
   "View Announcements": undefined;
   "Add Post": undefined;
-  "View Post Feed": {
-    PostImage: string;
-    PostTitle: string;
-    PostDescription: string;
-    PostAuthor: string;
-    PostDate: string;
-    comments?: IComments[];
-    NewsfeedID: number;
-    UserID: number;
-    Username: string;
-    PostID: number;
-  };
-  "View Post": {
-    PostImage: string;
-    PostTitle: string;
-    PostDescription: string;
-    PostDate: string;
-    PostID: number | undefined;
-  };
-  "Comment on Post": {
-    NewsfeedID: number;
-    UserID: number;
-    PostTitle: string;
-    NotificationDate: string;
-    CommentDate: string;
-    Username: string;
-    PostAuthor: string;
-    PostID: number;
-  };
+  "Edit Post": undefined;
+  "View Post Feed": undefined;
+  "View Post": undefined;
+  "Comment on Post": undefined;
   Notifications: undefined;
   "Gym Equipments": undefined;
   Workouts: undefined;
@@ -90,6 +65,7 @@ export type DetailedRootStackScreenProp = StackScreenProps<
   | "ContactInformation"
   | "AccountSetup"
   | "TermsAndCondition"
+  | "Edit Post"
 >;
 export type DetailedRootStackNavigationProp = StackNavigationProp<
   DetailedRootStackNavigatorsParamList,
@@ -108,4 +84,5 @@ export type DetailedRootStackNavigationProp = StackNavigationProp<
   | "ContactInformation"
   | "AccountSetup"
   | "TermsAndCondition"
+  | "Edit Post"
 >;

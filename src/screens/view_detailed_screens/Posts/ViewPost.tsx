@@ -1,31 +1,29 @@
 import { Button, StyleSheet, Text, View } from "react-native";
 import React, { useEffect } from "react";
-import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
-import { DetailedRootStackNavigatorsParamList } from "utils/types/detailed_screens/DetailedRootStackNavigators";
+import { useNavigation } from "@react-navigation/native";
 import DisplayAlert from "components/CustomAlert";
 import LoadingIndicator from "components/LoadingIndicator";
 import { useGetAccessTokenQuery } from "reducers/authReducer";
-import { useDeletePostsMutation } from "reducers/postReducer";
+import { setPostData, useDeletePostsMutation } from "reducers/postReducer";
 import {
   useDeleteCommentsMutation,
   useDeleteLikesMutation,
   useDeleteNotificationsMutation,
   useDeletePostInFeedMutation,
 } from "reducers/newsfeedReducer";
+import { AppDispatch, RootState } from "store/store";
+import { useDispatch, useSelector } from "react-redux";
 
 const ViewPost = () => {
-  const route =
-    useRoute<RouteProp<DetailedRootStackNavigatorsParamList, "View Post">>();
-
-  const { PostDate, PostDescription, PostImage, PostTitle, PostID } =
-    route.params;
-
   const {
     isError,
     data: user,
     isFetching,
     isUninitialized,
   } = useGetAccessTokenQuery();
+  const dispatch: AppDispatch = useDispatch();
+
+  const { postData } = useSelector((state: RootState) => state.post);
 
   const [deletePost, { data }] = useDeletePostsMutation();
   const [deletePostFeed, { data: feedData, status }] =
@@ -34,8 +32,15 @@ const ViewPost = () => {
   const [deleteComments, {}] = useDeleteCommentsMutation();
   const [deleteLikes, {}] = useDeleteLikesMutation();
   const [deleteNotifications, {}] = useDeleteNotificationsMutation();
-  useEffect(() => {}, []);
 
+  const {
+    PostAuthor,
+    PostDate,
+    PostDescription,
+    PostID,
+    PostImage,
+    PostTitle,
+  } = postData;
   const navigation = useNavigation();
 
   const handleDelete = async () => {

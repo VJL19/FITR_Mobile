@@ -21,13 +21,9 @@ import {
   useUnlikePostInFeedMutation,
 } from "reducers/newsfeedReducer";
 import { useGetAccessTokenQuery } from "reducers/authReducer";
+import { setCommentData } from "reducers/commentReducer";
 
 const DetailedPostFeed = () => {
-  const route =
-    useRoute<
-      RouteProp<DetailedRootStackNavigatorsParamList, "View Post Feed">
-    >();
-
   // const { user } = useSelector((state: RootState) => state.authReducer);
   const { comments, isLoading } = useSelector(
     (state: RootState) => state.comment
@@ -57,15 +53,13 @@ const DetailedPostFeed = () => {
     PostTitle,
     PostDescription,
     PostImage,
-    PostIsLike,
-    PostLikes,
     PostAuthor,
     PostDate,
     NewsfeedID,
     UserID,
     Username,
     PostID,
-  } = route.params;
+  } = useSelector((state: RootState) => state.comment.commentData);
 
   const arg = {
     UserID: user.UserID,
@@ -116,16 +110,6 @@ const DetailedPostFeed = () => {
   const handleComment = () => {
     navigation.navigate("DetailedScreens", {
       screen: "Comment on Post",
-      params: {
-        NewsfeedID: NewsfeedID,
-        PostTitle: PostTitle,
-        UserID: UserID,
-        PostAuthor: PostAuthor,
-        PostID: PostID,
-        Username: Username,
-        CommentDate: getCurrentDate(),
-        NotificationDate: getCurrentDate(),
-      },
     });
   };
 

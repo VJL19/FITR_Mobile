@@ -10,11 +10,11 @@ export interface INewsFeed {
   PostID: number;
 }
 
-export interface IComments {
+export interface IComments extends INewsFeed {
   UserID: number;
-  Username?: string;
   ProfilePic?: string;
   NewsfeedID: number;
   CommentID: number;
   CommentText: string;
+  CommentDate?: string;
 }

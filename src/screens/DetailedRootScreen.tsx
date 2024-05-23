@@ -19,6 +19,7 @@ import ChangeAccount from "./view_detailed_screens/MyAccount/ChangeAccount";
 import ContactInformation from "./view_detailed_screens/SignUp/ContactInformation";
 import AccountSetup from "./view_detailed_screens/SignUp/AccountSetup";
 import TermsAndConditions from "./view_detailed_screens/SignUp/TermsAndConditions";
+import EditPost from "./view_detailed_screens/Posts/EditPost";
 
 const DetailedRootScreen = () => {
   const config = {
@@ -86,6 +87,16 @@ const DetailedRootScreen = () => {
       <DetailedScreenStacks.Screen
         name="Add Post"
         component={AddPost}
+        options={{
+          presentation: "card",
+          gestureEnabled: true,
+          gestureDirection: "horizontal",
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+      />
+      <DetailedScreenStacks.Screen
+        name="Edit Post"
+        component={EditPost}
         options={{
           presentation: "card",
           gestureEnabled: true,

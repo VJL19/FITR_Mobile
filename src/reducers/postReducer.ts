@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import {
   deletePostAction,
   getPostAction,
@@ -18,6 +18,7 @@ interface IPostState {
   message: string;
   postItems: IPost[];
   result: IPost[];
+  postData: IPost;
 }
 
 const initialState: IPostState = {
@@ -27,6 +28,16 @@ const initialState: IPostState = {
   message: "",
   postItems: [],
   result: [],
+  postData: {
+    PostID: 0,
+    PostAuthor: "",
+    PostDate: "",
+    PostDescription: "",
+    PostImage: "",
+    PostTitle: "",
+    UserID: 0,
+    Username: "",
+  },
 };
 
 const config = loadConfig();
@@ -73,7 +84,14 @@ export const postslice = createApi({
 const postSlice = createSlice({
   name: "post",
   initialState,
-  reducers: {},
+  reducers: {
+    setPostData: (state, action: PayloadAction<IPost>) => {
+      state.postData = action.payload;
+    },
+    getPostData: (state) => {
+      state.postData;
+    },
+  },
   extraReducers: (builder) => {
     //calling api to post the user data.
     builder.addCase(postUserAction.fulfilled, (state, action) => {
@@ -127,6 +145,8 @@ const postSlice = createSlice({
     });
   },
 });
+
+export const { getPostData, setPostData } = postSlice.actions;
 export const { useAddPostMutation, useGetPostsQuery, useDeletePostsMutation } =
   postslice;
 export default postSlice.reducer;

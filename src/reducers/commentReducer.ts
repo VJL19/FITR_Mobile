@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import {
   commentPostAction,
   getAllCommentsAction,
@@ -13,6 +13,7 @@ interface ICommentState {
   isLoading: boolean;
 
   comments: IComments[];
+  commentData: IComments;
 }
 
 const initialState: ICommentState = {
@@ -21,12 +22,31 @@ const initialState: ICommentState = {
   status: 0,
   isLoading: false,
   comments: [],
+  commentData: {
+    NewsfeedID: 0,
+    UserID: 0,
+    CommentID: 0,
+    CommentText: "",
+    ProfilePic: "",
+    Username: "",
+    CommentDate: "",
+    PostTitle: "",
+    PostAuthor: "",
+    PostDate: "",
+    PostDescription: "",
+    PostID: 0,
+    PostImage: "",
+  },
 };
 
 const commentSlice = createSlice({
   name: "comment",
   initialState,
-  reducers: {},
+  reducers: {
+    setCommentData: (state, action: PayloadAction<IComments>) => {
+      state.commentData = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     //for getting all the comment in a post
     builder.addCase(getAllCommentsAction.fulfilled, (state, action) => {
@@ -83,5 +103,5 @@ const commentSlice = createSlice({
     });
   },
 });
-
+export const { setCommentData } = commentSlice.actions;
 export default commentSlice.reducer;

@@ -9,6 +9,7 @@ import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigat
 import { INewsFeed } from "utils/types/newsfeed.types";
 import getAccessToken from "actions/homeAction";
 import { useGetAccessTokenQuery } from "reducers/authReducer";
+import { setCommentData } from "reducers/commentReducer";
 
 const Postsfeed = ({
   PostTitle,
@@ -27,21 +28,25 @@ const Postsfeed = ({
 
   const navigation = useNavigation<RootStackNavigationProp>();
 
+  const dispatch: AppDispatch = useDispatch();
   const handlePress = () => {
     //navigate to another screen and pass params.
+
+    const arg = {
+      PostTitle: PostTitle,
+      PostDescription: PostDescription,
+      PostDate: PostDate,
+      PostAuthor: PostAuthor,
+      PostImage: PostImage,
+      NewsfeedID: NewsfeedID,
+      UserID: UserID,
+      Username: user.Username,
+      PostID: PostID,
+    };
+    dispatch(setCommentData(arg));
+
     navigation.navigate("DetailedScreens", {
       screen: "View Post Feed",
-      params: {
-        PostTitle: PostTitle,
-        PostDescription: PostDescription,
-        PostDate: PostDate,
-        PostAuthor: PostAuthor,
-        PostImage: PostImage,
-        NewsfeedID: NewsfeedID,
-        UserID: UserID,
-        Username: user.Username,
-        PostID: PostID,
-      },
     });
   };
 

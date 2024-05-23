@@ -4,6 +4,9 @@ import { IPost } from "utils/types/post.types";
 import logo from "assets/fitr_logo3.png";
 import { useNavigation } from "@react-navigation/native";
 import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
+import { AppDispatch } from "store/store";
+import { setPostData } from "reducers/postReducer";
+import { useDispatch } from "react-redux";
 
 const Posts = ({
   PostTitle,
@@ -11,18 +14,24 @@ const Posts = ({
   PostImage,
   PostDescription,
   PostID,
+  PostAuthor,
+  Username,
 }: IPost) => {
+  const dispatch: AppDispatch = useDispatch();
   const navigation = useNavigation<RootStackNavigationProp>();
   const handlePress = () => {
+    const arg = {
+      PostDate: PostDate,
+      PostDescription: PostDescription,
+      PostImage: PostImage,
+      PostTitle: PostTitle,
+      PostID: PostID,
+      PostAuthor: PostAuthor,
+      Username: Username,
+    };
+    dispatch(setPostData(arg));
     navigation.navigate("DetailedScreens", {
       screen: "View Post",
-      params: {
-        PostDate: PostDate,
-        PostDescription: PostDescription,
-        PostImage: PostImage,
-        PostTitle: PostTitle,
-        PostID: PostID,
-      },
     });
   };
   return (

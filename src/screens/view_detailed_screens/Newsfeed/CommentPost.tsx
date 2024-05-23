@@ -7,24 +7,17 @@ import DisplayFormError from "components/DisplayFormError";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { IComments } from "utils/types/newsfeed.types";
 import { commentSchema } from "utils/validations";
-import { commentPostAction, getAllCommentsAction } from "actions/commentAction";
-import { AppDispatch, RootState } from "store/store";
-import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "store/store";
+import { useSelector } from "react-redux";
 import DisplayAlert from "components/CustomAlert";
-import getAccessToken from "actions/homeAction";
-import { notifyCommentAction } from "actions/notificationAction";
 import { useGetAccessTokenQuery } from "reducers/authReducer";
 import {
   useCommentPostInFeedMutation,
   useNotifyCommentPostInFeedMutation,
 } from "reducers/newsfeedReducer";
+import getCurrentDate from "utils/helpers/formatDate";
 
 const CommentPost = () => {
-  const route =
-    useRoute<
-      RouteProp<DetailedRootStackNavigatorsParamList, "Comment on Post">
-    >();
-
   const { data } = useGetAccessTokenQuery();
   const { user } = data!;
 
@@ -39,7 +32,6 @@ const CommentPost = () => {
     resolver: joiResolver(commentSchema),
   });
 
-  const dispatch: AppDispatch = useDispatch();
   useEffect(() => {}, []);
   const {
     UserID,
@@ -47,10 +39,9 @@ const CommentPost = () => {
     NewsfeedID,
     PostAuthor,
     Username,
-    NotificationDate,
     CommentDate,
     PostID,
-  } = route.params;
+  } = useSelector((state: RootState) => state.comment.commentData);
 
   // const { message, status } = useSelector((state: RootState) => state.comment);
   const { message, status } = useSelector(
@@ -67,7 +58,7 @@ const CommentPost = () => {
     PostID: PostID,
     PostAuthor: PostAuthor,
     Username: Username,
-    NotificationDate: NotificationDate,
+    NotificationDate: getCurrentDate(),
     PostTitle: PostTitle,
   };
   const onComment = async (data: IComments) => {

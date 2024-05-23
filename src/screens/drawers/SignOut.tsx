@@ -19,7 +19,7 @@ import { logoutUser } from "actions/authAction";
 import { deleteToken } from "reducers/authReducer";
 const SignOut = () => {
   const navigation = useNavigation<DrawerStackNavigationProp>();
-  const signOut = useNavigation<RootStackNavigationProp>();
+  const rootNav = useNavigation<RootStackNavigationProp>();
 
   const { token, isAuthenticated } = useContext(AuthContext);
 
@@ -32,19 +32,33 @@ const SignOut = () => {
       await SecureStore.deleteItemAsync("accessToken");
     };
     deleteTokenAsync();
-    navigation.addListener("focus", async () => {
-      // await logOut();
-      dispatch(deleteToken());
-      const deleteTokenAsync = async () => {
-        await SecureStore.deleteItemAsync("accessToken");
-      };
-      deleteTokenAsync();
-      // await SecureStore.deleteItemAsync("accessToken");
-      // global_axios.defaults.headers.common["Authorization"] = "";
-    });
+    // navigation.addListener("focus", async () => {
+    //   // await logOut();
+    //   dispatch(deleteToken());
+    //   const deleteTokenAsync = async () => {
+    //     await SecureStore.deleteItemAsync("accessToken");
+    //   };
+    //   // await SecureStore.deleteItemAsync("accessToken");
+    // global_axios.defaults.headers.common["Authorization"] = "";
+    // });
+    deleteTokenAsync();
+    // rootNav.navigate("AuthStackScreens", { screen: "Sign In" });
     Alert.alert("Message!", "Log out successfully!");
     console.log("deleted successfully!");
   }, [isAuthenticated, token]);
+
+  // useEffect(() => {
+  //   const loadToken = async () => {
+  //     const token = await SecureStore.getItemAsync("accessToken");
+  //     if (!token) {
+  //       rootNav.reset({
+  //         index: 0,
+  //         routes: [{ name: "AuthStackScreens" }],
+  //       });
+  //     }
+  //   };
+  //   loadToken();
+  // }, [navigation]);
 
   return (
     <View>
