@@ -28,6 +28,7 @@ const AccountSetup = () => {
     control,
     handleSubmit,
     setValue,
+    watch,
     formState: { errors, isSubmitting, isValid, isSubmitted },
     reset,
   } = useForm<IAccountSetup>({
@@ -40,6 +41,13 @@ const AccountSetup = () => {
     setValue("ConfirmPassword", ConfirmPassword);
     setValue("Gender", Gender);
   }, []);
+
+  useEffect(() => {
+    const subscription = watch((value, { name, type }) =>
+      dispatch(setAccountInfoFields(value))
+    );
+    return () => subscription.unsubscribe();
+  }, [watch]);
   const gender = [
     { id: "1", label: "Male", value: "1" },
     { id: "2", label: "Female", value: "2" },

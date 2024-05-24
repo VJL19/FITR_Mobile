@@ -29,10 +29,10 @@ export interface IContactDetails {
 }
 
 export interface IAccountSetup {
-  Username: string;
-  Password: string;
-  ConfirmPassword: string;
-  Gender: string;
+  Username?: string;
+  Password?: string;
+  ConfirmPassword?: string;
+  Gender?: string;
   ProfilePic?: string;
 }
 

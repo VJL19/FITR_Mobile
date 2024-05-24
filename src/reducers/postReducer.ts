@@ -70,6 +70,14 @@ export const postslice = createApi({
       query: (UserID) => `/user/specific_post/:${UserID}`,
       providesTags: ["posts"],
     }),
+    editPost: builder.mutation<IPostState, IPost>({
+      query: (arg) => ({
+        url: "/user/edit_post",
+        method: "POST",
+        body: arg,
+      }),
+      invalidatesTags: ["posts"],
+    }),
     deletePosts: builder.mutation<IPostState, number | undefined>({
       query: (PostID) => ({
         url: `/user/delete_post/:${PostID}`,
@@ -147,6 +155,10 @@ const postSlice = createSlice({
 });
 
 export const { getPostData, setPostData } = postSlice.actions;
-export const { useAddPostMutation, useGetPostsQuery, useDeletePostsMutation } =
-  postslice;
+export const {
+  useAddPostMutation,
+  useGetPostsQuery,
+  useEditPostMutation,
+  useDeletePostsMutation,
+} = postslice;
 export default postSlice.reducer;

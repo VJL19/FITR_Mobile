@@ -33,6 +33,7 @@ const ContactInformation = () => {
     handleSubmit,
     setValue,
     formState: { errors, isSubmitting, isValid, isSubmitted },
+    watch,
     reset,
   } = useForm<IContactDetails>({
     resolver: joiResolver(contactDetailsSchema),
@@ -45,6 +46,12 @@ const ContactInformation = () => {
     setValue("Weight", Weight);
   }, []);
 
+  useEffect(() => {
+    const subscription = watch((value, { name, type }) =>
+      dispatch(setContactInfoFields(value))
+    );
+    return () => subscription.unsubscribe();
+  }, [watch]);
   const onSubmit = async (data: IContactDetails) => {
     console.log("contact data", data);
 

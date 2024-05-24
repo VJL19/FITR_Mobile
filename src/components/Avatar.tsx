@@ -46,12 +46,11 @@ const Avatar = () => {
       </View>
     );
   }
+
+  const url = data?.user?.ProfilePic;
   return (
     <View style={styles.container}>
-      <Image
-        source={require("../assets/avatar_default.jpeg")}
-        style={styles.avatarStyle}
-      />
+      <Image source={{ uri: url }} style={styles.avatarStyle} />
       <Text style={styles.avatarNameStyle}>
         {data?.user.LastName}, {data?.user.FirstName}
       </Text>

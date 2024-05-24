@@ -2,6 +2,7 @@ import Joi from "joi";
 import { IChangeAccount } from "../types/user.types";
 
 const myAccountSchema = Joi.object<IChangeAccount>({
+  UserID: Joi.number().required(),
   Username: Joi.string().alphanum().min(5).max(30).required().label("Username"),
   Email: Joi.string()
     .email({ minDomainSegments: 2, tlds: { allow: ["com", "ph"] } })

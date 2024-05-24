@@ -19,13 +19,23 @@ import { postSchema } from "utils/validations";
 import { useGetAccessTokenQuery } from "reducers/authReducer";
 import DisplayAlert from "components/CustomAlert";
 import getCurrentDate from "utils/helpers/formatDate";
+import { useNavigation } from "@react-navigation/native";
+import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
+import { useEditPostMutation } from "reducers/postReducer";
 
 const EditPost = () => {
-  const { PostTitle, PostImage, PostDescription } = useSelector(
+  const { PostTitle, PostImage, PostDescription, PostID } = useSelector(
     (state: RootState) => state.post.postData
   );
 
+  const navigation = useNavigation<RootStackNavigationProp>();
+
   const { isError, data: user } = useGetAccessTokenQuery();
+  const defaultValue = {
+    PostTitle: "",
+    PostDescription: "",
+  };
+  const [editPost, { data: editResult }] = useEditPostMutation();
 
   const {
     handleSubmit,
@@ -34,11 +44,12 @@ const EditPost = () => {
     setValue,
     formState: { isLoading, errors, isSubmitted },
   } = useForm<IPost>({
+    defaultValues: defaultValue,
     resolver: joiResolver(postSchema),
   });
 
   useEffect(() => {
-    setValue("PostImage", PostImage);
+    // setValue("PostImage", PostImage);
     setValue("PostTitle", PostTitle);
     setValue("PostDescription", PostDescription);
   }, []);
@@ -47,7 +58,7 @@ const EditPost = () => {
 
     console.log(data);
     const fullName = FirstName + " " + LastName;
-    setValue("UserID", UserID);
+    setValue("PostID", PostID);
     setValue("PostImage", "mydefault_poster.png");
     setValue("PostTitle", data.PostTitle);
     setValue("PostDescription", data.PostDescription);
@@ -57,6 +68,7 @@ const EditPost = () => {
 
     const postData = {
       UserID: UserID,
+      PostID: PostID,
       PostImage: "mydefault_poster.png",
       PostTitle: data.PostTitle,
       PostDate: getCurrentDate(),
@@ -65,18 +77,26 @@ const EditPost = () => {
       Username: Username,
     };
 
-    postUser(postData);
+    editPost(postData);
     // console.log("add posts", data);
     // dispatch(getPostAction(user.UserID));
 
-    console.log("add pressed", postResult?.message);
+    console.log("edit pressed", editResult?.message);
     // console.log("post message", result?.[0].NewsfeedID!);
 
-    DisplayAlert("Success message", "Post added successfully!");
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    navigation.goBack();
+    DisplayAlert("Success message", "Post edited added successfully!");
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    navigation.popToTop();
     reset();
   };
+  if (isError) {
+    return (
+      <View>
+        <Text>You are not authenticated!</Text>
+      </View>
+    );
+  }
+
   return (
     <ScrollView>
       <Image source={PostImage} style={{ height: 200, width: 345 }} />
@@ -152,7 +172,7 @@ const EditPost = () => {
       <DisplayFormError errors={errors.PostDescription} />
 
       <Button
-        title="Add Post"
+        title="Proceed"
         color={"#ff2e00"}
         onPress={handleSubmit(onSubmit, (error: FieldErrors<IPost>) =>
           console.log(error)

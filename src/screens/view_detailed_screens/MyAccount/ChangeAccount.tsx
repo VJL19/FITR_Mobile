@@ -14,13 +14,24 @@ import Ionicon from "react-native-vector-icons/Ionicons";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { IChangeAccount } from "utils/types/user.types";
 import { myAccountSchema } from "utils/validations";
-import getAccessToken from "actions/homeAction";
 import { setRoute } from "reducers/routeReducer";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "store/store";
 import * as ImagePicker from "expo-image-picker";
 import avatar from "assets/avatar_default.jpeg";
 import uploadImageAction from "actions/uploadImageAction";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { storage } from "global/firebaseConfig";
+import {
+  setToken,
+  useChangeAccountMutation,
+  useGetAccessTokenQuery,
+  useLoginUserMutation,
+} from "reducers/authReducer";
+import DisplayAlert from "components/CustomAlert";
+import { useNavigation } from "@react-navigation/native";
+import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
+import * as SecureStore from "expo-secure-store";
 
 const initialState: IChangeAccount = {
   Username: "",
@@ -28,16 +39,21 @@ const initialState: IChangeAccount = {
   ContactNumber: "",
   Password: "",
   ConfirmPassword: "",
+  UserID: 0,
 };
 
 const ChangeAccount = () => {
   const dispatch: AppDispatch = useDispatch();
   const [image, setImage] = useState<string | null | undefined>();
-  const [base64, setBase64] = useState<string | null | undefined>();
+  const [ProfilePic, setProfilePic] = useState<string | undefined>();
+
+  const { data: user, isError, refetch } = useGetAccessTokenQuery();
+  const [changeAccount, { error, data, status }] = useChangeAccountMutation();
+  const navigation = useNavigation<RootStackNavigationProp>();
+  const [imageUploaded, setImageUploaded] = useState(false);
   const {
     handleSubmit,
     reset,
-    setValue,
     control,
     formState: { isLoading, isSubmitted, errors },
   } = useForm<IChangeAccount>({
@@ -45,35 +61,55 @@ const ChangeAccount = () => {
     resolver: joiResolver(myAccountSchema),
   });
 
-  const {
-    message,
-    isLoading: imageLoading,
-    error,
-    status,
-  } = useSelector((state: RootState) => state.uploadImage);
+  // const {
+  //   message,
+  //   isLoading: imageLoading,
+  //   error,
+  //   status,
+  // } = useSelector((state: RootState) => state.uploadImage);
+
   useEffect(() => {
     dispatch(setRoute("My Account"));
-    dispatch(getAccessToken());
   }, []);
-  const onSubmit = async (data: IChangeAccount) => {
-    console.log(data);
 
-    console.log(imageLoading);
-
-    const arg = {
-      file: image,
-      base64: base64,
-    };
-
-    dispatch(uploadImageAction(arg));
-    if (status == 200) {
-      console.log("message uploaded image", message);
-      console.log("error uploaded image", error);
+  useEffect(() => {
+    if (status === "rejected" && isSubmitted) {
+      DisplayAlert("Error, message", error?.data?.error?.sqlMessage);
     }
-    console.log("message uploaded image", message);
-    console.log("error uploaded image", error);
+    if (status === "fulfilled" && isSubmitted) {
+      dispatch(setToken(data?.accessToken));
+      const setTokenAsync = async () => {
+        await SecureStore.setItemAsync("accessToken", data?.accessToken!);
+      };
+      setTokenAsync();
+      DisplayAlert("Success, message", data?.message);
+    }
+  }, [status, data?.message]);
+
+  const onSubmit = async (data: IChangeAccount) => {
+    await uploadImage(ProfilePic, "image");
+    const arg = {
+      ...data,
+      ProfilePic: ProfilePic,
+      UserID: user?.user?.UserID,
+      LastName: user?.user?.LastName,
+      FirstName: user?.user?.FirstName,
+      MiddleName: user?.user?.MiddleName,
+      Height: user?.user?.Height,
+      Weight: user?.user?.Weight,
+      Gender: user?.user?.Gender,
+    };
+    if (imageUploaded) {
+      changeAccount(arg);
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      console.log("Profile pic", ProfilePic);
+      // navigation.popToTop();
+      refetch();
+    }
   };
-  console.log("ayweh", message);
+  console.log("change account res", status);
+  console.log("change account data", data);
+
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -87,12 +123,50 @@ const ChangeAccount = () => {
 
     if (!result.canceled) {
       setImage(result.assets[0].uri);
-      setBase64(result.assets[0].base64);
+      setProfilePic(result.assets[0].uri);
+      // setBase64(result.assets[0].base64);
     }
   };
 
+  const uploadImage = async (uri: string, fileType: string) => {
+    try {
+      const response = await fetch(uri);
+      const blob = await response.blob();
+
+      const storageRef = ref(storage, "ProfilePics/" + new Date().getTime());
+      const uploadTask = uploadBytesResumable(storageRef, blob);
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {},
+        //if the upload image is error
+        (error) => {
+          console.log("Image upload error!", error);
+        },
+        //if the upload image is sucess
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref)
+            .then(async (downloadUrl) => {
+              setImageUploaded(true);
+              setProfilePic(downloadUrl);
+              console.log("Image available at!", downloadUrl);
+            })
+            .catch((err) => console.log("error", err));
+        }
+      );
+    } catch (err) {
+      console.log("errpr", err);
+    }
+  };
+
+  if (isError) {
+    return (
+      <View>
+        <Text>You are not authenticated</Text>
+      </View>
+    );
+  }
   return (
-    <View>
+    <ScrollView>
       <View>
         <Image
           source={image === undefined ? avatar : { uri: image }}
@@ -184,9 +258,14 @@ const ChangeAccount = () => {
       </ScrollView>
 
       <View style={{ width: "90%" }}>
-        <Button title="Save info" onPress={handleSubmit(onSubmit)} />
+        <Button
+          title="Save info"
+          onPress={handleSubmit(onSubmit, (error) =>
+            console.log("error", error)
+          )}
+        />
       </View>
-    </View>
+    </ScrollView>
   );
 };
 

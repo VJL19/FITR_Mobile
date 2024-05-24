@@ -33,7 +33,7 @@ const BottomRootScreen = ({
 
   const { isUninitialized, isFetching, data, status, isError } =
     useGetAccessTokenQuery(undefined, {
-      refetchOnMountOrArgChange: 15,
+      refetchOnMountOrArgChange: true,
     });
   useEffect(() => {
     dispatch(setRoute(route.name));

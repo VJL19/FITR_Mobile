@@ -17,38 +17,37 @@ import getAccessToken from "actions/homeAction";
 import { useNavigation } from "@react-navigation/native";
 import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
 import LoadingIndicator from "components/LoadingIndicator";
+import { useGetAccessTokenQuery } from "reducers/authReducer";
 
 const MyAccount = () => {
   const dispatch: AppDispatch = useDispatch();
 
-  const { user, isLoading, isAuthenticated } = useSelector(
-    (state: RootState) => state.authReducer
-  );
+  const { isError, data, isUninitialized, isFetching, refetch } =
+    useGetAccessTokenQuery(undefined, {});
 
+  const { user } = data!;
   const navigation = useNavigation<RootStackNavigationProp>();
   const [image, setImage] = useState<string | undefined>();
   useEffect(() => {
     dispatch(setRoute("My Account"));
-    dispatch(getAccessToken());
   }, []);
 
-  if (isLoading) {
+  if (isFetching || isUninitialized) {
     return <LoadingIndicator />;
   }
-  if (!isAuthenticated) {
+  if (isError) {
     return (
       <View>
         <Text>You are not authenticated! Please login again!</Text>
       </View>
     );
   }
+  console.log("hey", data);
+  const url = user?.ProfilePic === null ? avatar : user?.ProfilePic;
   return (
     <View style={styles.container}>
       <View>
-        <Image
-          source={image === undefined ? avatar : { uri: image }}
-          style={styles.image}
-        />
+        <Image source={{ uri: url }} style={styles.image} />
       </View>
       <ScrollView
         style={{
@@ -57,15 +56,15 @@ const MyAccount = () => {
       >
         <View style={{ flex: 1, flexDirection: "column" }}>
           <Text style={styles.title}>Username</Text>
-          <Text>{user.Username}</Text>
+          <Text>{user?.Username}</Text>
         </View>
         <View style={{ flex: 1, flexDirection: "column" }}>
           <Text style={styles.title}>Email</Text>
-          <Text>{user.Email}</Text>
+          <Text>{user?.Email}</Text>
         </View>
         <View style={{ flex: 1, flexDirection: "column" }}>
           <Text style={styles.title}>Contact Number</Text>
-          <Text>{user.ContactNumber}</Text>
+          <Text>{user?.ContactNumber}</Text>
         </View>
       </ScrollView>
       <View style={{ width: "90%" }}>

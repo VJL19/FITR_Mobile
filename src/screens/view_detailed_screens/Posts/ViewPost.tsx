@@ -20,7 +20,10 @@ const ViewPost = () => {
     data: user,
     isFetching,
     isUninitialized,
-  } = useGetAccessTokenQuery();
+  } = useGetAccessTokenQuery(undefined, {
+    refetchOnMountOrArgChange: true,
+    refetchOnFocus: true,
+  });
   const dispatch: AppDispatch = useDispatch();
 
   const { postData } = useSelector((state: RootState) => state.post);
@@ -60,6 +63,13 @@ const ViewPost = () => {
     console.log("deleted pressed");
   };
 
+  if (isError) {
+    return (
+      <View>
+        <Text>You are not authenticated!</Text>
+      </View>
+    );
+  }
   if (isFetching || isUninitialized) {
     return <LoadingIndicator />;
   }

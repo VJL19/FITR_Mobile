@@ -20,9 +20,6 @@ import {
 import { AuthContext } from "context/AuthContext";
 
 const DashboardScreen = ({ navigation }: RootStackScreenProp) => {
-  const { isAuthenticated, accessToken, status } = useSelector(
-    (state: RootState) => state.authReducer
-  );
   const { route: nav } = useSelector((state: RootState) => state.route);
 
   function getHeaderTitle(route) {

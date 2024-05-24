@@ -80,6 +80,7 @@ export interface LoginPayload {
 }
 
 export interface IChangeAccount {
+  UserID: number | undefined;
   Username: string;
   Email: string;
   ContactNumber: string;

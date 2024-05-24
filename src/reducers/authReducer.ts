@@ -1,7 +1,11 @@
 import { getToken, loginUser } from "../actions/authAction";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import IUser, { IAuthState, LoginPayload } from "../utils/types/user.types";
+import IUser, {
+  IAuthState,
+  IChangeAccount,
+  LoginPayload,
+} from "../utils/types/user.types";
 import * as SecureStore from "expo-secure-store";
 import testToken from "../actions/homeAction";
 import loadConfig from "../global/config";
@@ -60,8 +64,8 @@ export const authslice = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: config.BASE_URL,
     prepareHeaders: async (headers: Headers, { getState }) => {
-      // const token = (getState() as RootState).authReducer.accessToken;
-      const token = await SecureStore.getItemAsync("accessToken");
+      const token = (getState() as RootState).authReducer.accessToken;
+      // const token = await SecureStore.getItemAsync("accessToken");
       // console.log("state", getState());
       console.log("in auth slice", token);
       if (token) {
@@ -77,9 +81,19 @@ export const authslice = createApi({
         method: "POST",
         body: loginPayload,
       }),
+      invalidatesTags: ["auth"],
     }),
     getAccessToken: builder.query<IAuthState, void>({
       query: () => "/user/dashboard",
+      providesTags: ["auth"],
+    }),
+    changeAccount: builder.mutation<IAuthState, IChangeAccount>({
+      query: (arg) => ({
+        url: "/user/edit_account",
+        method: "POST",
+        body: arg,
+      }),
+      invalidatesTags: ["auth"],
     }),
   }),
 });
@@ -237,5 +251,9 @@ export const {
   setAccountInfoFields,
   clearFormFields,
 } = authSlice.actions;
-export const { useLoginUserMutation, useGetAccessTokenQuery } = authslice;
+export const {
+  useLoginUserMutation,
+  useGetAccessTokenQuery,
+  useChangeAccountMutation,
+} = authslice;
 export default authSlice.reducer;
