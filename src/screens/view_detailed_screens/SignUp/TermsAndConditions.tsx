@@ -7,27 +7,24 @@ import {
   View,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { useRoute, RouteProp, useNavigation } from "@react-navigation/native";
-import { DetailedRootStackNavigatorsParamList } from "utils/types/detailed_screens/DetailedRootStackNavigators";
+import { useNavigation } from "@react-navigation/native";
 import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { useForm } from "react-hook-form";
 import IForm, { IAccountSetup } from "utils/types/form.types";
 import { formSchema } from "utils/validations";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AppDispatch, RootState } from "store/store";
 import { useDispatch, useSelector } from "react-redux";
 import Checkbox from "expo-checkbox";
 import { useRegisterUserMutation } from "reducers/registerReducer";
 import * as SecureStore from "expo-secure-store";
-import { setAuthenticated, setToken } from "reducers/authReducer";
-import LoadingIndicator from "components/LoadingIndicator";
+import {
+  clearFormFields,
+  setAuthenticated,
+  setToken,
+} from "reducers/authReducer";
 
 const TermsAndConditions = () => {
-  const route =
-    useRoute<
-      RouteProp<DetailedRootStackNavigatorsParamList, "TermsAndCondition">
-    >();
   const [IsChecked, setIsChecked] = useState<boolean>();
 
   const [
@@ -35,20 +32,17 @@ const TermsAndConditions = () => {
     { isSuccess, isLoading, status, error, data: res, isError },
   ] = useRegisterUserMutation();
   const navigation = useNavigation<RootStackNavigationProp>();
-  const {
-    LastName,
-    FirstName,
-    MiddleName,
-    Age,
-    ContactNumber,
-    Email,
-    Height,
-    Weight,
-    Username,
-    Password,
-    ConfirmPassword,
-    Gender,
-  } = route.params;
+
+  const { LastName, FirstName, MiddleName, Age } = useSelector(
+    (state: RootState) => state.authReducer.personalInfo
+  );
+  const { ContactNumber, Email, Height, Weight } = useSelector(
+    (state: RootState) => state.authReducer.contactInfo
+  );
+
+  const { Username, Password, ConfirmPassword, Gender } = useSelector(
+    (state: RootState) => state.authReducer.accountInfo
+  );
   const {
     control,
     handleSubmit,
@@ -58,10 +52,6 @@ const TermsAndConditions = () => {
   } = useForm<IForm>({
     resolver: joiResolver(formSchema),
   });
-
-  // const { status, details, isLoading } = useSelector(
-  //   (state: RootState) => state.register
-  // );
 
   useEffect(() => {
     const loadToken = async () => {
@@ -95,11 +85,7 @@ const TermsAndConditions = () => {
         },
         { text: "OK", onPress: () => {} },
       ]);
-      const deleteItems = async () => {
-        await AsyncStorage.multiRemove(["form", "contactForm", "accountForm"]);
-      };
-      deleteItems();
-
+      dispatch(clearFormFields());
       const setTokenAsync = async () => {
         await SecureStore.setItemAsync("accessToken", res?.accessToken!);
       };

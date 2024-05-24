@@ -12,30 +12,22 @@ import DisplayFormError from "components/DisplayFormError";
 import LoadingIndicator from "components/LoadingIndicator";
 import { RadioGroup } from "react-native-radio-buttons-group";
 import avatar from "assets/avatar_default.jpeg";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "store/store";
+import { setAccountInfoFields } from "reducers/authReducer";
 
 const AccountSetup = () => {
-  const route =
-    useRoute<RouteProp<DetailedRootStackNavigatorsParamList, "AccountSetup">>();
-  const [initialField, setInitialField] = useState<string | undefined>();
+  const { Username, Password, ConfirmPassword, Gender } = useSelector(
+    (state: RootState) => state.authReducer.accountInfo
+  );
+  const dispatch: AppDispatch = useDispatch();
 
   const navigation = useNavigation<RootStackNavigationProp>();
-  const {
-    LastName,
-    FirstName,
-    MiddleName,
-    Age,
-    ContactNumber,
-    Email,
-    Height,
-    Weight,
-  } = route.params;
 
   const {
     control,
     handleSubmit,
     setValue,
-    getValues,
     formState: { errors, isSubmitting, isValid, isSubmitted },
     reset,
   } = useForm<IAccountSetup>({
@@ -43,60 +35,20 @@ const AccountSetup = () => {
   });
 
   useEffect(() => {
-    const loadFieldState = async () => {
-      const value = await AsyncStorage.getItem("accountForm");
-      if (value != null) {
-        const parseValue = JSON.parse(value);
-        setInitialField(parseValue);
-      }
-    };
-    loadFieldState();
+    setValue("Username", Username);
+    setValue("Password", Password);
+    setValue("ConfirmPassword", ConfirmPassword);
+    setValue("Gender", Gender);
   }, []);
   const gender = [
     { id: "1", label: "Male", value: "1" },
     { id: "2", label: "Female", value: "2" },
   ];
 
-  useEffect(() => {
-    setValue("LastName", LastName);
-    setValue("FirstName", FirstName);
-    setValue("MiddleName", MiddleName);
-    setValue("Age", Age);
-    setValue("ContactNumber", ContactNumber);
-    setValue("Email", Email);
-    setValue("Height", Height);
-    setValue("Weight", Weight);
-    if (initialField !== undefined) {
-      setValue("Username", initialField?.Username);
-      setValue("Password", initialField?.Password);
-      setValue("ConfirmPassword", initialField?.ConfirmPassword);
-      setValue("Gender", initialField?.Gender);
-    }
-    console.log("in account setup", initialField);
-  }, [initialField]);
-
   const onSubmit = async (data: IAccountSetup) => {
-    try {
-      await AsyncStorage.setItem("accountForm", JSON.stringify(data));
-    } catch (e) {
-      console.log("error in setting async item", e);
-    }
+    dispatch(setAccountInfoFields(data));
     navigation.navigate("DetailedScreens", {
       screen: "TermsAndCondition",
-      params: {
-        LastName: getValues("LastName"),
-        FirstName: getValues("FirstName"),
-        MiddleName: getValues("MiddleName"),
-        Age: getValues("Age"),
-        ContactNumber: getValues("ContactNumber"),
-        Email: getValues("Email"),
-        Height: getValues("Height"),
-        Weight: getValues("Weight"),
-        Username: getValues("Username"),
-        Password: getValues("Password"),
-        ConfirmPassword: getValues("ConfirmPassword"),
-        Gender: getValues("Gender"),
-      },
     });
   };
 

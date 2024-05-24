@@ -54,6 +54,24 @@ export interface IAuthState {
   message: string | unknown | undefined;
   isAuthenticated: boolean;
   isLoading: boolean;
+  personalInfo: {
+    LastName: string;
+    FirstName: string;
+    MiddleName: string;
+    Age: string;
+  };
+  contactInfo: {
+    ContactNumber: string;
+    Email: string;
+    Height: string;
+    Weight: string;
+  };
+  accountInfo: {
+    Username: string;
+    Password: string;
+    ConfirmPassword: string;
+    Gender: string;
+  };
 }
 
 export interface LoginPayload {

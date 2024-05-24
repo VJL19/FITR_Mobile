@@ -22,10 +22,6 @@ export interface IPersonalDetails {
 }
 
 export interface IContactDetails {
-  LastName: string;
-  FirstName: string;
-  MiddleName: string;
-  Age: string;
   ContactNumber: string;
   Email: string;
   Height: string;
@@ -33,14 +29,6 @@ export interface IContactDetails {
 }
 
 export interface IAccountSetup {
-  LastName: string;
-  FirstName: string;
-  MiddleName: string;
-  Age: string;
-  ContactNumber: string;
-  Email: string;
-  Height: string;
-  Weight: string;
   Username: string;
   Password: string;
   ConfirmPassword: string;

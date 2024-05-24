@@ -8,7 +8,6 @@ import {
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
-import { DetailedRootStackNavigatorsParamList } from "utils/types/detailed_screens/DetailedRootStackNavigators";
 import { Controller, useForm } from "react-hook-form";
 import { IContactDetails } from "utils/types/form.types";
 import { joiResolver } from "@hookform/resolvers/joi";
@@ -18,74 +17,40 @@ import DisplayFormError from "components/DisplayFormError";
 import LoadingIndicator from "components/LoadingIndicator";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "store/store";
+import { setContactInfoFields } from "reducers/authReducer";
 
 const ContactInformation = () => {
   const navigation = useNavigation<RootStackNavigationProp>();
-  const route =
-    useRoute<
-      RouteProp<DetailedRootStackNavigatorsParamList, "ContactInformation">
-    >();
-  const { LastName, FirstName, MiddleName, Age } = route.params;
-  const [initialField, setInitialField] = useState<string | undefined>();
 
+  const { ContactNumber, Email, Height, Weight } = useSelector(
+    (state: RootState) => state.authReducer.contactInfo
+  );
+  const dispatch: AppDispatch = useDispatch();
   const {
     control,
     handleSubmit,
     setValue,
-    getValues,
     formState: { errors, isSubmitting, isValid, isSubmitted },
-    watch,
     reset,
   } = useForm<IContactDetails>({
     resolver: joiResolver(contactDetailsSchema),
   });
 
   useEffect(() => {
-    const loadFieldState = async () => {
-      const value = await AsyncStorage.getItem("contactForm");
-      if (value != null) {
-        const parseValue = JSON.parse(value);
-        setInitialField(parseValue);
-      }
-    };
-    loadFieldState();
+    setValue("ContactNumber", ContactNumber);
+    setValue("Email", Email);
+    setValue("Height", Height);
+    setValue("Weight", Weight);
   }, []);
-
-  useEffect(() => {
-    setValue("LastName", LastName);
-    setValue("FirstName", FirstName);
-    setValue("MiddleName", MiddleName);
-    setValue("Age", Age);
-    if (initialField !== undefined) {
-      setValue("ContactNumber", initialField?.ContactNumber);
-      setValue("Email", initialField?.Email);
-      setValue("Height", initialField?.Height);
-      setValue("Weight", initialField?.Weight);
-    }
-    console.log("in contact", initialField);
-  }, [initialField]);
 
   const onSubmit = async (data: IContactDetails) => {
     console.log("contact data", data);
-    try {
-      await AsyncStorage.setItem("contactForm", JSON.stringify(data));
-    } catch (e) {
-      console.log("error in setting the contact form item", e);
-    }
 
+    dispatch(setContactInfoFields(data));
     navigation.navigate("DetailedScreens", {
       screen: "AccountSetup",
-      params: {
-        LastName: getValues("LastName"),
-        FirstName: getValues("FirstName"),
-        MiddleName: getValues("MiddleName"),
-        Age: getValues("Age"),
-        ContactNumber: getValues("ContactNumber"),
-        Email: getValues("Email"),
-        Height: getValues("Height"),
-        Weight: getValues("Weight"),
-      },
     });
   };
   const arr: INavigate[] = [

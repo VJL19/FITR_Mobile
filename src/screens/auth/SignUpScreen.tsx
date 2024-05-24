@@ -13,51 +13,41 @@ import { useNavigation } from "@react-navigation/native";
 import IForm, { IPersonalDetails } from "utils/types/form.types";
 import { formSchema, personalDetailsSchema } from "utils/validations";
 import { joiResolver } from "@hookform/resolvers/joi";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
 import CustomTextInput from "components/CustomTextInput";
 import DisplayFormError from "components/DisplayFormError";
 import LoadingIndicator from "components/LoadingIndicator";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "store/store";
+import { clearFormFields, setPersonalInfoFields } from "reducers/authReducer";
 
 const SignUpScreen = () => {
   const navigation = useNavigation<RootStackNavigationProp>();
   const [image, setImage] = useState<string | undefined>();
-  const [initialField, setInitialField] = useState<string | undefined>();
 
+  const { LastName, FirstName, MiddleName, Age } = useSelector(
+    (state: RootState) => state.authReducer.personalInfo
+  );
   const {
     control,
     handleSubmit,
     getValues,
     setValue,
+    watch,
     formState: { errors, isSubmitting, isValid, isSubmitted },
     reset,
   } = useForm<IPersonalDetails>({
     resolver: joiResolver(personalDetailsSchema),
   });
 
-  useEffect(() => {
-    const loadFormFields = async () => {
-      try {
-        const value = await AsyncStorage.getItem("form");
-        if (value != null) {
-          const parseValue = JSON.parse(value);
-          setInitialField(parseValue);
-        }
-      } catch (e) {
-        console.log("error in getting the item", e);
-      }
-    };
-    loadFormFields();
-  }, []);
+  const dispatch: AppDispatch = useDispatch();
 
   useEffect(() => {
-    if (initialField !== undefined) {
-      setValue("LastName", initialField?.LastName);
-      setValue("FirstName", initialField?.FirstName);
-      setValue("Age", initialField?.Age);
-      setValue("MiddleName", initialField?.MiddleName);
-    }
-  }, [initialField]);
+    setValue("LastName", LastName);
+    setValue("FirstName", FirstName);
+    setValue("Age", Age);
+    setValue("MiddleName", MiddleName);
+  }, []);
 
   const onSubmit = async (data: IPersonalDetails) => {
     // const newObj: IForm = {
@@ -71,19 +61,10 @@ const SignUpScreen = () => {
     // console.log(ext?.[ext?.length - 1]);
     console.log("data", data);
 
-    try {
-      await AsyncStorage.setItem("form", JSON.stringify(data));
-    } catch (e) {
-      console.log("error in setting the item", e);
-    }
+    dispatch(setPersonalInfoFields(data));
+
     navigation.navigate("DetailedScreens", {
       screen: "ContactInformation",
-      params: {
-        LastName: getValues("LastName"),
-        FirstName: getValues("FirstName"),
-        MiddleName: getValues("MiddleName"),
-        Age: getValues("Age"),
-      },
     });
     // dispatch(registerUser(newObj));
     // navigation.navigate("DashboardScreen");
@@ -103,8 +84,8 @@ const SignUpScreen = () => {
           e.preventDefault();
           // Prompt the user before leaving the screen
           Alert.alert(
-            "Discard signup?",
-            "The values in the fiels will not be saved. Are you sure to discard them and leave the screen?",
+            "Confirmation",
+            "The values in the fields will not be saved. Are you sure to discard them and leave the screen?",
             [
               { text: "Don't leave", style: "cancel", onPress: () => {} },
               {
@@ -114,11 +95,7 @@ const SignUpScreen = () => {
                 // This will continue the action that had triggered the removal of the screen
                 onPress: async () => {
                   navigation.dispatch(e.data.action);
-                  await AsyncStorage.multiRemove([
-                    "form",
-                    "contactForm",
-                    "accountForm",
-                  ]);
+                  dispatch(clearFormFields());
                 },
               },
             ]
@@ -211,7 +188,7 @@ const SignUpScreen = () => {
         <Button
           title="Proceed 1 out of 4"
           color={"#ff2e00"}
-          onPress={handleSubmit(onSubmit)}
+          onPress={handleSubmit(onSubmit, (err) => console.log(err))}
         />
       </View>
     </View>

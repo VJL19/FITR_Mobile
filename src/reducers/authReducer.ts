@@ -1,13 +1,26 @@
 import { getToken, loginUser } from "../actions/authAction";
-import { createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import IUser, { IAuthState, LoginPayload } from "../utils/types/user.types";
-import { useEffect } from "react";
-import global_axios from "../global/axios";
 import * as SecureStore from "expo-secure-store";
 import testToken from "../actions/homeAction";
 import loadConfig from "../global/config";
 import { RootState } from "store/store";
+import { State } from "react-native-gesture-handler";
+import { IAccountSetup } from "utils/types/form.types";
+
+interface IPersonalInfoField {
+  Age: string;
+  FirstName: string;
+  LastName: string;
+  MiddleName: string;
+}
+interface IContactInfoField {
+  ContactNumber: string;
+  Email: string;
+  Height: string;
+  Weight: string;
+}
 
 const initialState: IAuthState = {
   status: 0,
@@ -16,6 +29,24 @@ const initialState: IAuthState = {
   message: "",
   isAuthenticated: false,
   isLoading: false,
+  personalInfo: {
+    Age: "",
+    FirstName: "",
+    LastName: "",
+    MiddleName: "",
+  },
+  contactInfo: {
+    ContactNumber: "",
+    Email: "",
+    Height: "",
+    Weight: "",
+  },
+  accountInfo: {
+    Username: "",
+    Password: "",
+    ConfirmPassword: "",
+    Gender: "",
+  },
 };
 const config = loadConfig();
 
@@ -85,6 +116,38 @@ const authSlice = createSlice({
       deleteStoreToken();
       state.accessToken = "";
       state.isAuthenticated = false;
+    },
+    setPersonalInfoFields: (
+      state,
+      action: PayloadAction<IPersonalInfoField>
+    ) => {
+      state.personalInfo = action.payload;
+    },
+    setContactInfoFields: (state, action: PayloadAction<IContactInfoField>) => {
+      state.contactInfo = action.payload;
+    },
+    setAccountInfoFields: (state, action: PayloadAction<IAccountSetup>) => {
+      state.accountInfo = action.payload;
+    },
+    clearFormFields: (state) => {
+      state.personalInfo = {
+        Age: "",
+        FirstName: "",
+        LastName: "",
+        MiddleName: "",
+      };
+      state.contactInfo = {
+        ContactNumber: "",
+        Email: "",
+        Height: "",
+        Weight: "",
+      };
+      state.accountInfo = {
+        Username: "",
+        Password: "",
+        ConfirmPassword: "",
+        Gender: "",
+      };
     },
     loadToken: (state) => {
       // const ACCESS_TOKEN = "accessToken";
@@ -169,6 +232,10 @@ export const {
   deleteToken,
   getStoredToken,
   setAuthenticated,
+  setPersonalInfoFields,
+  setContactInfoFields,
+  setAccountInfoFields,
+  clearFormFields,
 } = authSlice.actions;
 export const { useLoginUserMutation, useGetAccessTokenQuery } = authslice;
 export default authSlice.reducer;
