@@ -27,6 +27,8 @@ import QRCode from "react-native-qrcode-svg";
 import { encryptUserRecord } from "utils/helpers/hashQrData";
 import { RadioGroup } from "react-native-radio-buttons-group";
 import { BarCodeScanningResult } from "expo-camera/build/legacy/Camera.types";
+import { useGetAccessTokenQuery } from "reducers/authReducer";
+import { useCheckUserScanQrQuery } from "reducers/attendanceReducer";
 const Attendance = () => {
   const [hasPermission, setHasPermission] = useState<boolean>();
   const [scanned, setScanned] = useState(false);
@@ -55,19 +57,16 @@ const Attendance = () => {
   ];
 
   const dispatch: AppDispatch = useDispatch();
-  const { status, error, message, secretCode, IsScanQR, isLoading } =
-    useSelector((state: RootState) => state.attendance);
 
-  const { user, isAuthenticated } = useSelector(
-    (state: RootState) => state.authReducer
-  );
+  const { data, isError, isUninitialized, isFetching } =
+    useGetAccessTokenQuery();
 
-  // console.log("secret code", secretCode);
+  const { user } = data!;
+  const { data: IsScanQR } = useCheckUserScanQrQuery(user?.UserID, {
+    refetchOnMountOrArgChange: true,
+    refetchOnFocus: true,
+  });
   console.log("is Scan Qr", IsScanQR);
-  console.log("message att", message);
-  console.log("status att", status);
-  // console.log("error att", error);
-  // console.log("current att", user);
   const userRecord: IAttendance = {
     UserID: user.UserID,
     ProfilePic: user.ProfilePic,
@@ -105,11 +104,8 @@ const Attendance = () => {
   //   IsScanQR: "true",
   // };
 
-  console.log(selectedSubscription);
   useEffect(() => {
     dispatch(getSecretCode());
-    dispatch(getAccessToken());
-    dispatch(checkUserScanQr(user));
     dispatch(setRoute("Attendance"));
 
     const encryptRecord = async () => {
@@ -120,7 +116,7 @@ const Attendance = () => {
     encryptRecord();
   }, []);
 
-  console.log(user.Username);
+  console.log(user);
   const handleBarCodeScanned = async ({
     type,
     data,
@@ -141,11 +137,11 @@ const Attendance = () => {
     return <Text>No access to camera</Text>;
   }
 
-  if (isLoading) {
+  if (isUninitialized || isFetching) {
     return <LoadingIndicator />;
   }
 
-  if (!isAuthenticated) {
+  if (isError) {
     return (
       <View>
         <Text>You are not authenticated! Please Login Again!</Text>
@@ -157,12 +153,7 @@ const Attendance = () => {
     <View style={styles.container}>
       <View style={{ justifyContent: "center", alignItems: "center" }}>
         <Text style={styles.textTitle}>Tap Me!</Text>
-        {/* {IsScanQR === "false" && (
-          <Text style={styles.description}>
-            Please select between the types of subscription you wanna inquire in
-            the gym.
-          </Text>
-        )} */}
+
         {hashData && (
           <View style={{ borderWidth: 15, borderColor: "white" }}>
             <QRCode
@@ -175,7 +166,7 @@ const Attendance = () => {
           </View>
         )}
       </View>
-      {IsScanQR === "false" && (
+      {!IsScanQR?.IsScanQR && (
         <View style={{ flex: 1 }}>
           <Text style={{ textAlign: "center", fontSize: 16 }}>
             Select a subscription you wanna inquire in the gym.
@@ -204,7 +195,7 @@ const Attendance = () => {
         </View>
       )}
 
-      {IsScanQR === "true" && (
+      {IsScanQR?.IsScanQR && (
         <View>
           <Text style={{ fontSize: 20, color: "#f5f5f5" }}>
             You have already tapped the qr code.

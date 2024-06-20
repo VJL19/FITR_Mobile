@@ -84,9 +84,9 @@ const EditPost = () => {
     console.log("edit pressed", editResult?.message);
     // console.log("post message", result?.[0].NewsfeedID!);
 
-    DisplayAlert("Success message", "Post edited added successfully!");
+    DisplayAlert("Success message", "Post edited successfully!");
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    navigation.popToTop();
+    navigation.navigate("DashboardScreen");
     reset();
   };
   if (isError) {

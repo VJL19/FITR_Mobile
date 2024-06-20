@@ -1,4 +1,11 @@
-import { InteractionManager, StyleSheet, Text, View } from "react-native";
+import {
+  FlatList,
+  InteractionManager,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import LoadingIndicator from "components/LoadingIndicator";
 import { useNavigation } from "@react-navigation/native";
@@ -13,11 +20,23 @@ import { useDispatch } from "react-redux";
 import { useRoute } from "@react-navigation/native";
 import useIsReady from "hooks/useIsReady";
 import { DrawerStackNavigationProp } from "utils/types/navigators/DrawerStackNavigators";
+import Posts from "screens/view_detailed_screens/Posts/Posts";
+import { IPost } from "utils/types/post.types";
+import { useGetUserSpecificProgramsQuery } from "reducers/programReducer";
+import { useGetAccessTokenQuery } from "reducers/authReducer";
+import Program from "screens/view_detailed_screens/Programs/Program";
+import IProgram from "utils/types/program_planner.types";
+import FloatingActionButton from "components/FloatingActionButton";
 
 const Programs = () => {
-  const { isReady } = useIsReady();
   const navigation = useNavigation<RootStackNavigationProp>();
   const navigation2 = useNavigation<DashboardStackNavigationProp>();
+
+  const { data: user, isError } = useGetAccessTokenQuery();
+  const { data, isFetching, isUninitialized } = useGetUserSpecificProgramsQuery(
+    user?.user.UserID,
+    { refetchOnMountOrArgChange: true }
+  );
   const route = useRoute();
   const dispatch: AppDispatch = useDispatch();
   useEffect(() => {
@@ -26,19 +45,40 @@ const Programs = () => {
     navigation2.setOptions({ headerTitle: "Programs" });
   }, []);
 
-  if (!isReady) {
+  const handlePress = () => {
+    navigation.navigate("DetailedScreens", { screen: "Add Program" });
+  };
+  if (data?.result.length === 0) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Text>Your program is empty!</Text>
+        <FloatingActionButton handlePress={handlePress} />
+      </View>
+    );
+  }
+
+  if (isError) {
+    return (
+      <View>
+        <Text>You are not authenticated!</Text>
+      </View>
+    );
+  }
+  if (isUninitialized || isFetching) {
     return <LoadingIndicator />;
   }
   return (
     <View style={styles.container}>
-      <Text
-        style={styles.textStyle}
-        onPress={() =>
-          navigation.navigate("DetailedScreens", { screen: "Add Programs" })
-        }
-      >
-        Add Programs
-      </Text>
+      <View style={styles.box}>
+        <FlatList
+          horizontal={true}
+          alwaysBounceVertical={true}
+          data={data?.result}
+          renderItem={({ item }) => <Program {...item} />}
+          keyExtractor={(item: IProgram) => item?.ProgramID?.toString()}
+        />
+      </View>
+      <FloatingActionButton handlePress={handlePress} />
     </View>
   );
 };
@@ -48,14 +88,10 @@ export default Programs;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#202020",
+    backgroundColor: "#f5f5f5",
   },
   textStyle: {
-    color: "#f5f5f5",
+    color: "#202020",
   },
+  box: { flex: 0.3, marginRight: 50 },
 });
-function RouteProp<T>() {
-  throw new Error("Function not implemented.");
-}

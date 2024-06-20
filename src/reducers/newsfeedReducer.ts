@@ -48,7 +48,7 @@ export const newsfeedslice = createApi({
   endpoints: (builder) => ({
     addPostInFeed: builder.mutation<INewsfeedState, INewsFeed>({
       query: (arg) => ({
-        url: "/user/create_postfeed",
+        url: "/user/newsfeed/create_postfeed",
         method: "POST",
         body: arg,
       }),
@@ -56,14 +56,15 @@ export const newsfeedslice = createApi({
     }),
     deletePostInFeed: builder.mutation<INewsfeedState, number | undefined>({
       query: (PostID) => ({
-        url: `/user/remove_postfeed/:${PostID}`,
+        url: `/user/newsfeed/remove_postfeed/:${PostID}`,
         params: { PostID },
         method: "DELETE",
       }),
       invalidatesTags: ["newsfeed"],
     }),
     getAllPostInFeed: builder.query<INewsfeedState, string | undefined>({
-      query: (SubscriptionType) => `/user/all_posts/:${SubscriptionType}`,
+      query: (SubscriptionType) =>
+        `/user/newsfeed/all_posts/:${SubscriptionType}`,
       providesTags: ["newsfeed"],
     }),
     likePostInFeed: builder.mutation<
@@ -71,7 +72,7 @@ export const newsfeedslice = createApi({
       { UserID: number; NewsfeedID: number }
     >({
       query: (arg) => ({
-        url: "/user/like_post",
+        url: "/user/newsfeed/like_post",
         method: "POST",
         body: arg,
       }),
@@ -99,7 +100,7 @@ export const newsfeedslice = createApi({
       { UserID: number; NewsfeedID: number }
     >({
       query: (arg) => ({
-        url: "/user/unlike_post",
+        url: "/user/newsfeed/unlike_post",
         method: "POST",
         body: arg,
       }),
@@ -121,7 +122,7 @@ export const newsfeedslice = createApi({
       { UserID: number; NewsfeedID: number }
     >({
       query: (arg) => ({
-        url: "/user/check_likepost",
+        url: "/user/newsfeed/check_likepost",
         method: "POST",
         body: arg,
       }),
@@ -137,14 +138,14 @@ export const newsfeedslice = createApi({
       }
     >({
       query: (arg) => ({
-        url: "/user/comment_post",
+        url: "/user/newsfeed/comment_post",
         method: "POST",
         body: arg,
       }),
       invalidatesTags: ["newsfeed"],
     }),
     getAllComments: builder.query<INewsfeedState, void>({
-      query: () => "/user/all_comments",
+      query: () => "/user/newsfeed/all_comments",
       providesTags: ["newsfeed"],
     }),
     notifyCommentPostInFeed: builder.mutation<
@@ -167,7 +168,7 @@ export const newsfeedslice = createApi({
     }),
     deleteLikes: builder.mutation<INewsfeedState, number | undefined>({
       query: (NewsfeedID) => ({
-        url: `/user/remove_user_likes/:${NewsfeedID}`,
+        url: `/user/newsfeed/remove_user_likes/:${NewsfeedID}`,
         method: "DELETE",
         params: { NewsfeedID },
       }),
@@ -175,7 +176,7 @@ export const newsfeedslice = createApi({
     }),
     deleteComments: builder.mutation<INewsfeedState, number | undefined>({
       query: (NewsfeedID) => ({
-        url: `/user/remove_user_comments/:${NewsfeedID}`,
+        url: `/user/newsfeed/remove_user_comments/:${NewsfeedID}`,
         method: "DELETE",
         params: { NewsfeedID },
       }),

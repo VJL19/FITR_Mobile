@@ -11,6 +11,10 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { useNavigation } from "@react-navigation/native";
 import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
+import { Image } from "react-native";
+import gym_equipLogo from "assets/equipment.jpg";
+import workout_logo from "assets/workout.jpg";
+import exercise_logo from "assets/exercises.jpg";
 
 const Tutorials = () => {
   const [isReady, setIsReady] = useState(false);
@@ -62,12 +66,7 @@ const Tutorials = () => {
         >
           <View style={styles.BoxStyle}>
             <Text style={styles.BoxTextStyle}>Gym Equipments</Text>
-            <MaterialCommunityIcons
-              name="dumbbell"
-              color={"#ff2e00"}
-              size={170}
-              style={{ opacity: 0.7, zIndex: 1 }}
-            />
+            <Image source={gym_equipLogo} style={styles.imageStyle} />
           </View>
         </TouchableNativeFeedback>
         <TouchableNativeFeedback
@@ -83,12 +82,7 @@ const Tutorials = () => {
         >
           <View style={styles.BoxStyle}>
             <Text style={styles.BoxTextStyle}>Exercises</Text>
-            <MaterialCommunityIcons
-              name="run-fast"
-              color={"#ff2e00"}
-              size={170}
-              style={{ opacity: 0.7, zIndex: 1 }}
-            />
+            <Image source={exercise_logo} style={styles.imageStyle} />
           </View>
         </TouchableNativeFeedback>
         <TouchableNativeFeedback
@@ -104,12 +98,7 @@ const Tutorials = () => {
         >
           <View style={styles.BoxStyle}>
             <Text style={styles.BoxTextStyle}>Workouts</Text>
-            <MaterialCommunityIcons
-              name="weight-lifter"
-              color={"#000000"}
-              size={170}
-              style={{ opacity: 0.7, zIndex: 1 }}
-            />
+            <Image source={workout_logo} style={styles.imageStyle} />
           </View>
         </TouchableNativeFeedback>
       </View>
@@ -122,24 +111,31 @@ export default Tutorials;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    alignItems: "center",
     backgroundColor: "#f5f5f5",
     justifyContent: "space-around",
   },
   BoxStyle: {
-    alignItems: "center",
-    justifyContent: "center",
+    width: 175,
+    justifyContent: "flex-end",
     backgroundColor: "#f5f5f5",
-    opacity: 0.65,
-    borderRadius: 8,
-    borderWidth: 2,
-    borderColor: "#ff2e00",
   },
   BoxTextStyle: {
-    zIndex: 2,
+    width: "100%",
+    height: 75,
+    opacity: 0.7,
+    backgroundColor: "#131313",
+    color: "#f5f5f5",
     position: "absolute",
-    color: "black",
     fontFamily: "Inter-ExtraBold",
-    fontSize: 24,
+    fontSize: 20,
     textAlign: "center",
+    textAlignVertical: "center",
+  },
+  imageStyle: {
+    height: 180,
+    resizeMode: "cover",
+    width: "auto",
+    zIndex: -2,
   },
 });

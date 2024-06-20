@@ -3,7 +3,8 @@ import { IComments } from "../newsfeed.types";
 
 export type DetailedRootStackNavigatorsParamList = {
   "Process Checkout": { checkout_url: string } | undefined;
-  "Add Programs": undefined;
+  "Add Program": undefined;
+  "View Program": undefined;
   "View Announcements": undefined;
   "Add Post": undefined;
   "Edit Post": undefined;
@@ -18,13 +19,16 @@ export type DetailedRootStackNavigatorsParamList = {
   ContactInformation: undefined;
   AccountSetup: undefined;
   TermsAndCondition: undefined;
+  "Edit Program": undefined;
+  "View Image": { imageUrl: string } | undefined;
 };
 
 export type DetailedRootStackScreenProp = StackScreenProps<
   DetailedRootStackNavigatorsParamList,
   | "Process Checkout"
-  | "Add Programs"
+  | "Add Program"
   | "View Announcements"
+  | "View Program"
   | "Add Post"
   | "View Post Feed"
   | "View Post"
@@ -38,11 +42,14 @@ export type DetailedRootStackScreenProp = StackScreenProps<
   | "AccountSetup"
   | "TermsAndCondition"
   | "Edit Post"
+  | "Edit Program"
+  | "View Image"
 >;
 export type DetailedRootStackNavigationProp = StackNavigationProp<
   DetailedRootStackNavigatorsParamList,
   | "Process Checkout"
-  | "Add Programs"
+  | "Add Program"
+  | "View Program"
   | "View Announcements"
   | "Add Post"
   | "View Post Feed"
@@ -57,4 +64,6 @@ export type DetailedRootStackNavigationProp = StackNavigationProp<
   | "AccountSetup"
   | "TermsAndCondition"
   | "Edit Post"
+  | "Edit Program"
+  | "View Image"
 >;

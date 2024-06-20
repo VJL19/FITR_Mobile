@@ -122,9 +122,11 @@ const BottomRootScreen = ({
         tabBarInactiveTintColor: "#202020",
         tabBarStyle: {
           backgroundColor: "#F5F5F5",
-          height: 62,
+          height: 80,
+          flexWrap: "wrap-reverse",
           shadowColor: "#000000",
           elevation: 50,
+          paddingVertical: 13,
         },
       })}
     >

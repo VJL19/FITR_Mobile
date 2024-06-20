@@ -1,11 +1,8 @@
 import { Button, StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
-import { Dropdown } from "react-native-element-dropdown";
-import DropdownComponent from "components/DropdownComponent";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { AppDispatch, RootState } from "store/store";
-import { checkUserScanQr } from "actions/attendanceAction";
 import LoadingIndicator from "components/LoadingIndicator";
 import SubscriptionTypeEnum, {
   SubscriptionAmount,
@@ -17,7 +14,8 @@ import processPayment, {
 import { useNavigation } from "@react-navigation/native";
 import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
 import { setRoute } from "reducers/routeReducer";
-import getAccessToken from "actions/homeAction";
+import { useGetAccessTokenQuery } from "reducers/authReducer";
+import { useCheckUserScanQrQuery } from "reducers/attendanceReducer";
 
 const Subscription = () => {
   const [paymentMethod, setPaymentMethod] = useState("");
@@ -28,21 +26,19 @@ const Subscription = () => {
 
   const dispatch: AppDispatch = useDispatch();
 
-  const { user: subscription } = useSelector(
-    (state: RootState) => state.attendance
-  );
-
   const { details, error, status, checkout_url } = useSelector(
     (state: RootState) => state.subscription
   );
 
+  const { data, isFetching, isUninitialized, isError } =
+    useGetAccessTokenQuery();
+  const { user } = data!;
+  const { data: subscription } = useCheckUserScanQrQuery(user?.UserID);
+
   console.log("details subs", details);
   console.log("details error", error);
   console.log("details status", status);
-  // console.log("loading", isLoading);
-  const { user, isLoading, isAuthenticated } = useSelector(
-    (state: RootState) => state.authReducer
-  );
+
   const subscription_types = [
     { label: "Cash", value: "1" },
     { label: "Bank Transfer", value: "2" },
@@ -58,9 +54,7 @@ const Subscription = () => {
 
   console.log(paymentMethod);
   useEffect(() => {
-    dispatch(checkUserScanQr(user));
     dispatch(setRoute("Subscription"));
-    dispatch(getAccessToken());
   }, []);
 
   console.log(subscription, "current subscription");
@@ -70,10 +64,10 @@ const Subscription = () => {
       {
         currency: "PHP",
         amount:
-          subscription.SubscriptionType === SubscriptionTypeEnum.Session
+          subscription?.user.SubscriptionType === SubscriptionTypeEnum.Session
             ? SubscriptionAmount.SESSION
             : SubscriptionAmount.MONTHLY,
-        name: subscription.SubscriptionType,
+        name: subscription?.user.SubscriptionType!,
         quantity: 1,
       },
     ];
@@ -95,24 +89,24 @@ const Subscription = () => {
     }
   };
 
-  if (!isAuthenticated) {
+  if (isError) {
     return (
       <View>
         <Text>You are not authenticated! Please login again!</Text>
       </View>
     );
   }
-  if (isLoading) {
+  if (isUninitialized || isFetching) {
     return <LoadingIndicator />;
   }
   return (
     <View style={styles.container}>
       <Text style={styles.textStyle}>Subscription</Text>
       <Text>Select a payment method: </Text>
-      {subscription.SubscriptionType === SubscriptionTypeEnum.Session && (
+      {subscription?.user.SubscriptionType === SubscriptionTypeEnum.Session && (
         <Text style={styles.textStyle}>You have a due amount of 90.00</Text>
       )}
-      {subscription.SubscriptionType === SubscriptionTypeEnum.Monthly && (
+      {subscription?.user.SubscriptionType === SubscriptionTypeEnum.Monthly && (
         <Text style={styles.textStyle}>You have a due amount of 900.00</Text>
       )}
 
@@ -146,10 +140,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#202020",
+    backgroundColor: "#f5f5f5",
   },
   textStyle: {
-    color: "#f5f5f5",
+    color: "#202020",
     fontSize: 23,
   },
 });

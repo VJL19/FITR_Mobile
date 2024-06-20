@@ -5,6 +5,7 @@ import {
   View,
   Image,
   Button,
+  Alert,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -32,6 +33,7 @@ import DisplayAlert from "components/CustomAlert";
 import { useNavigation } from "@react-navigation/native";
 import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
 import * as SecureStore from "expo-secure-store";
+import LoadingIndicator from "components/LoadingIndicator";
 
 const initialState: IChangeAccount = {
   Username: "",
@@ -46,9 +48,11 @@ const ChangeAccount = () => {
   const dispatch: AppDispatch = useDispatch();
   const [image, setImage] = useState<string | null | undefined>();
   const [ProfilePic, setProfilePic] = useState<string | undefined>();
+  const [loading, setLoading] = useState(false);
 
   const { data: user, isError, refetch } = useGetAccessTokenQuery();
-  const [changeAccount, { error, data, status }] = useChangeAccountMutation();
+  const [changeAccount, { error, data, status, isError: isChangeErr }] =
+    useChangeAccountMutation();
   const navigation = useNavigation<RootStackNavigationProp>();
   const [imageUploaded, setImageUploaded] = useState(false);
   const {
@@ -73,24 +77,24 @@ const ChangeAccount = () => {
   }, []);
 
   useEffect(() => {
-    if (status === "rejected" && isSubmitted) {
-      DisplayAlert("Error, message", error?.data?.error?.sqlMessage);
-    }
+    // if (status === "rejected" && isSubmitted) {
+    //   DisplayAlert("Error, message", error?.data?.error?.sqlMessage);
+    // }
     if (status === "fulfilled" && isSubmitted) {
       dispatch(setToken(data?.accessToken));
       const setTokenAsync = async () => {
         await SecureStore.setItemAsync("accessToken", data?.accessToken!);
       };
       setTokenAsync();
-      DisplayAlert("Success, message", data?.message);
+      DisplayAlert("Success message", data?.message);
     }
   }, [status, data?.message]);
 
   const onSubmit = async (data: IChangeAccount) => {
-    await uploadImage(ProfilePic, "image");
+    const url = await uploadImage(image, "image");
     const arg = {
       ...data,
-      ProfilePic: ProfilePic,
+      ProfilePic: url,
       UserID: user?.user?.UserID,
       LastName: user?.user?.LastName,
       FirstName: user?.user?.FirstName,
@@ -99,16 +103,28 @@ const ChangeAccount = () => {
       Weight: user?.user?.Weight,
       Gender: user?.user?.Gender,
     };
-    if (imageUploaded) {
-      changeAccount(arg);
+    changeAccount(arg);
+    if (status === "fulfilled" && isSubmitted) {
+      dispatch(setToken(data?.accessToken));
+      const setTokenAsync = async () => {
+        await SecureStore.setItemAsync("accessToken", data?.accessToken!);
+      };
+      setTokenAsync();
       await new Promise((resolve) => setTimeout(resolve, 1500));
-      console.log("Profile pic", ProfilePic);
-      // navigation.popToTop();
-      refetch();
+      DisplayAlert("Success message", data?.message);
+      navigation.navigate("DashboardScreen");
     }
+
+    if (status === "rejected" && isSubmitted) {
+      DisplayAlert("Error, message", error?.data?.error?.sqlMessage);
+    }
+    refetch();
+    // navigation.popToTop();
   };
+  console.log("form", isSubmitted);
   console.log("change account res", status);
   console.log("change account data", data);
+  console.log("change account error", error);
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -123,15 +139,16 @@ const ChangeAccount = () => {
 
     if (!result.canceled) {
       setImage(result.assets[0].uri);
-      setProfilePic(result.assets[0].uri);
       // setBase64(result.assets[0].base64);
     }
   };
 
   const uploadImage = async (uri: string, fileType: string) => {
     try {
+      if (!uri) return;
       const response = await fetch(uri);
       const blob = await response.blob();
+      setLoading(true);
 
       const storageRef = ref(storage, "ProfilePics/" + new Date().getTime());
       const uploadTask = uploadBytesResumable(storageRef, blob);
@@ -141,23 +158,39 @@ const ChangeAccount = () => {
         //if the upload image is error
         (error) => {
           console.log("Image upload error!", error);
-        },
-        //if the upload image is sucess
-        () => {
-          getDownloadURL(uploadTask.snapshot.ref)
-            .then(async (downloadUrl) => {
-              setImageUploaded(true);
-              setProfilePic(downloadUrl);
-              console.log("Image available at!", downloadUrl);
-            })
-            .catch((err) => console.log("error", err));
         }
+        // //if the upload image is sucess
+        // () => {
+        //   getDownloadURL(uploadTask.snapshot.ref)
+        //     .then(async (downloadUrl) => {
+        //       setImageUploaded(true);
+        //       setImage(downloadUrl);
+
+        //       const arg = {
+        //         ...accountData,
+        //         ProfilePic: downloadUrl,
+        //       };
+        //       changeAccount(arg);
+        //       console.log("Image available at!", downloadUrl);
+        //     })
+        //     .catch((err) => console.log("error", err));
+        // }
       );
+      await uploadTask;
+
+      let downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+
+      return downloadURL;
     } catch (err) {
-      console.log("errpr", err);
+      console.log("error", err);
+    } finally {
+      setLoading(false);
     }
   };
 
+  if (loading) {
+    return <LoadingIndicator />;
+  }
   if (isError) {
     return (
       <View>

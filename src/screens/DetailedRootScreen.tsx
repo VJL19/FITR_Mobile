@@ -20,6 +20,11 @@ import ContactInformation from "./view_detailed_screens/SignUp/ContactInformatio
 import AccountSetup from "./view_detailed_screens/SignUp/AccountSetup";
 import TermsAndConditions from "./view_detailed_screens/SignUp/TermsAndConditions";
 import EditPost from "./view_detailed_screens/Posts/EditPost";
+import ViewProgram from "./view_detailed_screens/Programs/ViewProgram";
+import { useNavigation } from "@react-navigation/native";
+import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
+import EditProgram from "./view_detailed_screens/Programs/EditProgram";
+import ViewImage from "./view_detailed_screens/ViewImage/ViewImage";
 
 const DetailedRootScreen = () => {
   const config = {
@@ -32,6 +37,18 @@ const DetailedRootScreen = () => {
       restDisplacementThreshold: 0.01,
       restSpeedThreshold: 0.01,
     },
+  };
+
+  const navigation = useNavigation<RootStackNavigationProp>();
+  const handleProgram = () => {
+    navigation.navigate("DetailedScreens", {
+      screen: "Edit Program",
+    });
+  };
+  const handlePost = () => {
+    navigation.navigate("DetailedScreens", {
+      screen: "Edit Post",
+    });
   };
   return (
     <DetailedScreenStacks.Navigator
@@ -55,8 +72,42 @@ const DetailedRootScreen = () => {
       }}
     >
       <DetailedScreenStacks.Screen
-        name="Add Programs"
+        name="View Image"
+        component={ViewImage}
+        options={{
+          headerShown: false,
+          presentation: "card",
+          gestureEnabled: true,
+          gestureDirection: "horizontal",
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+      />
+      <DetailedScreenStacks.Screen
+        name="Add Program"
         component={AddPrograms}
+        options={{
+          presentation: "card",
+          gestureEnabled: true,
+          gestureDirection: "horizontal",
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+      />
+      <DetailedScreenStacks.Screen
+        name="View Program"
+        component={ViewProgram}
+        options={{
+          presentation: "card",
+          gestureEnabled: true,
+          gestureDirection: "horizontal",
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+          headerRight: () => (
+            <CustomMenu onPress={handleProgram} screenName="Program" />
+          ),
+        }}
+      />
+      <DetailedScreenStacks.Screen
+        name="Edit Program"
+        component={EditProgram}
         options={{
           presentation: "card",
           gestureEnabled: true,
@@ -123,7 +174,9 @@ const DetailedRootScreen = () => {
           gestureEnabled: true,
           gestureDirection: "horizontal",
           cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
-          headerRight: () => <CustomMenu />,
+          headerRight: () => (
+            <CustomMenu onPress={handlePost} screenName="Post" />
+          ),
         }}
       />
       <DetailedScreenStacks.Screen

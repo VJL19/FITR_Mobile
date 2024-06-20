@@ -60,19 +60,19 @@ export const postslice = createApi({
   endpoints: (builder) => ({
     addPost: builder.mutation<IPostState, IPost>({
       query: (postData) => ({
-        url: "/user/create_post",
+        url: "/user/posts/create_post",
         method: "POST",
         body: postData,
       }),
       invalidatesTags: ["posts"],
     }),
     getPosts: builder.query<IPostState, number | undefined>({
-      query: (UserID) => `/user/specific_post/:${UserID}`,
+      query: (UserID) => `/user/posts/specific_post/:${UserID}`,
       providesTags: ["posts"],
     }),
     editPost: builder.mutation<IPostState, IPost>({
       query: (arg) => ({
-        url: "/user/edit_post",
+        url: "/user/posts/edit_post",
         method: "POST",
         body: arg,
       }),
@@ -80,7 +80,7 @@ export const postslice = createApi({
     }),
     deletePosts: builder.mutation<IPostState, number | undefined>({
       query: (PostID) => ({
-        url: `/user/delete_post/:${PostID}`,
+        url: `/user/posts/delete_post/:${PostID}`,
         params: { PostID },
         method: "DELETE",
       }),

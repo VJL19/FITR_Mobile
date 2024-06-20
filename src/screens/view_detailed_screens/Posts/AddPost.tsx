@@ -41,7 +41,6 @@ const AddPost = () => {
     resolver: joiResolver(postSchema),
   });
 
-  useEffect(() => {}, []);
   const onSubmit = async (data: IPost) => {
     const { UserID, FirstName, LastName, Username } = user?.user!;
 

@@ -13,6 +13,7 @@ import { IPost } from "utils/types/post.types";
 import { setRoute } from "reducers/routeReducer";
 import { useGetAccessTokenQuery } from "reducers/authReducer";
 import { useGetPostsQuery } from "reducers/postReducer";
+import FloatingActionButton from "components/FloatingActionButton";
 
 const MyPosts = () => {
   const navigation = useNavigation<RootStackNavigationProp>();
@@ -55,22 +56,7 @@ const MyPosts = () => {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <Text>My posts is empty!</Text>
-        <Pressable
-          onPress={handlePress}
-          style={{
-            alignSelf: "flex-end",
-            width: "20%",
-            borderRadius: 50,
-            height: 70,
-            backgroundColor: "#ff2e00",
-            position: "absolute",
-            top: "80%",
-          }}
-        >
-          <View style={{ alignItems: "center", justifyContent: "center" }}>
-            <Text style={{ fontSize: 40, color: "#f5f5f5" }}>+</Text>
-          </View>
-        </Pressable>
+        <FloatingActionButton handlePress={handlePress} />
       </View>
     );
   }
@@ -90,22 +76,7 @@ const MyPosts = () => {
         keyExtractor={(item: IPost) => item?.PostID?.toString()}
       />
 
-      <Pressable
-        onPress={handlePress}
-        style={{
-          alignSelf: "flex-end",
-          width: "20%",
-          borderRadius: 50,
-          height: 70,
-          backgroundColor: "#ff2e00",
-          position: "absolute",
-          top: "80%",
-        }}
-      >
-        <View style={{ alignItems: "center", justifyContent: "center" }}>
-          <Text style={{ fontSize: 40, color: "#f5f5f5" }}>+</Text>
-        </View>
-      </Pressable>
+      <FloatingActionButton handlePress={handlePress} />
     </View>
   );
 };

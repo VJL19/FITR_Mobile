@@ -14,6 +14,7 @@ import notificationReducer from "../reducers/notificationReducer";
 import uploadImageReducer from "../reducers/uploadImageReducer";
 import { authslice } from "../reducers/authReducer";
 import { setupListeners } from "@reduxjs/toolkit/query";
+import programReducer, { programApi } from "reducers/programReducer";
 export const store = configureStore({
   reducer: {
     [authslice.reducerPath]: authslice.reducer,
@@ -21,6 +22,8 @@ export const store = configureStore({
     [newsfeedslice.reducerPath]: newsfeedslice.reducer,
     [attendanceslice.reducerPath]: attendanceslice.reducer,
     [registerslice.reducerPath]: registerslice.reducer,
+    [programApi.reducerPath]: programApi.reducer,
+    program: programReducer,
     counter: counterReducer,
     register: registerReducer,
     authReducer: authReducer,
@@ -40,6 +43,7 @@ export const store = configureStore({
       newsfeedslice.middleware,
       attendanceslice.middleware,
       registerslice.middleware,
+      programApi.middleware,
     ]),
 });
 setupListeners(store.dispatch);

@@ -63,6 +63,10 @@ export const attendanceslice = createApi({
       query: (UserID) => `/user/specific_record/:${UserID}`,
       providesTags: ["attendance"],
     }),
+    checkUserScanQr: builder.query<IAttendanceState, number | undefined>({
+      query: (UserID) => `/user/check_IsScanQR/:${UserID}`,
+      providesTags: ["attendance"],
+    }),
   }),
 });
 
@@ -132,5 +136,6 @@ const attendanceSlice = createSlice({
   },
 });
 
-export const { useGetUserRecordsQuery } = attendanceslice;
+export const { useGetUserRecordsQuery, useCheckUserScanQrQuery } =
+  attendanceslice;
 export default attendanceSlice.reducer;

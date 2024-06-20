@@ -1,5 +1,5 @@
-import { StyleSheet, Text, View } from "react-native";
-import React, { useState } from "react";
+import { GestureResponderEvent, StyleSheet, Text, View } from "react-native";
+import React, { useEffect, useState } from "react";
 import { Button, Menu, Divider } from "react-native-paper";
 import MaterialIcon from "react-native-vector-icons/MaterialCommunityIcons";
 import theme from "../assets/themes/theme";
@@ -8,19 +8,24 @@ import { useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
 
-const CustomMenu = () => {
+const CustomMenu = ({
+  screenName,
+  onPress,
+}: {
+  screenName: string;
+  onPress: (e: GestureResponderEvent) => void;
+}) => {
   const [visible, setVisible] = useState(true);
 
-  const navigation = useNavigation<RootStackNavigationProp>();
   const openMenu = () => setVisible(true);
   const closeMenu = () => setVisible(false);
+  const navigation = useNavigation<RootStackNavigationProp>();
 
-  const handleEditPost = () => {
-    navigation.navigate("DetailedScreens", {
-      screen: "Edit Post",
+  useEffect(() => {
+    navigation.addListener("blur", () => {
+      closeMenu();
     });
-    closeMenu();
-  };
+  }, []);
   return (
     <View>
       <Menu
@@ -34,9 +39,9 @@ const CustomMenu = () => {
           </Button>
         }
       >
-        <Menu.Item onPress={handleEditPost} title="Edit Post" />
+        <Menu.Item onPress={onPress} title={`Edit ${screenName}`} />
         <Divider />
-        <Menu.Item onPress={() => {}} title="Delete Post" />
+        <Menu.Item onPress={() => {}} title={`Delete ${screenName}`} />
       </Menu>
     </View>
   );

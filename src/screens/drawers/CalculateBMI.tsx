@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setRoute } from "reducers/routeReducer";
 import getAccessToken from "actions/homeAction";
 import LoadingIndicator from "components/LoadingIndicator";
+import { useGetAccessTokenQuery } from "reducers/authReducer";
 export interface IBMIField {
   Height: string;
   Weight: string;
@@ -27,9 +28,8 @@ const CalculateBMI = () => {
 
   const dispatch: AppDispatch = useDispatch();
 
-  const { user, isAuthenticated, isLoading } = useSelector(
-    (state: RootState) => state.authReducer
-  );
+  const { data, isError, isUninitialized, isFetching } =
+    useGetAccessTokenQuery();
 
   const {
     handleSubmit,
@@ -43,10 +43,8 @@ const CalculateBMI = () => {
   });
   useEffect(() => {
     dispatch(setRoute("Calculate BMI"));
-    dispatch(getAccessToken());
-
-    setValue("Height", user?.Height?.toString());
-    setValue("Weight", user?.Weight?.toString());
+    setValue("Height", data?.user?.Height?.toString()!);
+    setValue("Weight", data?.user?.Weight?.toString()!);
   }, []);
 
   const onCalculate = async (data: IBMIField) => {
@@ -56,10 +54,10 @@ const CalculateBMI = () => {
     setClassificiation(getClassification(res));
   };
 
-  if (isLoading) {
+  if (isFetching || isUninitialized) {
     return <LoadingIndicator />;
   }
-  if (!isAuthenticated) {
+  if (isError) {
     return (
       <View>
         <Text>You are not authenticated! please login again</Text>
