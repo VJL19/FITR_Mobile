@@ -3,21 +3,15 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setRoute } from "reducers/routeReducer";
 import { AppDispatch, RootState } from "store/store";
-import * as ImagePicker from "expo-image-picker";
 import avatar from "assets/avatar_default.jpeg";
-import { Controller, useForm } from "react-hook-form";
-import { joiResolver } from "@hookform/resolvers/joi";
-import CustomTextInput from "components/CustomTextInput";
-import DisplayFormError from "components/DisplayFormError";
-import { IChangeAccount } from "utils/types/user.types";
 import { myAccountSchema } from "utils/validations";
 import { ScrollView } from "react-native-gesture-handler";
 import Ionicon from "react-native-vector-icons/Ionicons";
-import getAccessToken from "actions/homeAction";
 import { useNavigation } from "@react-navigation/native";
 import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
 import LoadingIndicator from "components/LoadingIndicator";
 import { useGetAccessTokenQuery } from "reducers/authReducer";
+import CustomError from "components/CustomError";
 
 const MyAccount = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -25,7 +19,6 @@ const MyAccount = () => {
   const { isError, data, isUninitialized, isFetching, refetch } =
     useGetAccessTokenQuery(undefined, {});
 
-  const { user } = data!;
   const navigation = useNavigation<RootStackNavigationProp>();
   const [image, setImage] = useState<string | undefined>();
   useEffect(() => {
@@ -36,14 +29,10 @@ const MyAccount = () => {
     return <LoadingIndicator />;
   }
   if (isError) {
-    return (
-      <View>
-        <Text>You are not authenticated! Please login again!</Text>
-      </View>
-    );
+    return <CustomError />;
   }
   console.log("hey", data);
-  const url = user?.ProfilePic === null ? avatar : user?.ProfilePic;
+  const url = data?.user?.ProfilePic === null ? avatar : data?.user?.ProfilePic;
   return (
     <View style={styles.container}>
       <View>
@@ -56,15 +45,15 @@ const MyAccount = () => {
       >
         <View style={{ flex: 1, flexDirection: "column" }}>
           <Text style={styles.title}>Username</Text>
-          <Text>{user?.Username}</Text>
+          <Text>{data?.user?.Username}</Text>
         </View>
         <View style={{ flex: 1, flexDirection: "column" }}>
           <Text style={styles.title}>Email</Text>
-          <Text>{user?.Email}</Text>
+          <Text>{data?.user?.Email}</Text>
         </View>
         <View style={{ flex: 1, flexDirection: "column" }}>
           <Text style={styles.title}>Contact Number</Text>
-          <Text>{user?.ContactNumber}</Text>
+          <Text>{data?.user?.ContactNumber}</Text>
         </View>
       </ScrollView>
       <View style={{ width: "90%" }}>

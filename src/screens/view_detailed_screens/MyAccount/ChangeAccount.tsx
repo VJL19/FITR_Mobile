@@ -34,6 +34,10 @@ import { useNavigation } from "@react-navigation/native";
 import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
 import * as SecureStore from "expo-secure-store";
 import LoadingIndicator from "components/LoadingIndicator";
+import CustomModal from "components/CustomModal";
+import { useCameraFns } from "utils/helpers/useCameraFns";
+import CustomError from "components/CustomError";
+import { uploadImage } from "utils/helpers/uploadImage";
 
 const initialState: IChangeAccount = {
   Username: "",
@@ -46,15 +50,16 @@ const initialState: IChangeAccount = {
 
 const ChangeAccount = () => {
   const dispatch: AppDispatch = useDispatch();
-  const [image, setImage] = useState<string | null | undefined>();
-  const [ProfilePic, setProfilePic] = useState<string | undefined>();
+  const { image, pickImage, pickCameraImage, removePhoto } = useCameraFns();
+  const [modalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const { data: user, isError, refetch } = useGetAccessTokenQuery();
-  const [changeAccount, { error, data, status, isError: isChangeErr }] =
-    useChangeAccountMutation();
+  const [
+    changeAccount,
+    { error, data: dataChangeAcc, status, isError: isChangeErr },
+  ] = useChangeAccountMutation();
   const navigation = useNavigation<RootStackNavigationProp>();
-  const [imageUploaded, setImageUploaded] = useState(false);
   const {
     handleSubmit,
     reset,
@@ -81,17 +86,26 @@ const ChangeAccount = () => {
     //   DisplayAlert("Error, message", error?.data?.error?.sqlMessage);
     // }
     if (status === "fulfilled" && isSubmitted) {
-      dispatch(setToken(data?.accessToken));
+      dispatch(setToken(dataChangeAcc?.accessToken));
       const setTokenAsync = async () => {
-        await SecureStore.setItemAsync("accessToken", data?.accessToken!);
+        await SecureStore.setItemAsync(
+          "accessToken",
+          dataChangeAcc?.accessToken!
+        );
       };
       setTokenAsync();
-      DisplayAlert("Success message", data?.message);
+      DisplayAlert("Success message", dataChangeAcc?.message);
     }
-  }, [status, data?.message]);
+  }, [status, dataChangeAcc?.message]);
 
   const onSubmit = async (data: IChangeAccount) => {
-    const url = await uploadImage(image, "image");
+    const url = await uploadImage(
+      image,
+      "ProfilePics",
+      "image",
+      loading,
+      setLoading
+    );
     const arg = {
       ...data,
       ProfilePic: url,
@@ -105,13 +119,16 @@ const ChangeAccount = () => {
     };
     changeAccount(arg);
     if (status === "fulfilled" && isSubmitted) {
-      dispatch(setToken(data?.accessToken));
+      dispatch(setToken(dataChangeAcc?.accessToken));
       const setTokenAsync = async () => {
-        await SecureStore.setItemAsync("accessToken", data?.accessToken!);
+        await SecureStore.setItemAsync(
+          "accessToken",
+          dataChangeAcc?.accessToken!
+        );
       };
       setTokenAsync();
       await new Promise((resolve) => setTimeout(resolve, 1500));
-      DisplayAlert("Success message", data?.message);
+      DisplayAlert("Success message", dataChangeAcc?.message);
       navigation.navigate("DashboardScreen");
     }
 
@@ -123,80 +140,59 @@ const ChangeAccount = () => {
   };
   console.log("form", isSubmitted);
   console.log("change account res", status);
-  console.log("change account data", data);
+  console.log("change account data", dataChangeAcc);
   console.log("change account error", error);
 
-  const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      cameraType: ImagePicker.CameraType.back,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-      base64: true,
-    });
+  // const uploadImage = async (uri: string, fileType: string) => {
+  //   try {
+  //     if (uri === undefined) return;
+  //     const response = await fetch(uri);
+  //     const blob = await response.blob();
+  //     setLoading(true);
 
-    if (!result.canceled) {
-      setImage(result.assets[0].uri);
-      // setBase64(result.assets[0].base64);
-    }
-  };
+  //     const storageRef = ref(storage, "ProfilePics/" + new Date().getTime());
+  //     const uploadTask = uploadBytesResumable(storageRef, blob);
+  //     uploadTask.on(
+  //       "state_changed",
+  //       (snapshot) => {},
+  //       //if the upload image is error
+  //       (error) => {
+  //         console.log("Image upload error!", error);
+  //       }
+  //       // //if the upload image is sucess
+  //       // () => {
+  //       //   getDownloadURL(uploadTask.snapshot.ref)
+  //       //     .then(async (downloadUrl) => {
+  //       //       setImageUploaded(true);
+  //       //       setImage(downloadUrl);
 
-  const uploadImage = async (uri: string, fileType: string) => {
-    try {
-      if (!uri) return;
-      const response = await fetch(uri);
-      const blob = await response.blob();
-      setLoading(true);
+  //       //       const arg = {
+  //       //         ...accountData,
+  //       //         ProfilePic: downloadUrl,
+  //       //       };
+  //       //       changeAccount(arg);
+  //       //       console.log("Image available at!", downloadUrl);
+  //       //     })
+  //       //     .catch((err) => console.log("error", err));
+  //       // }
+  //     );
+  //     await uploadTask;
 
-      const storageRef = ref(storage, "ProfilePics/" + new Date().getTime());
-      const uploadTask = uploadBytesResumable(storageRef, blob);
-      uploadTask.on(
-        "state_changed",
-        (snapshot) => {},
-        //if the upload image is error
-        (error) => {
-          console.log("Image upload error!", error);
-        }
-        // //if the upload image is sucess
-        // () => {
-        //   getDownloadURL(uploadTask.snapshot.ref)
-        //     .then(async (downloadUrl) => {
-        //       setImageUploaded(true);
-        //       setImage(downloadUrl);
+  //     let downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
 
-        //       const arg = {
-        //         ...accountData,
-        //         ProfilePic: downloadUrl,
-        //       };
-        //       changeAccount(arg);
-        //       console.log("Image available at!", downloadUrl);
-        //     })
-        //     .catch((err) => console.log("error", err));
-        // }
-      );
-      await uploadTask;
-
-      let downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-
-      return downloadURL;
-    } catch (err) {
-      console.log("error", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  //     return downloadURL;
+  //   } catch (err) {
+  //     console.log("error", err);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   if (loading) {
     return <LoadingIndicator />;
   }
   if (isError) {
-    return (
-      <View>
-        <Text>You are not authenticated</Text>
-      </View>
-    );
+    return <CustomError />;
   }
   return (
     <ScrollView>
@@ -206,97 +202,105 @@ const ChangeAccount = () => {
           style={styles.image}
         />
         <View style={{ position: "absolute", top: "65%", left: "40%" }}>
-          <Ionicon
-            name="camera-outline"
-            size={35}
-            color="#ff2e00"
-            onPress={pickImage}
+          <CustomModal
+            modalTitle="Upload profile picture"
+            handleCamera={pickCameraImage}
+            handleGallery={pickImage}
+            handleRemove={removePhoto}
+            modalVisible={modalVisible}
+            setModalVisible={setModalVisible}
           />
         </View>
       </View>
-      <ScrollView style={{ width: "90%" }}>
-        <Controller
-          control={control}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <CustomTextInput
-              error={errors.Username}
-              onBlur={onBlur}
-              onChange={onChange}
-              value={value}
-              placeholder="Enter your Username"
-            />
-          )}
-          name="Username"
-        />
-        <DisplayFormError errors={errors.Username} />
-        <Controller
-          control={control}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <CustomTextInput
-              error={errors.Email}
-              onBlur={onBlur}
-              onChange={onChange}
-              value={value}
-              placeholder="Enter your Email"
-            />
-          )}
-          name="Email"
-        />
-        <DisplayFormError errors={errors.Email} />
-        <Controller
-          control={control}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <CustomTextInput
-              error={errors.ContactNumber}
-              onBlur={onBlur}
-              onChange={onChange}
-              value={value}
-              inputMode="tel"
-              placeholder="Enter your ContactNumber"
-            />
-          )}
-          name="ContactNumber"
-        />
-        <DisplayFormError errors={errors.ContactNumber} />
-        <Controller
-          control={control}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <CustomTextInput
-              secureTextEntry={true}
-              error={errors.Password}
-              onBlur={onBlur}
-              onChange={onChange}
-              value={value}
-              placeholder="Enter your Password"
-            />
-          )}
-          name="Password"
-        />
-        <DisplayFormError errors={errors.Password} />
-        <Controller
-          control={control}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <CustomTextInput
-              secureTextEntry={true}
-              error={errors.ConfirmPassword}
-              onBlur={onBlur}
-              onChange={onChange}
-              value={value}
-              placeholder="Enter your ConfirmPassword"
-            />
-          )}
-          name="ConfirmPassword"
-        />
-        <DisplayFormError errors={errors.ConfirmPassword} />
-      </ScrollView>
-
-      <View style={{ width: "90%" }}>
-        <Button
-          title="Save info"
-          onPress={handleSubmit(onSubmit, (error) =>
-            console.log("error", error)
-          )}
-        />
+      <View style={{ alignItems: "center", padding: 15 }}>
+        <ScrollView style={{ width: "100%" }}>
+          <Text style={styles.labelStyle}>Username</Text>
+          <Controller
+            control={control}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <CustomTextInput
+                error={errors.Username}
+                onBlur={onBlur}
+                onChange={onChange}
+                value={value}
+                placeholder="Enter your Username"
+              />
+            )}
+            name="Username"
+          />
+          <DisplayFormError errors={errors.Username} />
+          <Text style={styles.labelStyle}>Email</Text>
+          <Controller
+            control={control}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <CustomTextInput
+                error={errors.Email}
+                onBlur={onBlur}
+                onChange={onChange}
+                value={value}
+                placeholder="Enter your Email"
+              />
+            )}
+            name="Email"
+          />
+          <DisplayFormError errors={errors.Email} />
+          <Text style={styles.labelStyle}>Contact Number</Text>
+          <Controller
+            control={control}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <CustomTextInput
+                error={errors.ContactNumber}
+                onBlur={onBlur}
+                onChange={onChange}
+                value={value}
+                inputMode="tel"
+                placeholder="Enter your ContactNumber"
+              />
+            )}
+            name="ContactNumber"
+          />
+          <DisplayFormError errors={errors.ContactNumber} />
+          <Text style={styles.labelStyle}>Password</Text>
+          <Controller
+            control={control}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <CustomTextInput
+                secureTextEntry={true}
+                error={errors.Password}
+                onBlur={onBlur}
+                onChange={onChange}
+                value={value}
+                placeholder="Enter your Password"
+              />
+            )}
+            name="Password"
+          />
+          <DisplayFormError errors={errors.Password} />
+          <Text style={styles.labelStyle}>Confirm Password</Text>
+          <Controller
+            control={control}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <CustomTextInput
+                secureTextEntry={true}
+                error={errors.ConfirmPassword}
+                onBlur={onBlur}
+                onChange={onChange}
+                value={value}
+                placeholder="Enter your ConfirmPassword"
+              />
+            )}
+            name="ConfirmPassword"
+          />
+          <DisplayFormError errors={errors.ConfirmPassword} />
+        </ScrollView>
+        <View style={{ width: "90%" }}>
+          <Button
+            title="Save info"
+            onPress={handleSubmit(onSubmit, (error) =>
+              console.log("error", error)
+            )}
+          />
+        </View>
       </View>
     </ScrollView>
   );
@@ -311,5 +315,9 @@ const styles = StyleSheet.create({
     borderRadius: 150,
     borderWidth: 1.5,
     borderColor: "#ff2e00",
+  },
+  labelStyle: {
+    fontSize: 22,
+    fontWeight: "bold",
   },
 });

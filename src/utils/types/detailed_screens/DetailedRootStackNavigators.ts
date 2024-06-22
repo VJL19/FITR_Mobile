@@ -21,6 +21,7 @@ export type DetailedRootStackNavigatorsParamList = {
   TermsAndCondition: undefined;
   "Edit Program": undefined;
   "View Image": { imageUrl: string } | undefined;
+  "View Payments": undefined;
 };
 
 export type DetailedRootStackScreenProp = StackScreenProps<
@@ -44,6 +45,7 @@ export type DetailedRootStackScreenProp = StackScreenProps<
   | "Edit Post"
   | "Edit Program"
   | "View Image"
+  | "View Payments"
 >;
 export type DetailedRootStackNavigationProp = StackNavigationProp<
   DetailedRootStackNavigatorsParamList,
@@ -66,4 +68,5 @@ export type DetailedRootStackNavigationProp = StackNavigationProp<
   | "Edit Post"
   | "Edit Program"
   | "View Image"
+  | "View Payments"
 >;

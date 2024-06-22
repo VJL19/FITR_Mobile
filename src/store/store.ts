@@ -5,7 +5,9 @@ import authReducer from "../reducers/authReducer";
 import attendanceReducer, {
   attendanceslice,
 } from "../reducers/attendanceReducer";
-import subscriptionReducer from "../reducers/subscriptionReducer";
+import subscriptionReducer, {
+  subscriptionApi,
+} from "../reducers/subscriptionReducer";
 import postReducer, { postslice } from "../reducers/postReducer";
 import routeReducer from "../reducers/routeReducer";
 import newsfeedReducer, { newsfeedslice } from "../reducers/newsfeedReducer";
@@ -15,6 +17,7 @@ import uploadImageReducer from "../reducers/uploadImageReducer";
 import { authslice } from "../reducers/authReducer";
 import { setupListeners } from "@reduxjs/toolkit/query";
 import programReducer, { programApi } from "reducers/programReducer";
+import { tutorialApi } from "reducers/tutorialReducer";
 export const store = configureStore({
   reducer: {
     [authslice.reducerPath]: authslice.reducer,
@@ -23,6 +26,8 @@ export const store = configureStore({
     [attendanceslice.reducerPath]: attendanceslice.reducer,
     [registerslice.reducerPath]: registerslice.reducer,
     [programApi.reducerPath]: programApi.reducer,
+    [subscriptionApi.reducerPath]: subscriptionApi.reducer,
+    [tutorialApi.reducerPath]: tutorialApi.reducer,
     program: programReducer,
     counter: counterReducer,
     register: registerReducer,
@@ -44,6 +49,8 @@ export const store = configureStore({
       attendanceslice.middleware,
       registerslice.middleware,
       programApi.middleware,
+      subscriptionApi.middleware,
+      tutorialApi.middleware,
     ]),
 });
 setupListeners(store.dispatch);

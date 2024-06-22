@@ -17,8 +17,9 @@ const ViewProgram = () => {
   const navigation = useNavigation();
   const handleFinish = async () => {
     DialogBox({
-      dialogTitle: "Confirmation",
-      dialogDescription: "Are you sure you want to finish this program?",
+      dialogTitle: "Finish program?",
+      dialogDescription:
+        "This action cannot be undone and will remove this program from your lists.",
       params: ProgramID,
       async handlePress(args) {
         finishProgram(args);

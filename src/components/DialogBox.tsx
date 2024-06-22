@@ -11,7 +11,7 @@ const DialogBox = ({
   dialogTitle: string;
   dialogDescription: string;
   params?: any;
-  handlePress: (args: any) => Promise<any>;
+  handlePress: (args: any) => Promise<void>;
 }) => {
   return Alert.alert(dialogTitle, dialogDescription, [
     { text: "Discard", style: "cancel", onPress: () => {} },

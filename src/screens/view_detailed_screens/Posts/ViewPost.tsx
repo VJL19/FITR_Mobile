@@ -1,4 +1,11 @@
-import { Button, StyleSheet, Text, View } from "react-native";
+import {
+  Button,
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  TouchableOpacity,
+} from "react-native";
 import React, { useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import DisplayAlert from "components/CustomAlert";
@@ -14,6 +21,10 @@ import {
 import { AppDispatch, RootState } from "store/store";
 import { useDispatch, useSelector } from "react-redux";
 import DialogBox from "components/DialogBox";
+import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
+import CustomError from "components/CustomError";
+import postDefault from "assets/post_default.webp";
+import { IMAGE_VALUES } from "utils/enums/DefaultValues";
 
 const ViewPost = () => {
   const {
@@ -45,12 +56,23 @@ const ViewPost = () => {
     PostImage,
     PostTitle,
   } = postData;
-  const navigation = useNavigation();
+
+  const navigation = useNavigation<RootStackNavigationProp>();
+
+  const handlePress = () => {
+    navigation.navigate("DetailedScreens", {
+      screen: "View Image",
+      params: {
+        imageUrl: PostImage,
+      },
+    });
+  };
 
   const handleDelete = async () => {
     DialogBox({
-      dialogTitle: "Confirmation",
-      dialogDescription: "Are you sure you want to delete this post?",
+      dialogTitle: "Delete post?",
+      dialogDescription:
+        "This action cannot be undone and will delete this post.",
       params: PostID,
       async handlePress(args) {
         deletePost(args);
@@ -65,17 +87,10 @@ const ViewPost = () => {
         navigation.goBack();
       },
     });
-
-    if (status === "fulfilled") {
-    }
   };
 
   if (isError) {
-    return (
-      <View>
-        <Text>You are not authenticated!</Text>
-      </View>
-    );
+    return <CustomError />;
   }
   if (isFetching || isUninitialized) {
     return <LoadingIndicator />;
@@ -83,9 +98,19 @@ const ViewPost = () => {
   return (
     <View style={styles.container}>
       <View>
+        <TouchableOpacity onPress={handlePress}>
+          <Image
+            resizeMode="contain"
+            source={
+              PostImage === IMAGE_VALUES.DEFAULT
+                ? postDefault
+                : { uri: PostImage }
+            }
+            style={{ height: 290, width: "100%" }}
+          />
+        </TouchableOpacity>
         <Text>ViewPost</Text>
         <Text>{PostID}</Text>
-        <Text>{PostImage}</Text>
         <Text>{PostTitle}</Text>
         <Text>{PostDescription}</Text>
         <Text>{PostDate}</Text>

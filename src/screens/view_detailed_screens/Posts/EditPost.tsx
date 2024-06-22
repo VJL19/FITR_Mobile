@@ -7,7 +7,7 @@ import {
   View,
   Image,
 } from "react-native";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "store/store";
 import CustomTextInput from "components/CustomTextInput";
@@ -22,12 +22,21 @@ import getCurrentDate from "utils/helpers/formatDate";
 import { useNavigation } from "@react-navigation/native";
 import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
 import { useEditPostMutation } from "reducers/postReducer";
+import { useCameraFns } from "utils/helpers/useCameraFns";
+import { uploadImage } from "utils/helpers/uploadImage";
+import CustomError from "components/CustomError";
+import CustomModal from "components/CustomModal";
+import postDefault from "assets/post_default.webp";
+import { IMAGE_VALUES } from "utils/enums/DefaultValues";
 
 const EditPost = () => {
   const { PostTitle, PostImage, PostDescription, PostID } = useSelector(
     (state: RootState) => state.post.postData
   );
-
+  const { image, pickImage, pickCameraImage, removePhoto, setImage } =
+    useCameraFns();
+  const [modalVisible, setModalVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigation = useNavigation<RootStackNavigationProp>();
 
   const { isError, data: user } = useGetAccessTokenQuery();
@@ -50,16 +59,24 @@ const EditPost = () => {
 
   useEffect(() => {
     // setValue("PostImage", PostImage);
+    setImage(PostImage);
     setValue("PostTitle", PostTitle);
     setValue("PostDescription", PostDescription);
   }, []);
   const onSubmit = async (data: IPost) => {
     const { UserID, FirstName, LastName, Username } = user?.user!;
 
+    const url = await uploadImage(
+      image,
+      "Posts/",
+      "image",
+      loading,
+      setLoading
+    );
     console.log(data);
     const fullName = FirstName + " " + LastName;
     setValue("PostID", PostID);
-    setValue("PostImage", "mydefault_poster.png");
+    setValue("PostImage", "default_poster.png");
     setValue("PostTitle", data.PostTitle);
     setValue("PostDescription", data.PostDescription);
     setValue("PostDate", getCurrentDate());
@@ -69,7 +86,7 @@ const EditPost = () => {
     const postData = {
       UserID: UserID,
       PostID: PostID,
-      PostImage: "mydefault_poster.png",
+      PostImage: url === undefined ? "default_poster.png" : url,
       PostTitle: data.PostTitle,
       PostDate: getCurrentDate(),
       PostDescription: data.PostDescription,
@@ -90,17 +107,27 @@ const EditPost = () => {
     reset();
   };
   if (isError) {
-    return (
-      <View>
-        <Text>You are not authenticated!</Text>
-      </View>
-    );
+    return <CustomError />;
   }
 
   return (
     <ScrollView>
-      <Image source={PostImage} style={{ height: 200, width: 345 }} />
-
+      <View>
+        <Image
+          source={image === IMAGE_VALUES.DEFAULT ? postDefault : { uri: image }}
+          style={{ height: 250, width: "100%" }}
+        />
+        <View style={{ position: "absolute", top: "45%", left: "45%" }}>
+          <CustomModal
+            modalTitle="Upload a photo"
+            handleCamera={pickCameraImage}
+            handleGallery={pickImage}
+            handleRemove={removePhoto}
+            modalVisible={modalVisible}
+            setModalVisible={setModalVisible}
+          />
+        </View>
+      </View>
       <View style={{ marginTop: 25 }}>
         <Controller
           control={control}

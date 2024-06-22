@@ -49,19 +49,16 @@ const styles = StyleSheet.create({
     width: 300,
     padding: 15,
     marginTop: 15,
-    backgroundColor: "#202020",
-    borderWidth: 2,
+    backgroundColor: "rgba(255,45,0, .2)",
     borderRadius: 10,
     marginLeft: 10,
   },
   title: {
     fontSize: 22,
-    color: "#f5f5f5",
     fontWeight: "800",
     fontFamily: "Inter-Bold",
   },
   date: {
     fontSize: 14,
-    color: "#f5f5f5",
   },
 });

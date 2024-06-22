@@ -13,6 +13,7 @@ import { setRoute } from "reducers/routeReducer";
 import getAccessToken from "actions/homeAction";
 import LoadingIndicator from "components/LoadingIndicator";
 import { useGetAccessTokenQuery } from "reducers/authReducer";
+import CustomError from "components/CustomError";
 export interface IBMIField {
   Height: string;
   Weight: string;
@@ -58,11 +59,7 @@ const CalculateBMI = () => {
     return <LoadingIndicator />;
   }
   if (isError) {
-    return (
-      <View>
-        <Text>You are not authenticated! please login again</Text>
-      </View>
-    );
+    return <CustomError />;
   }
   return (
     <View style={styles.container}>

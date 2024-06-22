@@ -14,6 +14,7 @@ import { setRoute } from "reducers/routeReducer";
 import { useGetAccessTokenQuery } from "reducers/authReducer";
 import { useGetPostsQuery } from "reducers/postReducer";
 import FloatingActionButton from "components/FloatingActionButton";
+import CustomError from "components/CustomError";
 
 const MyPosts = () => {
   const navigation = useNavigation<RootStackNavigationProp>();
@@ -45,11 +46,7 @@ const MyPosts = () => {
   }
 
   if (isError) {
-    return (
-      <View>
-        <Text>You are not authenticated!</Text>
-      </View>
-    );
+    return <CustomError />;
   }
 
   if (data?.result.length === 0) {

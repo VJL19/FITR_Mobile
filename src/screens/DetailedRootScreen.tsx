@@ -25,6 +25,7 @@ import { useNavigation } from "@react-navigation/native";
 import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
 import EditProgram from "./view_detailed_screens/Programs/EditProgram";
 import ViewImage from "./view_detailed_screens/ViewImage/ViewImage";
+import SubscriptionHistory from "./view_detailed_screens/Subscription/SubscriptionHistory";
 
 const DetailedRootScreen = () => {
   const config = {
@@ -71,6 +72,17 @@ const DetailedRootScreen = () => {
         cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
       }}
     >
+      <DetailedScreenStacks.Screen
+        name="View Payments"
+        component={SubscriptionHistory}
+        options={{
+          headerTitle: "Subscription History",
+          presentation: "card",
+          gestureEnabled: true,
+          gestureDirection: "horizontal",
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+      />
       <DetailedScreenStacks.Screen
         name="View Image"
         component={ViewImage}

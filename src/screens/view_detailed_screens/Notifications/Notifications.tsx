@@ -10,6 +10,7 @@ import { INotifications } from "utils/types/notifications.types";
 import LoadingIndicator from "components/LoadingIndicator";
 import { useGetAccessTokenQuery } from "reducers/authReducer";
 import { useGetAllNotificationsQuery } from "reducers/newsfeedReducer";
+import CustomError from "components/CustomError";
 
 const Notifications = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -37,7 +38,7 @@ const Notifications = () => {
     return <LoadingIndicator />;
   }
   if (isError) {
-    return <Text>You are not authenticated please login again</Text>;
+    return <CustomError />;
   }
   return (
     <View>

@@ -1,10 +1,4 @@
-import {
-  Pressable,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { StyleSheet, TouchableOpacity } from "react-native";
 import React from "react";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
@@ -27,7 +21,7 @@ const styles = StyleSheet.create({
     bottom: 20,
     right: 20,
     height: 75,
-    backgroundColor: "#ff213f",
+    backgroundColor: "#ff2e00",
     borderRadius: 100,
     elevation: 20,
   },

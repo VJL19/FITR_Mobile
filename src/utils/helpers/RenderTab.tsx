@@ -12,7 +12,7 @@ import {
   Newsfeed,
   SignOut,
   Subscription,
-} from "../../screens/drawers";
+} from "src/screens/drawers";
 const RenderTab = ({ route }: DrawerStackScreenProp) => {
   let Component;
   const RenderTabs = () => {

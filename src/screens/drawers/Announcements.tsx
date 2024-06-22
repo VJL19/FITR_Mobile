@@ -23,7 +23,7 @@ const Announcements = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={{ color: "#f5f5f5" }}>Announcemnts</Text>
+      <Text>Announcemnts</Text>
     </View>
   );
 };
@@ -33,7 +33,7 @@ export default Announcements;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#202020",
+    backgroundColor: "#f5f5f5",
     justifyContent: "center",
     alignItems: "center",
   },

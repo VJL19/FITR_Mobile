@@ -27,6 +27,7 @@ import { useGetAccessTokenQuery } from "reducers/authReducer";
 import Program from "screens/view_detailed_screens/Programs/Program";
 import IProgram from "utils/types/program_planner.types";
 import FloatingActionButton from "components/FloatingActionButton";
+import CustomError from "components/CustomError";
 
 const Programs = () => {
   const navigation = useNavigation<RootStackNavigationProp>();
@@ -58,11 +59,7 @@ const Programs = () => {
   }
 
   if (isError) {
-    return (
-      <View>
-        <Text>You are not authenticated!</Text>
-      </View>
-    );
+    return <CustomError />;
   }
   if (isUninitialized || isFetching) {
     return <LoadingIndicator />;

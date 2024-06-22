@@ -4,8 +4,8 @@ enum SubscriptionTypeEnum {
 }
 
 export enum SubscriptionAmount {
-  SESSION = 2000,
-  MONTHLY = 3000,
+  SESSION = 90,
+  MONTHLY = 900,
 }
 
 export default SubscriptionTypeEnum;

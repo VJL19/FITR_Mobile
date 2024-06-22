@@ -29,6 +29,7 @@ import { RadioGroup } from "react-native-radio-buttons-group";
 import { BarCodeScanningResult } from "expo-camera/build/legacy/Camera.types";
 import { useGetAccessTokenQuery } from "reducers/authReducer";
 import { useCheckUserScanQrQuery } from "reducers/attendanceReducer";
+import CustomError from "components/CustomError";
 const Attendance = () => {
   const [hasPermission, setHasPermission] = useState<boolean>();
   const [scanned, setScanned] = useState(false);
@@ -142,11 +143,7 @@ const Attendance = () => {
   }
 
   if (isError) {
-    return (
-      <View>
-        <Text>You are not authenticated! Please Login Again!</Text>
-      </View>
-    );
+    return <CustomError />;
   }
 
   return (

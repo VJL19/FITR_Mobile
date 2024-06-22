@@ -1,5 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 import processPayment from "../actions/subscriptionAction";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { ISubscriptions } from "utils/types/subscriptions.types";
+import loadConfig from "global/config";
+import * as SecureStore from "expo-secure-store";
 
 interface ISubscriptionState {
   status: number;
@@ -9,6 +13,8 @@ interface ISubscriptionState {
   isLoading: boolean;
   checkout_url: string;
   confirmationUrl: string;
+  message: string;
+  result: ISubscriptions[];
 }
 
 const initialState: ISubscriptionState = {
@@ -20,6 +26,50 @@ const initialState: ISubscriptionState = {
   checkout_url: "",
   confirmationUrl: "",
 };
+
+const config = loadConfig();
+
+export const subscriptionApi = createApi({
+  reducerPath: "/user/subscriptions",
+  tagTypes: ["subscriptions"],
+  baseQuery: fetchBaseQuery({
+    baseUrl: config.BASE_URL,
+
+    prepareHeaders: async (headers: Headers, { getState }) => {
+      // const token = (getState() as RootState).authReducer.accessToken;
+      const token = await SecureStore.getItemAsync("accessToken");
+      // console.log("state", getState());
+      if (token) {
+        headers.set("authorization", `Bearer ${token}`);
+      }
+      return headers;
+    },
+  }),
+  endpoints: (builder) => ({
+    addSubscription: builder.mutation<ISubscriptionState, ISubscriptions>({
+      query: (arg) => ({
+        url: "/user/subscription/create_subscription",
+        method: "POST",
+        body: arg,
+      }),
+      invalidatesTags: ["subscriptions"],
+    }),
+    getSpecificSubscription: builder.query<
+      ISubscriptionState,
+      number | undefined
+    >({
+      query: (UserID) => `/user/subscription/specific_subscription:${UserID}`,
+      providesTags: ["subscriptions"],
+    }),
+    getSubscriptionHistory: builder.query<
+      ISubscriptionState,
+      number | undefined
+    >({
+      query: (UserID) => `/user/subscription/subscription_history:${UserID}`,
+      providesTags: ["subscriptions"],
+    }),
+  }),
+});
 
 const subscriptionSlice = createSlice({
   name: "subscription",
@@ -48,3 +98,8 @@ const subscriptionSlice = createSlice({
 });
 
 export default subscriptionSlice.reducer;
+export const {
+  useGetSpecificSubscriptionQuery,
+  useAddSubscriptionMutation,
+  useGetSubscriptionHistoryQuery,
+} = subscriptionApi;
