@@ -17,6 +17,8 @@ interface IUser extends IAttendance {
   ProfilePic: string;
   Gender: string;
   SubscriptionType: string;
+  Address: string;
+  Birthday: string;
 }
 
 export interface ILoginForm {
@@ -59,10 +61,12 @@ export interface IAuthState {
     FirstName: string;
     MiddleName: string;
     Age: string;
+    Birthday: string;
   };
   contactInfo: {
     ContactNumber: string;
     Email: string;
+    Address: string;
     Height: string;
     Weight: string;
   };
@@ -71,6 +75,7 @@ export interface IAuthState {
     Password: string;
     ConfirmPassword: string;
     Gender: string;
+    SubscriptionType: string;
   };
 }
 

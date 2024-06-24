@@ -24,7 +24,7 @@ import { setContactInfoFields } from "reducers/authReducer";
 const ContactInformation = () => {
   const navigation = useNavigation<RootStackNavigationProp>();
 
-  const { ContactNumber, Email, Height, Weight } = useSelector(
+  const { ContactNumber, Email, Height, Weight, Address } = useSelector(
     (state: RootState) => state.authReducer.contactInfo
   );
   const dispatch: AppDispatch = useDispatch();
@@ -41,6 +41,7 @@ const ContactInformation = () => {
 
   useEffect(() => {
     setValue("ContactNumber", ContactNumber);
+    setValue("Address", Address);
     setValue("Email", Email);
     setValue("Height", Height);
     setValue("Weight", Weight);
@@ -117,6 +118,21 @@ const ContactInformation = () => {
           name="ContactNumber"
         />
         <DisplayFormError errors={errors.ContactNumber} />
+        <Text style={styles.labelStyle}>Address</Text>
+        <Controller
+          control={control}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <CustomTextInput
+              error={errors.Address}
+              onBlur={onBlur}
+              onChange={onChange}
+              value={value}
+              placeholder="Enter your Address"
+            />
+          )}
+          name="Address"
+        />
+        <DisplayFormError errors={errors.Address} />
         <Text style={styles.labelStyle}>Email</Text>
         <Controller
           control={control}

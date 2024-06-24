@@ -6,6 +6,7 @@ const personalDetailsSchema = Joi.object<IForm>({
   FirstName: Joi.string().min(5).max(150).required().label("FirstName"),
   MiddleName: Joi.string().min(5).max(150).required().label("MiddleName"),
   Age: Joi.string().required().label("Age"),
+  Birthday: Joi.string().required().label("Birthday"),
 });
 
 const accountDetailsSchema = Joi.object<IForm>({
@@ -27,6 +28,7 @@ const accountDetailsSchema = Joi.object<IForm>({
     .label("ConfirmPassword"),
   ProfilePic: Joi.string().optional().label("ProfilePic"),
   Gender: Joi.string().required().label("Gender"),
+  SubscriptionType: Joi.string().required().label("SubscriptionType"),
 });
 
 const contactDetailsSchema = Joi.object<IForm>({
@@ -38,6 +40,7 @@ const contactDetailsSchema = Joi.object<IForm>({
     .label("Email"),
   Height: Joi.string().required().label("Height"),
   Weight: Joi.string().required().label("Weight"),
+  Address: Joi.string().required().label("Address"),
 });
 
 const formSchema = Joi.object<IForm>({
@@ -45,6 +48,8 @@ const formSchema = Joi.object<IForm>({
   FirstName: Joi.string().min(5).max(150).required().label("FirstName"),
   MiddleName: Joi.string().min(5).max(150).required().label("MiddleName"),
   Age: Joi.string().required().label("Age"),
+  Birthday: Joi.string().required().label("Birthday"),
+  Address: Joi.string().required().label("Address"),
   ContactNumber: Joi.string().max(11).required().label("ContactNumber"),
   Email: Joi.string()
     .email({ minDomainSegments: 2, tlds: { allow: ["com", "ph"] } })
@@ -71,6 +76,7 @@ const formSchema = Joi.object<IForm>({
     .label("ConfirmPassword"),
   ProfilePic: Joi.string().optional().label("ProfilePic"),
   Gender: Joi.string().required().label("Gender"),
+  SubscriptionType: Joi.string().required().label("SubscriptionType"),
 });
 export {
   formSchema,

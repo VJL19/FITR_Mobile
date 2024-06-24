@@ -1,26 +1,23 @@
 import React, { useState, useEffect } from "react";
-import { Text, View, StyleSheet, Button } from "react-native";
+import {
+  Text,
+  View,
+  StyleSheet,
+  Button,
+  TouchableNativeFeedback,
+} from "react-native";
 import { CameraView, Camera } from "expo-camera";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "store/store";
 import IAttendance from "utils/types/attendance.types";
-import getAccessToken from "actions/homeAction";
-import {
-  getSecretCode,
-  attendanceUser,
-  checkUserScanQr,
-} from "actions/attendanceAction";
+import { getSecretCode, attendanceUser } from "actions/attendanceAction";
 import getCurrentDate, {
   advanceMonthlyEnd,
   advanceSessionEnd,
 } from "utils/helpers/formatDate";
 import LoadingIndicator from "components/LoadingIndicator";
 import { useNavigation } from "@react-navigation/native";
-import {
-  DrawerStackNavigationProp,
-  DrawerStackParamList,
-} from "utils/types/navigators/DrawerStackNavigators";
-import DropdownComponent from "components/DropdownComponent";
+import { DrawerStackNavigationProp } from "utils/types/navigators/DrawerStackNavigators";
 import SubscriptionEnum from "utils/enums/Subscription";
 import { setRoute } from "reducers/routeReducer";
 import QRCode from "react-native-qrcode-svg";
@@ -30,13 +27,16 @@ import { BarCodeScanningResult } from "expo-camera/build/legacy/Camera.types";
 import { useGetAccessTokenQuery } from "reducers/authReducer";
 import { useCheckUserScanQrQuery } from "reducers/attendanceReducer";
 import CustomError from "components/CustomError";
+import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
+import Ionicon from "react-native-vector-icons/Ionicons";
+
 const Attendance = () => {
   const [hasPermission, setHasPermission] = useState<boolean>();
   const [scanned, setScanned] = useState(false);
   const [toggleScan, setToggleScan] = useState(false);
   const [selectedSubscription, setSelectedSubscription] = useState("");
   const [hashData, setHashData] = useState<string | unknown>("");
-  const navigation = useNavigation<DrawerStackNavigationProp>();
+  const navigation = useNavigation<RootStackNavigationProp>();
 
   // console.log(qrRef.current.toDataURL);
 
@@ -128,7 +128,7 @@ const Attendance = () => {
     //validation for secret code stored in qr in admin.
     alert(`Bar code with type ${type} and data ${data} has been scanned!`);
     dispatch(attendanceUser(userRecord));
-    navigation.navigate("HomeDrawer");
+    // navigation.navigate("HomeDrawer");
   };
 
   if (hasPermission === null) {
@@ -148,8 +148,52 @@ const Attendance = () => {
 
   return (
     <View style={styles.container}>
-      <View style={{ justifyContent: "center", alignItems: "center" }}>
-        <Text style={styles.textTitle}>Tap Me!</Text>
+      <View
+        style={{
+          justifyContent: "space-around",
+          flexDirection: "row",
+        }}
+      >
+        <TouchableNativeFeedback
+          useForeground={true}
+          background={TouchableNativeFeedback.Ripple(
+            "rgba(255,46,0,0.5)",
+            true,
+
+            100
+          )}
+          onPress={() =>
+            navigation.navigate("DetailedScreens", {
+              screen: "View Attendance History",
+            })
+          }
+        >
+          <View style={styles.BoxStyle}>
+            <Text style={styles.BoxTextStyle}>Attendance History</Text>
+            <Ionicon name="home" color={"ff2e00"} size={150} />
+          </View>
+        </TouchableNativeFeedback>
+        <TouchableNativeFeedback
+          useForeground={true}
+          background={TouchableNativeFeedback.Ripple(
+            "rgba(255,46,0,0.5)",
+            true,
+
+            100
+          )}
+          onPress={() =>
+            navigation.navigate("DetailedScreens", {
+              screen: "View RFID Card",
+            })
+          }
+        >
+          <View style={styles.BoxStyle}>
+            <Text style={styles.BoxTextStyle}>RFID Card</Text>
+            <Ionicon name="home" color={"ff2e00"} size={150} />
+          </View>
+        </TouchableNativeFeedback>
+      </View>
+      {/* <Text style={styles.textTitle}>Tap Me!</Text>
 
         {hashData && (
           <View style={{ borderWidth: 15, borderColor: "white" }}>
@@ -162,8 +206,8 @@ const Attendance = () => {
             />
           </View>
         )}
-      </View>
-      {!IsScanQR?.IsScanQR && (
+        </View> */}
+      {/* {!IsScanQR?.IsScanQR && (
         <View style={{ flex: 1 }}>
           <Text style={{ textAlign: "center", fontSize: 16 }}>
             Select a subscription you wanna inquire in the gym.
@@ -206,7 +250,7 @@ const Attendance = () => {
           onPress={() => setToggleScan((prev) => !prev)}
           color={"#ff2e00"}
         />
-      )}
+      )} */}
     </View>
   );
 };
@@ -257,5 +301,22 @@ const styles = StyleSheet.create({
     fontSize: 18,
     width: 300,
     color: "#F5F5F5",
+  },
+  BoxStyle: {
+    width: 175,
+    justifyContent: "flex-end",
+    backgroundColor: "#f5f5f5",
+  },
+  BoxTextStyle: {
+    width: "100%",
+    height: 75,
+    opacity: 0.87,
+    backgroundColor: "#131313",
+    color: "#f5f5f5",
+    position: "absolute",
+    fontFamily: "Inter-ExtraBold",
+    fontSize: 20,
+    textAlign: "center",
+    textAlignVertical: "center",
   },
 });

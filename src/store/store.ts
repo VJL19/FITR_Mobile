@@ -17,7 +17,7 @@ import uploadImageReducer from "../reducers/uploadImageReducer";
 import { authslice } from "../reducers/authReducer";
 import { setupListeners } from "@reduxjs/toolkit/query";
 import programReducer, { programApi } from "reducers/programReducer";
-import { tutorialApi } from "reducers/tutorialReducer";
+import tutorialReducer, { tutorialApi } from "reducers/tutorialReducer";
 export const store = configureStore({
   reducer: {
     [authslice.reducerPath]: authslice.reducer,
@@ -28,6 +28,7 @@ export const store = configureStore({
     [programApi.reducerPath]: programApi.reducer,
     [subscriptionApi.reducerPath]: subscriptionApi.reducer,
     [tutorialApi.reducerPath]: tutorialApi.reducer,
+    tutorial: tutorialReducer,
     program: programReducer,
     counter: counterReducer,
     register: registerReducer,

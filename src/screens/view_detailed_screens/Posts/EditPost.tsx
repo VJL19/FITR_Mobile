@@ -111,101 +111,106 @@ const EditPost = () => {
   }
 
   return (
-    <ScrollView>
-      <View>
-        <Image
-          source={image === IMAGE_VALUES.DEFAULT ? postDefault : { uri: image }}
-          style={{ height: 250, width: "100%" }}
-        />
-        <View style={{ position: "absolute", top: "45%", left: "45%" }}>
-          <CustomModal
-            modalTitle="Upload a photo"
-            handleCamera={pickCameraImage}
-            handleGallery={pickImage}
-            handleRemove={removePhoto}
-            modalVisible={modalVisible}
-            setModalVisible={setModalVisible}
+    <View style={{ flex: 1 }}>
+      <ScrollView>
+        <View>
+          <Image
+            source={
+              image === IMAGE_VALUES.DEFAULT ? postDefault : { uri: image }
+            }
+            style={{ height: 250, width: "100%" }}
+          />
+          <View style={{ position: "absolute", top: "45%", left: "45%" }}>
+            <CustomModal
+              modalTitle="Upload a photo"
+              handleCamera={pickCameraImage}
+              handleGallery={pickImage}
+              handleRemove={removePhoto}
+              modalVisible={modalVisible}
+              setModalVisible={setModalVisible}
+            />
+          </View>
+        </View>
+        <View style={{ marginTop: 25 }}>
+          <Controller
+            control={control}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <React.Fragment>
+                <Text
+                  style={{
+                    color: "#202020",
+                    fontSize: 18,
+                    fontFamily: "Inter-Bold",
+                    letterSpacing: 1,
+                  }}
+                >
+                  Title
+                </Text>
+                <CustomTextInput
+                  error={errors.PostTitle}
+                  placeholder="Enter your title of the post"
+                  onBlur={onBlur}
+                  onChange={onChange}
+                  value={value}
+                />
+              </React.Fragment>
+            )}
+            name="PostTitle"
+          />
+          <DisplayFormError errors={errors.PostTitle} />
+
+          <Controller
+            control={control}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <React.Fragment>
+                <Text
+                  style={{
+                    color: "#202020",
+                    fontSize: 18,
+                    fontFamily: "Inter-Bold",
+                    letterSpacing: 1,
+                  }}
+                >
+                  Description
+                </Text>
+
+                <TextInput
+                  multiline={true}
+                  textAlignVertical="top"
+                  placeholder="Enter the description"
+                  placeholderTextColor={"#c2c2c2"}
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  value={value}
+                  style={{
+                    borderWidth: 1,
+                    height: 300,
+                    borderRadius: 8,
+                    padding: 15,
+                    color: "#202020",
+                    borderColor: errors.PostDescription ? "#d9534f" : "#202020",
+                    marginBottom: 10,
+                    fontSize: 16,
+                  }}
+                />
+              </React.Fragment>
+            )}
+            name="PostDescription"
           />
         </View>
-      </View>
-      <View style={{ marginTop: 25 }}>
-        <Controller
-          control={control}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <React.Fragment>
-              <Text
-                style={{
-                  color: "#202020",
-                  fontSize: 18,
-                  fontFamily: "Inter-Bold",
-                  letterSpacing: 1,
-                }}
-              >
-                Title
-              </Text>
-              <CustomTextInput
-                error={errors.PostTitle}
-                placeholder="Enter your title of the post"
-                onBlur={onBlur}
-                onChange={onChange}
-                value={value}
-              />
-            </React.Fragment>
-          )}
-          name="PostTitle"
-        />
-        <DisplayFormError errors={errors.PostTitle} />
 
-        <Controller
-          control={control}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <React.Fragment>
-              <Text
-                style={{
-                  color: "#202020",
-                  fontSize: 18,
-                  fontFamily: "Inter-Bold",
-                  letterSpacing: 1,
-                }}
-              >
-                Description
-              </Text>
-
-              <TextInput
-                multiline={true}
-                textAlignVertical="top"
-                placeholder="Enter the description"
-                placeholderTextColor={"#c2c2c2"}
-                onBlur={onBlur}
-                onChangeText={onChange}
-                value={value}
-                style={{
-                  borderWidth: 1,
-                  height: 300,
-                  borderRadius: 8,
-                  padding: 15,
-                  color: "#202020",
-                  borderColor: errors.PostDescription ? "#d9534f" : "#202020",
-                  marginBottom: 10,
-                  fontSize: 16,
-                }}
-              />
-            </React.Fragment>
+        <DisplayFormError errors={errors.PostDescription} />
+      </ScrollView>
+      <View style={{ width: "95%", alignSelf: "center", marginBottom: 15 }}>
+        <Button
+          title="Proceed"
+          color={"#ff2e00"}
+          onPress={handleSubmit(onSubmit, (error: FieldErrors<IPost>) =>
+            console.log(error)
           )}
-          name="PostDescription"
         />
       </View>
-
-      <DisplayFormError errors={errors.PostDescription} />
-
-      <Button
-        title="Proceed"
-        color={"#ff2e00"}
-        onPress={handleSubmit(onSubmit, (error: FieldErrors<IPost>) =>
-          console.log(error)
-        )}
-      />
-    </ScrollView>
+    </View>
   );
 };
 

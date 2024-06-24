@@ -19,6 +19,7 @@ interface ICustomTextInputProps {
   inputMode?: InputModeOptions | undefined;
   placeholder: string;
   secureTextEntry?: boolean;
+  isEditable?: boolean;
 }
 
 const CustomTextInput = ({
@@ -29,9 +30,11 @@ const CustomTextInput = ({
   placeholder,
   inputMode,
   secureTextEntry,
+  isEditable,
 }: ICustomTextInputProps) => {
   return (
     <TextInput
+      editable={isEditable}
       secureTextEntry={secureTextEntry}
       inputMode={inputMode}
       placeholder={placeholder}

@@ -38,6 +38,7 @@ import CustomModal from "components/CustomModal";
 import { useCameraFns } from "utils/helpers/useCameraFns";
 import CustomError from "components/CustomError";
 import { uploadImage } from "utils/helpers/uploadImage";
+import { IMAGE_VALUES } from "utils/enums/DefaultValues";
 
 const initialState: IChangeAccount = {
   Username: "",
@@ -116,6 +117,9 @@ const ChangeAccount = () => {
       Height: user?.user?.Height,
       Weight: user?.user?.Weight,
       Gender: user?.user?.Gender,
+      Address: user?.user?.Address,
+      Birthday: user?.user?.Birthday,
+      SubscriptionType: user?.user?.SubscriptionType,
     };
     changeAccount(arg);
     if (status === "fulfilled" && isSubmitted) {
@@ -142,6 +146,8 @@ const ChangeAccount = () => {
   console.log("change account res", status);
   console.log("change account data", dataChangeAcc);
   console.log("change account error", error);
+
+  console.log(user?.user?.ProfilePic);
 
   // const uploadImage = async (uri: string, fileType: string) => {
   //   try {
@@ -195,114 +201,116 @@ const ChangeAccount = () => {
     return <CustomError />;
   }
   return (
-    <ScrollView>
-      <View>
-        <Image
-          source={image === undefined ? avatar : { uri: image }}
-          style={styles.image}
+    <View style={{ flex: 1 }}>
+      <ScrollView>
+        <View>
+          <Image
+            source={image === IMAGE_VALUES.DEFAULT ? avatar : { uri: image }}
+            style={styles.image}
+          />
+          <View style={{ position: "absolute", top: "65%", left: "40%" }}>
+            <CustomModal
+              modalTitle="Upload profile picture"
+              handleCamera={pickCameraImage}
+              handleGallery={pickImage}
+              handleRemove={removePhoto}
+              modalVisible={modalVisible}
+              setModalVisible={setModalVisible}
+            />
+          </View>
+        </View>
+        <View style={{ alignItems: "center", padding: 15 }}>
+          <ScrollView style={{ width: "100%" }}>
+            <Text style={styles.labelStyle}>Username</Text>
+            <Controller
+              control={control}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <CustomTextInput
+                  error={errors.Username}
+                  onBlur={onBlur}
+                  onChange={onChange}
+                  value={value}
+                  placeholder="Enter your Username"
+                />
+              )}
+              name="Username"
+            />
+            <DisplayFormError errors={errors.Username} />
+            <Text style={styles.labelStyle}>Email</Text>
+            <Controller
+              control={control}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <CustomTextInput
+                  error={errors.Email}
+                  onBlur={onBlur}
+                  onChange={onChange}
+                  value={value}
+                  placeholder="Enter your Email"
+                />
+              )}
+              name="Email"
+            />
+            <DisplayFormError errors={errors.Email} />
+            <Text style={styles.labelStyle}>Contact Number</Text>
+            <Controller
+              control={control}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <CustomTextInput
+                  error={errors.ContactNumber}
+                  onBlur={onBlur}
+                  onChange={onChange}
+                  value={value}
+                  inputMode="tel"
+                  placeholder="Enter your ContactNumber"
+                />
+              )}
+              name="ContactNumber"
+            />
+            <DisplayFormError errors={errors.ContactNumber} />
+            <Text style={styles.labelStyle}>Password</Text>
+            <Controller
+              control={control}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <CustomTextInput
+                  secureTextEntry={true}
+                  error={errors.Password}
+                  onBlur={onBlur}
+                  onChange={onChange}
+                  value={value}
+                  placeholder="Enter your Password"
+                />
+              )}
+              name="Password"
+            />
+            <DisplayFormError errors={errors.Password} />
+            <Text style={styles.labelStyle}>Confirm Password</Text>
+            <Controller
+              control={control}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <CustomTextInput
+                  secureTextEntry={true}
+                  error={errors.ConfirmPassword}
+                  onBlur={onBlur}
+                  onChange={onChange}
+                  value={value}
+                  placeholder="Enter your ConfirmPassword"
+                />
+              )}
+              name="ConfirmPassword"
+            />
+            <DisplayFormError errors={errors.ConfirmPassword} />
+          </ScrollView>
+        </View>
+      </ScrollView>
+      <View style={{ width: "95%", alignSelf: "center", marginBottom: 15 }}>
+        <Button
+          title="Save info"
+          onPress={handleSubmit(onSubmit, (error) =>
+            console.log("error", error)
+          )}
         />
-        <View style={{ position: "absolute", top: "65%", left: "40%" }}>
-          <CustomModal
-            modalTitle="Upload profile picture"
-            handleCamera={pickCameraImage}
-            handleGallery={pickImage}
-            handleRemove={removePhoto}
-            modalVisible={modalVisible}
-            setModalVisible={setModalVisible}
-          />
-        </View>
       </View>
-      <View style={{ alignItems: "center", padding: 15 }}>
-        <ScrollView style={{ width: "100%" }}>
-          <Text style={styles.labelStyle}>Username</Text>
-          <Controller
-            control={control}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <CustomTextInput
-                error={errors.Username}
-                onBlur={onBlur}
-                onChange={onChange}
-                value={value}
-                placeholder="Enter your Username"
-              />
-            )}
-            name="Username"
-          />
-          <DisplayFormError errors={errors.Username} />
-          <Text style={styles.labelStyle}>Email</Text>
-          <Controller
-            control={control}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <CustomTextInput
-                error={errors.Email}
-                onBlur={onBlur}
-                onChange={onChange}
-                value={value}
-                placeholder="Enter your Email"
-              />
-            )}
-            name="Email"
-          />
-          <DisplayFormError errors={errors.Email} />
-          <Text style={styles.labelStyle}>Contact Number</Text>
-          <Controller
-            control={control}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <CustomTextInput
-                error={errors.ContactNumber}
-                onBlur={onBlur}
-                onChange={onChange}
-                value={value}
-                inputMode="tel"
-                placeholder="Enter your ContactNumber"
-              />
-            )}
-            name="ContactNumber"
-          />
-          <DisplayFormError errors={errors.ContactNumber} />
-          <Text style={styles.labelStyle}>Password</Text>
-          <Controller
-            control={control}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <CustomTextInput
-                secureTextEntry={true}
-                error={errors.Password}
-                onBlur={onBlur}
-                onChange={onChange}
-                value={value}
-                placeholder="Enter your Password"
-              />
-            )}
-            name="Password"
-          />
-          <DisplayFormError errors={errors.Password} />
-          <Text style={styles.labelStyle}>Confirm Password</Text>
-          <Controller
-            control={control}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <CustomTextInput
-                secureTextEntry={true}
-                error={errors.ConfirmPassword}
-                onBlur={onBlur}
-                onChange={onChange}
-                value={value}
-                placeholder="Enter your ConfirmPassword"
-              />
-            )}
-            name="ConfirmPassword"
-          />
-          <DisplayFormError errors={errors.ConfirmPassword} />
-        </ScrollView>
-        <View style={{ width: "90%" }}>
-          <Button
-            title="Save info"
-            onPress={handleSubmit(onSubmit, (error) =>
-              console.log("error", error)
-            )}
-          />
-        </View>
-      </View>
-    </ScrollView>
+    </View>
   );
 };
 

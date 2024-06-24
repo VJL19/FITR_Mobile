@@ -50,7 +50,8 @@
     "react-native-vector-icons": "^10.0.3",
     "react-native-webview": "13.8.6",
     "react-redux": "^9.1.1",
-    "text-encoding-polyfill": "^0.6.7"
+    "text-encoding-polyfill": "^0.6.7",
+    "@react-native-community/datetimepicker": "8.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

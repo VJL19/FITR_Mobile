@@ -1,6 +1,6 @@
 export interface ISubscriptions {
   UserID: number;
-  SubscriptionID?: number;
+  SubscriptionID: number;
   SubscriptionAmount: number;
   SubscriptionStatus?: string;
   SubscriptionUploadedImage: string | undefined;

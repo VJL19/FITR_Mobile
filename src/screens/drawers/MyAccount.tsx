@@ -12,6 +12,7 @@ import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigat
 import LoadingIndicator from "components/LoadingIndicator";
 import { useGetAccessTokenQuery } from "reducers/authReducer";
 import CustomError from "components/CustomError";
+import { IMAGE_VALUES } from "utils/enums/DefaultValues";
 
 const MyAccount = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -32,11 +33,18 @@ const MyAccount = () => {
     return <CustomError />;
   }
   console.log("hey", data);
-  const url = data?.user?.ProfilePic === null ? avatar : data?.user?.ProfilePic;
+
   return (
     <View style={styles.container}>
       <View>
-        <Image source={{ uri: url }} style={styles.image} />
+        <Image
+          source={
+            data?.user?.ProfilePic === IMAGE_VALUES.DEFAULT
+              ? avatar
+              : { uri: data?.user?.ProfilePic }
+          }
+          style={styles.image}
+        />
       </View>
       <ScrollView
         style={{

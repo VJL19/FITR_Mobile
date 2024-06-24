@@ -18,12 +18,14 @@ interface IPersonalInfoField {
   FirstName: string;
   LastName: string;
   MiddleName: string;
+  Birthday: string;
 }
 interface IContactInfoField {
   ContactNumber: string;
   Email: string;
   Height: string;
   Weight: string;
+  Address: string;
 }
 
 const initialState: IAuthState = {
@@ -34,18 +36,21 @@ const initialState: IAuthState = {
   isAuthenticated: false,
   isLoading: false,
   personalInfo: {
+    Birthday: "",
     Age: "",
     FirstName: "",
     LastName: "",
     MiddleName: "",
   },
   contactInfo: {
+    Address: "",
     ContactNumber: "",
     Email: "",
     Height: "",
     Weight: "",
   },
   accountInfo: {
+    SubscriptionType: "",
     Username: "",
     Password: "",
     ConfirmPassword: "",
@@ -149,18 +154,21 @@ const authSlice = createSlice({
         FirstName: "",
         LastName: "",
         MiddleName: "",
+        Birthday: "",
       };
       state.contactInfo = {
         ContactNumber: "",
         Email: "",
         Height: "",
         Weight: "",
+        Address: "",
       };
       state.accountInfo = {
         Username: "",
         Password: "",
         ConfirmPassword: "",
         Gender: "",
+        SubscriptionType: "",
       };
     },
     loadToken: (state) => {

@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
   BoxTextStyle: {
     width: "100%",
     height: 75,
-    opacity: 0.7,
+    opacity: 0.87,
     backgroundColor: "#131313",
     color: "#f5f5f5",
     position: "absolute",

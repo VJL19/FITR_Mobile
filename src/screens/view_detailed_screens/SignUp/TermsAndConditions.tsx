@@ -23,6 +23,7 @@ import {
   setAuthenticated,
   setToken,
 } from "reducers/authReducer";
+import { IMAGE_VALUES } from "utils/enums/DefaultValues";
 
 const TermsAndConditions = () => {
   const [IsChecked, setIsChecked] = useState<boolean>();
@@ -33,16 +34,15 @@ const TermsAndConditions = () => {
   ] = useRegisterUserMutation();
   const navigation = useNavigation<RootStackNavigationProp>();
 
-  const { LastName, FirstName, MiddleName, Age } = useSelector(
+  const { LastName, FirstName, MiddleName, Age, Birthday } = useSelector(
     (state: RootState) => state.authReducer.personalInfo
   );
-  const { ContactNumber, Email, Height, Weight } = useSelector(
+  const { ContactNumber, Email, Height, Weight, Address } = useSelector(
     (state: RootState) => state.authReducer.contactInfo
   );
 
-  const { Username, Password, ConfirmPassword, Gender } = useSelector(
-    (state: RootState) => state.authReducer.accountInfo
-  );
+  const { Username, Password, ConfirmPassword, Gender, SubscriptionType } =
+    useSelector((state: RootState) => state.authReducer.accountInfo);
   const {
     control,
     handleSubmit,
@@ -108,13 +108,17 @@ const TermsAndConditions = () => {
     setValue("Password", Password);
     setValue("ConfirmPassword", ConfirmPassword);
     setValue("Gender", Gender);
+    setValue("Address", Address);
+    setValue("Birthday", Birthday);
+    setValue("SubscriptionType", SubscriptionType);
   }, []);
 
   const onSubmit = async (data: IForm) => {
     const newObj: IForm = {
       ...data,
       Gender: data.Gender === "1" ? "Male" : "Female",
-      ProfilePic: "avatar_default.jpeg",
+      SubscriptionType: data.SubscriptionType === "1" ? "Session" : "Monthly",
+      ProfilePic: IMAGE_VALUES.DEFAULT,
     };
     // dispatch(registerUser(newObj));
 

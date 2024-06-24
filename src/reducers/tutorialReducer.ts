@@ -3,13 +3,59 @@ import loadConfig from "global/config";
 import { IGymEquipment } from "utils/types/gym_equipment.types";
 import { IExercises } from "utils/types/exercises.types";
 import { IWorkouts } from "utils/types/workouts.types";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 interface ITutorialState {
   error: string;
   message: string;
   status: number;
-  result: IGymEquipment[] | IExercises[] | IWorkouts[];
+  gym_results: IGymEquipment[];
+  exercise_results: IExercises[];
+  workout_results: IWorkouts[];
 }
+
+interface ITutorialSliceState {
+  gym_data: IGymEquipment;
+  exercise_data: IExercises;
+  workout_data: IWorkouts;
+}
+
+const initialState: ITutorialSliceState = {
+  gym_data: {
+    GymEquipmentID: 0,
+    GymEquipmentImage: "",
+    GymEquipmentName: "",
+    GymEquipmentDescription: "",
+    GymEquipmentIntensity: "",
+    GymEquipmentTargetMuscle: "",
+    GymEquipmentCategory: "",
+    GymEquipmentTutorialVideos: [],
+  },
+  exercise_data: {
+    ExerciseID: 0,
+    ExerciseImage: "",
+    ExerciseName: "",
+    ExerciseSets: "",
+    ExerciseReps: "",
+    ExerciseExplanation: "",
+    ExerciseIntensity: "",
+    ExerciseTargetMuscle: "",
+    ExerciseCategory: "",
+    ExerciseTutorialVideos: [],
+  },
+  workout_data: {
+    WorkOutID: 0,
+    WorkOutImage: "",
+    WorkOutName: "",
+    WorkOutSets: "",
+    WorkOutReps: "",
+    WorkOutExplanation: "",
+    WorkOutIntensity: "",
+    WorkOutTargetMuscle: "",
+    WorkOutCategory: "",
+    WorkOutTutorialVideos: [],
+  },
+};
 
 const config = loadConfig();
 export const tutorialApi = createApi({
@@ -92,6 +138,28 @@ export const tutorialApi = createApi({
   }),
 });
 
+export const tutorialSlice = createSlice({
+  name: "tutorial",
+  initialState: initialState,
+  reducers: {
+    setGymEquipmentData: (
+      { gym_data },
+      action: PayloadAction<IGymEquipment>
+    ) => {
+      gym_data = action.payload;
+    },
+    setExerciseData: ({ exercise_data }, action: PayloadAction<IExercises>) => {
+      exercise_data = action.payload;
+    },
+    setWorkoutData: ({ workout_data }, action: PayloadAction<IWorkouts>) => {
+      workout_data = action.payload;
+    },
+  },
+});
+
+export const { setExerciseData, setGymEquipmentData, setWorkoutData } =
+  tutorialSlice.actions;
+
 export const {
   useGetAllGymEquipmentsQuery,
   useGetGymEquipmentByCategoryQuery,
@@ -106,3 +174,4 @@ export const {
   useGetWorkOutByIntensityQuery,
   useGetWorkOutByTargetMuscleQuery,
 } = tutorialApi;
+export default tutorialSlice.reducer;

@@ -12,6 +12,9 @@ interface IForm {
   ConfirmPassword: string;
   ProfilePic: string | undefined;
   Gender: string;
+  Birthday: string;
+  Address: string;
+  SubscriptionType: string;
 }
 
 export interface IPersonalDetails {
@@ -19,6 +22,7 @@ export interface IPersonalDetails {
   FirstName: string;
   MiddleName: string;
   Age: string;
+  Birthday: string;
 }
 
 export interface IContactDetails {
@@ -26,14 +30,16 @@ export interface IContactDetails {
   Email: string;
   Height: string;
   Weight: string;
+  Address: string;
 }
 
 export interface IAccountSetup {
-  Username?: string;
-  Password?: string;
-  ConfirmPassword?: string;
-  Gender?: string;
-  ProfilePic?: string;
+  Username: string;
+  Password: string;
+  ConfirmPassword: string;
+  Gender: string;
+  ProfilePic: string;
+  SubscriptionType: string;
 }
 
 export default IForm;

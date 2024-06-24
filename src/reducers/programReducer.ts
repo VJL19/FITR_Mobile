@@ -42,6 +42,10 @@ export const programApi = createApi({
       query: (UserID) => `/user/program/display_planner/:${UserID}`,
       providesTags: ["program"],
     }),
+    getTodayPrograms: builder.query<IProgramState, number | undefined>({
+      query: (UserID) => `/user/program/todays_program/:${UserID}`,
+      providesTags: ["program"],
+    }),
     createUserProgram: builder.mutation<IProgramState, IProgram>({
       query: (arg) => ({
         url: "/user/program/create_planner",
@@ -83,6 +87,7 @@ export const {
   useGetUserSpecificProgramsQuery,
   useCreateUserProgramMutation,
   useEditUserProgramMutation,
+  useGetTodayProgramsQuery,
   useDeleteUserProgramMutation,
 } = programApi;
 export default programSlice.reducer;

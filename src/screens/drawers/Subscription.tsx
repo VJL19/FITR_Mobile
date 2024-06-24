@@ -193,7 +193,7 @@ const Subscription = () => {
                 textDecorationLine: "underline",
                 fontStyle: "italic",
                 fontSize: 17,
-                color: "blue",
+                color: "#ff2e00",
                 textAlign: "center",
               }}
             >

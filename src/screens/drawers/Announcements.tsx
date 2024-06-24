@@ -6,8 +6,9 @@ import useIsReady from "hooks/useIsReady";
 import LoadingIndicator from "components/LoadingIndicator";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "store/store";
-import { useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { setRoute } from "reducers/routeReducer";
+import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
 
 const Announcements = () => {
   const { isReady } = useIsReady();
@@ -21,9 +22,18 @@ const Announcements = () => {
     return <LoadingIndicator />;
   }
 
+  const navigation = useNavigation<RootStackNavigationProp>();
   return (
     <View style={styles.container}>
-      <Text>Announcemnts</Text>
+      <Text
+        onPress={() =>
+          navigation.navigate("DetailedScreens", {
+            screen: "View Announcement",
+          })
+        }
+      >
+        Announcemnts
+      </Text>
     </View>
   );
 };

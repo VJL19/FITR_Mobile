@@ -6,6 +6,8 @@ import IUser from "../utils/types/user.types";
 import IAttendance from "../utils/types/attendance.types";
 import LoadingIndicator from "./LoadingIndicator";
 import { useGetAccessTokenQuery } from "reducers/authReducer";
+import { IMAGE_VALUES } from "utils/enums/DefaultValues";
+import avatar from "assets/avatar_default.jpeg";
 
 const Avatar = () => {
   const { user, accessToken } = useSelector(
@@ -50,7 +52,14 @@ const Avatar = () => {
   const url = data?.user?.ProfilePic;
   return (
     <View style={styles.container}>
-      <Image source={{ uri: url }} style={styles.avatarStyle} />
+      <Image
+        source={
+          data?.user?.ProfilePic === IMAGE_VALUES.DEFAULT
+            ? avatar
+            : { uri: url }
+        }
+        style={styles.avatarStyle}
+      />
       <Text style={styles.avatarNameStyle}>
         {data?.user.LastName}, {data?.user.FirstName}
       </Text>

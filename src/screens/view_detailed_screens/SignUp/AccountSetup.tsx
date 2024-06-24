@@ -11,15 +11,13 @@ import CustomTextInput from "components/CustomTextInput";
 import DisplayFormError from "components/DisplayFormError";
 import LoadingIndicator from "components/LoadingIndicator";
 import { RadioGroup } from "react-native-radio-buttons-group";
-import avatar from "assets/avatar_default.jpeg";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "store/store";
 import { setAccountInfoFields } from "reducers/authReducer";
 
 const AccountSetup = () => {
-  const { Username, Password, ConfirmPassword, Gender } = useSelector(
-    (state: RootState) => state.authReducer.accountInfo
-  );
+  const { Username, Password, ConfirmPassword, Gender, SubscriptionType } =
+    useSelector((state: RootState) => state.authReducer.accountInfo);
   const dispatch: AppDispatch = useDispatch();
 
   const navigation = useNavigation<RootStackNavigationProp>();
@@ -40,6 +38,7 @@ const AccountSetup = () => {
     setValue("Password", Password);
     setValue("ConfirmPassword", ConfirmPassword);
     setValue("Gender", Gender);
+    setValue("SubscriptionType", SubscriptionType);
   }, []);
 
   useEffect(() => {
@@ -53,7 +52,13 @@ const AccountSetup = () => {
     { id: "2", label: "Female", value: "2" },
   ];
 
+  const subscription_types = [
+    { id: "1", label: "Session", value: "1" },
+    { id: "2", label: "Monthly", value: "2" },
+  ];
+
   const onSubmit = async (data: IAccountSetup) => {
+    console.log("account setup data", data);
     dispatch(setAccountInfoFields(data));
     navigation.navigate("DetailedScreens", {
       screen: "TermsAndCondition",
@@ -127,6 +132,20 @@ const AccountSetup = () => {
           name="Gender"
         />
         <DisplayFormError errors={errors.Gender} />
+        <Text style={styles.labelStyle}>Subscription Type</Text>
+        <Controller
+          control={control}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <RadioGroup
+              radioButtons={subscription_types}
+              onPress={onChange}
+              selectedId={value}
+              containerStyle={{ flex: 1, flexDirection: "row" }}
+            />
+          )}
+          name="SubscriptionType"
+        />
+        <DisplayFormError errors={errors.SubscriptionType} />
       </ScrollView>
       <View>
         {isSubmitting && <LoadingIndicator />}

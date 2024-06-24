@@ -98,87 +98,90 @@ const EditProgram = () => {
     return <LoadingIndicator />;
   }
   return (
-    <ScrollView>
-      <View style={{ marginTop: 25 }}>
-        <Controller
-          control={control}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <React.Fragment>
-              <Text
-                style={{
-                  color: "#202020",
-                  fontSize: 18,
-                  fontFamily: "Inter-Bold",
-                  letterSpacing: 1,
-                }}
-              >
-                Title
-              </Text>
-              <CustomTextInput
-                error={errors.ProgramTitle}
-                placeholder="Enter the title of the program"
-                onBlur={onBlur}
-                onChange={onChange}
-                value={value}
-              />
-            </React.Fragment>
-          )}
-          name="ProgramTitle"
-        />
-        <DisplayFormError errors={errors.ProgramTitle} />
+    <View style={{ flex: 1 }}>
+      <ScrollView>
+        <View style={{ marginTop: 25 }}>
+          <Controller
+            control={control}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <React.Fragment>
+                <Text
+                  style={{
+                    color: "#202020",
+                    fontSize: 18,
+                    fontFamily: "Inter-Bold",
+                    letterSpacing: 1,
+                  }}
+                >
+                  Title
+                </Text>
+                <CustomTextInput
+                  error={errors.ProgramTitle}
+                  placeholder="Enter the title of the program"
+                  onBlur={onBlur}
+                  onChange={onChange}
+                  value={value}
+                />
+              </React.Fragment>
+            )}
+            name="ProgramTitle"
+          />
+          <DisplayFormError errors={errors.ProgramTitle} />
 
-        <Controller
-          control={control}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <React.Fragment>
-              <Text
-                style={{
-                  color: "#202020",
-                  fontSize: 18,
-                  fontFamily: "Inter-Bold",
-                  letterSpacing: 1,
-                }}
-              >
-                Description
-              </Text>
+          <Controller
+            control={control}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <React.Fragment>
+                <Text
+                  style={{
+                    color: "#202020",
+                    fontSize: 18,
+                    fontFamily: "Inter-Bold",
+                    letterSpacing: 1,
+                  }}
+                >
+                  Description
+                </Text>
 
-              <TextInput
-                multiline={true}
-                textAlignVertical="top"
-                placeholder="Enter the description"
-                placeholderTextColor={"#c2c2c2"}
-                onBlur={onBlur}
-                onChangeText={onChange}
-                value={value}
-                style={{
-                  borderWidth: 1,
-                  height: 300,
-                  borderRadius: 8,
-                  padding: 15,
-                  color: "#202020",
-                  borderColor: errors.ProgramDescription
-                    ? "#d9534f"
-                    : "#202020",
-                  marginBottom: 10,
-                  fontSize: 16,
-                }}
-              />
-            </React.Fragment>
+                <TextInput
+                  multiline={true}
+                  textAlignVertical="top"
+                  placeholder="Enter the description"
+                  placeholderTextColor={"#c2c2c2"}
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  value={value}
+                  style={{
+                    borderWidth: 1,
+                    height: 300,
+                    borderRadius: 8,
+                    padding: 15,
+                    color: "#202020",
+                    borderColor: errors.ProgramDescription
+                      ? "#d9534f"
+                      : "#202020",
+                    marginBottom: 10,
+                    fontSize: 16,
+                  }}
+                />
+              </React.Fragment>
+            )}
+            name="ProgramDescription"
+          />
+        </View>
+
+        <DisplayFormError errors={errors.ProgramDescription} />
+      </ScrollView>
+      <View style={{ width: "95%", alignSelf: "center", marginBottom: 15 }}>
+        <Button
+          title="Edit Program"
+          color={"#ff2e00"}
+          onPress={handleSubmit(onSubmit, (error: FieldErrors<IProgram>) =>
+            console.log("err", error)
           )}
-          name="ProgramDescription"
         />
       </View>
-
-      <DisplayFormError errors={errors.ProgramDescription} />
-
-      <Button
-        title="Edit Program"
-        color={"#ff2e00"}
-        onPress={handleSubmit(onSubmit, (error: FieldErrors<IProgram>) =>
-          console.log("err", error)
-        )}
-      />
-    </ScrollView>
+    </View>
   );
 };
 

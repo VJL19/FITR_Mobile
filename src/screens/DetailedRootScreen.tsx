@@ -26,6 +26,11 @@ import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigat
 import EditProgram from "./view_detailed_screens/Programs/EditProgram";
 import ViewImage from "./view_detailed_screens/ViewImage/ViewImage";
 import SubscriptionHistory from "./view_detailed_screens/Subscription/SubscriptionHistory";
+import ViewGymEquipment from "./view_detailed_screens/Tutorials/GymEquipments/ViewGymEquipment";
+import ViewWorkout from "./view_detailed_screens/Tutorials/Workouts/ViewWorkout";
+import ViewExercise from "./view_detailed_screens/Tutorials/Exercises/ViewExercise";
+import ViewRFIDCard from "./view_detailed_screens/Attendance/ViewRFIDCard";
+import ViewAttendanceHistory from "./view_detailed_screens/Attendance/ViewAttendanceHistory";
 
 const DetailedRootScreen = () => {
   const config = {
@@ -72,6 +77,27 @@ const DetailedRootScreen = () => {
         cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
       }}
     >
+      <DetailedScreenStacks.Screen
+        name="View Attendance History"
+        component={ViewAttendanceHistory}
+        options={{
+          presentation: "card",
+          gestureEnabled: true,
+          gestureDirection: "horizontal",
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+      />
+      <DetailedScreenStacks.Screen
+        name="View RFID Card"
+        component={ViewRFIDCard}
+        options={{
+          headerTitle: "View RFID Card Details",
+          presentation: "card",
+          gestureEnabled: true,
+          gestureDirection: "horizontal",
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+      />
       <DetailedScreenStacks.Screen
         name="View Payments"
         component={SubscriptionHistory}
@@ -128,7 +154,7 @@ const DetailedRootScreen = () => {
         }}
       />
       <DetailedScreenStacks.Screen
-        name="View Announcements"
+        name="View Announcement"
         component={ViewAnnouncements}
         options={{
           presentation: "card",
@@ -225,6 +251,17 @@ const DetailedRootScreen = () => {
         }}
       />
       <DetailedScreenStacks.Screen
+        name="View Gym Equipment"
+        component={ViewGymEquipment}
+        options={{
+          cardOverlayEnabled: true,
+          presentation: "card",
+          gestureEnabled: true,
+          gestureDirection: "horizontal",
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+      />
+      <DetailedScreenStacks.Screen
         name="Workouts"
         component={Workouts}
         options={{
@@ -236,8 +273,30 @@ const DetailedRootScreen = () => {
         }}
       />
       <DetailedScreenStacks.Screen
+        name="View Workout"
+        component={ViewWorkout}
+        options={{
+          cardOverlayEnabled: true,
+          presentation: "card",
+          gestureEnabled: true,
+          gestureDirection: "horizontal",
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+      />
+      <DetailedScreenStacks.Screen
         name="Exercises"
         component={Exercises}
+        options={{
+          cardOverlayEnabled: true,
+          presentation: "card",
+          gestureEnabled: true,
+          gestureDirection: "horizontal",
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+      />
+      <DetailedScreenStacks.Screen
+        name="View Exercise"
+        component={ViewExercise}
         options={{
           cardOverlayEnabled: true,
           presentation: "card",

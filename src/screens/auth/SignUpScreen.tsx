@@ -5,6 +5,8 @@ import {
   Button,
   StyleSheet,
   ScrollView,
+  Pressable,
+  Platform,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
@@ -20,12 +22,17 @@ import LoadingIndicator from "components/LoadingIndicator";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "store/store";
 import { clearFormFields, setPersonalInfoFields } from "reducers/authReducer";
+import DateTimePicker, {
+  DateTimePickerEvent,
+} from "@react-native-community/datetimepicker";
 
 const SignUpScreen = () => {
   const navigation = useNavigation<RootStackNavigationProp>();
   const [image, setImage] = useState<string | undefined>();
 
-  const { LastName, FirstName, MiddleName, Age } = useSelector(
+  const [showPicker, setShowPicker] = useState(false);
+
+  const { LastName, FirstName, MiddleName, Age, Birthday } = useSelector(
     (state: RootState) => state.authReducer.personalInfo
   );
   const {
@@ -47,6 +54,7 @@ const SignUpScreen = () => {
     setValue("FirstName", FirstName);
     setValue("Age", Age);
     setValue("MiddleName", MiddleName);
+    setValue("Birthday", Birthday);
   }, []);
 
   const onSubmit = async (data: IPersonalDetails) => {
@@ -72,6 +80,28 @@ const SignUpScreen = () => {
     // await new Promise((resolve) => setTimeout(resolve, 2500));
   };
 
+  const toggleDatePicker = () => {
+    setShowPicker(!showPicker);
+  };
+
+  const onChangeDate = (
+    event: DateTimePickerEvent,
+    selectedDate?: Date | undefined
+  ) => {
+    const { type } = event;
+    if (type == "set") {
+      const currentDate = selectedDate;
+      setValue("Birthday", currentDate!.toDateString());
+
+      if (Platform.OS === "android") {
+        toggleDatePicker();
+        setValue("Birthday", currentDate!.toDateString());
+      }
+    } else {
+      toggleDatePicker();
+    }
+  };
+
   useEffect(
     () =>
       navigation.addListener("beforeRemove", (e) => {
@@ -84,12 +114,12 @@ const SignUpScreen = () => {
           e.preventDefault();
           // Prompt the user before leaving the screen
           Alert.alert(
-            "Confirmation",
+            "Are you sure?",
             "The values in the fields will not be saved. Are you sure to discard them and leave the screen?",
             [
               { text: "Don't leave", style: "cancel", onPress: () => {} },
               {
-                text: "Discard",
+                text: "Ok",
                 style: "destructive",
                 // If the user confirmed, then we dispatch the action we blocked earlier
                 // This will continue the action that had triggered the removal of the screen
@@ -120,6 +150,14 @@ const SignUpScreen = () => {
           justifyContent: "center",
         }}
       >
+        {showPicker && (
+          <DateTimePicker
+            mode="date"
+            value={new Date()}
+            onChange={onChangeDate}
+            display="calendar"
+          />
+        )}
         <Text style={styles.labelStyle}>Last Name</Text>
         <Controller
           control={control}
@@ -181,6 +219,36 @@ const SignUpScreen = () => {
           name="Age"
         />
         <DisplayFormError errors={errors.Age} />
+        <Text style={styles.labelStyle}>Date of birth</Text>
+        {!showPicker && (
+          <Pressable onPress={toggleDatePicker}>
+            <Controller
+              control={control}
+              render={({ field: { onChange, onBlur, value } }) => (
+                // <CustomTextInput
+                //   inputMode="numeric"
+                //   error={errors.Age}
+                //   onBlur={onBlur}
+                //   onChange={onChange}
+                //   value={value}
+                //   placeholder="Enter your Birthday"
+                // />
+
+                <CustomTextInput
+                  isEditable={false}
+                  inputMode="text"
+                  error={errors.Birthday}
+                  onBlur={onBlur}
+                  onChange={onChange}
+                  value={value}
+                  placeholder="Enter your birthday"
+                />
+              )}
+              name="Birthday"
+            />
+          </Pressable>
+        )}
+        <DisplayFormError errors={errors.Birthday} />
       </ScrollView>
       <View>
         {isSubmitting && <LoadingIndicator />}

@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
     width: 300,
     padding: 15,
     marginTop: 15,
-    backgroundColor: "rgba(255,45,0, .2)",
+    backgroundColor: "#E12900",
     borderRadius: 10,
     marginLeft: 10,
   },
@@ -57,8 +57,10 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: "800",
     fontFamily: "Inter-Bold",
+    color: "#f5f5f5",
   },
   date: {
     fontSize: 14,
+    color: "#f5f5f5",
   },
 });

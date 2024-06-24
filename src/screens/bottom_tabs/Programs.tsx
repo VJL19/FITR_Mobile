@@ -67,6 +67,17 @@ const Programs = () => {
   return (
     <View style={styles.container}>
       <View style={styles.box}>
+        <Text style={{ fontWeight: "bold", fontSize: 25 }}>All programs</Text>
+        <FlatList
+          horizontal={true}
+          alwaysBounceVertical={true}
+          data={data?.result}
+          renderItem={({ item }) => <Program {...item} />}
+          keyExtractor={(item: IProgram) => item?.ProgramID?.toString()}
+        />
+        <Text style={{ fontWeight: "bold", fontSize: 25 }}>
+          All suggested programs
+        </Text>
         <FlatList
           horizontal={true}
           alwaysBounceVertical={true}
@@ -86,9 +97,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f5f5f5",
+    padding: 12,
   },
   textStyle: {
     color: "#202020",
   },
-  box: { flex: 0.3, marginRight: 50 },
+  box: { flex: 0.87, width: "100%" },
 });
