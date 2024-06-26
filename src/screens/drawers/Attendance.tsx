@@ -3,6 +3,7 @@ import {
   Text,
   View,
   StyleSheet,
+  Image,
   Button,
   TouchableNativeFeedback,
 } from "react-native";
@@ -28,7 +29,7 @@ import { useGetAccessTokenQuery } from "reducers/authReducer";
 import { useCheckUserScanQrQuery } from "reducers/attendanceReducer";
 import CustomError from "components/CustomError";
 import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
-import Ionicon from "react-native-vector-icons/Ionicons";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 const Attendance = () => {
   const [hasPermission, setHasPermission] = useState<boolean>();
@@ -150,6 +151,7 @@ const Attendance = () => {
     <View style={styles.container}>
       <View
         style={{
+          flex: 0.4,
           justifyContent: "space-around",
           flexDirection: "row",
         }}
@@ -170,7 +172,13 @@ const Attendance = () => {
         >
           <View style={styles.BoxStyle}>
             <Text style={styles.BoxTextStyle}>Attendance History</Text>
-            <Ionicon name="home" color={"ff2e00"} size={150} />
+            <View style={{ position: "absolute", top: 0 }}>
+              <MaterialCommunityIcons
+                name="history"
+                color={"#f5f5f5"}
+                size={120}
+              />
+            </View>
           </View>
         </TouchableNativeFeedback>
         <TouchableNativeFeedback
@@ -189,7 +197,13 @@ const Attendance = () => {
         >
           <View style={styles.BoxStyle}>
             <Text style={styles.BoxTextStyle}>RFID Card</Text>
-            <Ionicon name="home" color={"ff2e00"} size={150} />
+            <View style={{ position: "absolute", top: 0 }}>
+              <MaterialCommunityIcons
+                name="card-account-details"
+                color={"#f5f5f5"}
+                size={120}
+              />
+            </View>
           </View>
         </TouchableNativeFeedback>
       </View>
@@ -304,12 +318,14 @@ const styles = StyleSheet.create({
   },
   BoxStyle: {
     width: 175,
+    alignItems: "center",
     justifyContent: "flex-end",
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#E12900",
   },
   BoxTextStyle: {
     width: "100%",
     height: 75,
+    zIndex: 2,
     opacity: 0.87,
     backgroundColor: "#131313",
     color: "#f5f5f5",
@@ -318,5 +334,10 @@ const styles = StyleSheet.create({
     fontSize: 20,
     textAlign: "center",
     textAlignVertical: "center",
+  },
+  imageStyle: {
+    height: 180,
+    resizeMode: "cover",
+    width: "auto",
   },
 });

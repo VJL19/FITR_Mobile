@@ -31,6 +31,7 @@ import ViewWorkout from "./view_detailed_screens/Tutorials/Workouts/ViewWorkout"
 import ViewExercise from "./view_detailed_screens/Tutorials/Exercises/ViewExercise";
 import ViewRFIDCard from "./view_detailed_screens/Attendance/ViewRFIDCard";
 import ViewAttendanceHistory from "./view_detailed_screens/Attendance/ViewAttendanceHistory";
+import ViewTutorialYoutube from "components/ViewTutorialYoutube";
 
 const DetailedRootScreen = () => {
   const config = {
@@ -297,6 +298,17 @@ const DetailedRootScreen = () => {
       <DetailedScreenStacks.Screen
         name="View Exercise"
         component={ViewExercise}
+        options={{
+          cardOverlayEnabled: true,
+          presentation: "card",
+          gestureEnabled: true,
+          gestureDirection: "horizontal",
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+      />
+      <DetailedScreenStacks.Screen
+        name="View Tutorial Youtube"
+        component={ViewTutorialYoutube}
         options={{
           cardOverlayEnabled: true,
           presentation: "card",

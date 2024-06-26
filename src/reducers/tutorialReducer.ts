@@ -4,6 +4,7 @@ import { IGymEquipment } from "utils/types/gym_equipment.types";
 import { IExercises } from "utils/types/exercises.types";
 import { IWorkouts } from "utils/types/workouts.types";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import * as SecureStore from "expo-secure-store";
 
 interface ITutorialState {
   error: string;
@@ -63,6 +64,15 @@ export const tutorialApi = createApi({
   tagTypes: ["tutorial"],
   baseQuery: fetchBaseQuery({
     baseUrl: config.BASE_URL,
+    prepareHeaders: async (headers: Headers, { getState }) => {
+      // const token = (getState() as RootState).authReducer.accessToken;
+      const token = await SecureStore.getItemAsync("accessToken");
+      // console.log("state", getState());
+      if (token) {
+        headers.set("authorization", `Bearer ${token}`);
+      }
+      return headers;
+    },
   }),
   endpoints: (builder) => ({
     getGymEquipmentByTargetMuscle: builder.query<
@@ -138,21 +148,18 @@ export const tutorialApi = createApi({
   }),
 });
 
-export const tutorialSlice = createSlice({
+const tutorialSlice = createSlice({
   name: "tutorial",
   initialState: initialState,
   reducers: {
-    setGymEquipmentData: (
-      { gym_data },
-      action: PayloadAction<IGymEquipment>
-    ) => {
-      gym_data = action.payload;
+    setGymEquipmentData: (state, action: PayloadAction<IGymEquipment>) => {
+      state.gym_data = action.payload;
     },
-    setExerciseData: ({ exercise_data }, action: PayloadAction<IExercises>) => {
-      exercise_data = action.payload;
+    setExerciseData: (state, action: PayloadAction<IExercises>) => {
+      state.exercise_data = action.payload;
     },
-    setWorkoutData: ({ workout_data }, action: PayloadAction<IWorkouts>) => {
-      workout_data = action.payload;
+    setWorkoutData: (state, action: PayloadAction<IWorkouts>) => {
+      state.workout_data = action.payload;
     },
   },
 });

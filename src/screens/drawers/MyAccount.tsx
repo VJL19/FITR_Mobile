@@ -1,4 +1,12 @@
-import { Button, StyleSheet, Text, View, Image } from "react-native";
+import {
+  Button,
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  ImageBackground,
+  TouchableOpacity,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setRoute } from "reducers/routeReducer";
@@ -34,18 +42,30 @@ const MyAccount = () => {
   }
   console.log("hey", data);
 
+  const handlePress = () => {
+    navigation.navigate("DetailedScreens", {
+      screen: "View Image",
+      params: { imageUrl: data?.user?.ProfilePic },
+    });
+  };
   return (
     <View style={styles.container}>
-      <View>
-        <Image
-          source={
-            data?.user?.ProfilePic === IMAGE_VALUES.DEFAULT
-              ? avatar
-              : { uri: data?.user?.ProfilePic }
-          }
-          style={styles.image}
-        />
-      </View>
+      <TouchableOpacity
+        style={{ alignSelf: "flex-start" }}
+        onPress={handlePress}
+      >
+        <View style={{ alignSelf: "flex-start" }}>
+          <ImageBackground
+            resizeMode="cover"
+            source={
+              data?.user?.ProfilePic === IMAGE_VALUES.DEFAULT
+                ? avatar
+                : { uri: data?.user?.ProfilePic }
+            }
+            style={styles.image}
+          ></ImageBackground>
+        </View>
+      </TouchableOpacity>
       <ScrollView
         style={{
           width: "90%",
@@ -86,10 +106,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#f5f5f5",
   },
   image: {
-    width: 120,
-    height: 120,
-    borderRadius: 150,
-    borderWidth: 1.5,
+    width: "100%",
+    height: 250,
     borderColor: "#ff2e00",
   },
   title: {

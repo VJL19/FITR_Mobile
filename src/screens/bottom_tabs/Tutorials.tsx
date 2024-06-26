@@ -65,7 +65,9 @@ const Tutorials = () => {
           }
         >
           <View style={styles.BoxStyle}>
-            <Text style={styles.BoxTextStyle}>Gym Equipments</Text>
+            <Text numberOfLines={1} style={styles.BoxTextStyle}>
+              Gym Equipments
+            </Text>
             <Image source={gym_equipLogo} style={styles.imageStyle} />
           </View>
         </TouchableNativeFeedback>
@@ -122,13 +124,12 @@ const styles = StyleSheet.create({
   },
   BoxTextStyle: {
     width: "100%",
-    height: 75,
-    opacity: 0.87,
+    height: 65,
     backgroundColor: "#131313",
     color: "#f5f5f5",
     position: "absolute",
     fontFamily: "Inter-ExtraBold",
-    fontSize: 20,
+    fontSize: 18,
     textAlign: "center",
     textAlignVertical: "center",
   },

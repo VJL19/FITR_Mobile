@@ -18,6 +18,10 @@ import { authslice } from "../reducers/authReducer";
 import { setupListeners } from "@reduxjs/toolkit/query";
 import programReducer, { programApi } from "reducers/programReducer";
 import tutorialReducer, { tutorialApi } from "reducers/tutorialReducer";
+import {
+  favoriteExerciseApi,
+  favoriteWorkoutApi,
+} from "reducers/favoriteReducer";
 export const store = configureStore({
   reducer: {
     [authslice.reducerPath]: authslice.reducer,
@@ -28,6 +32,8 @@ export const store = configureStore({
     [programApi.reducerPath]: programApi.reducer,
     [subscriptionApi.reducerPath]: subscriptionApi.reducer,
     [tutorialApi.reducerPath]: tutorialApi.reducer,
+    [favoriteExerciseApi.reducerPath]: favoriteExerciseApi.reducer,
+    [favoriteWorkoutApi.reducerPath]: favoriteWorkoutApi.reducer,
     tutorial: tutorialReducer,
     program: programReducer,
     counter: counterReducer,
@@ -52,6 +58,8 @@ export const store = configureStore({
       programApi.middleware,
       subscriptionApi.middleware,
       tutorialApi.middleware,
+      favoriteExerciseApi.middleware,
+      favoriteWorkoutApi.middleware,
     ]),
 });
 setupListeners(store.dispatch);

@@ -14,7 +14,12 @@ const Workouts = () => {
 
   const { isError } = useGetAccessTokenQuery();
 
-  const { data, isUninitialized, isFetching } = useGetAllWorkoutsQuery();
+  const { data, isUninitialized, isFetching } = useGetAllWorkoutsQuery(
+    undefined,
+    {
+      refetchOnMountOrArgChange: true,
+    }
+  );
 
   if (isFetching || isUninitialized) {
     return <LoadingIndicator />;
@@ -23,13 +28,16 @@ const Workouts = () => {
   if (isError) {
     return <CustomError />;
   }
-  return (
-    <View>
-      <Text>Workouts</Text>
 
+  return (
+    <View style={styles.container}>
       <FlatList
+        key="_"
+        numColumns={2}
         alwaysBounceVertical={true}
         data={data?.workout_results}
+        initialNumToRender={5}
+        maxToRenderPerBatch={5}
         renderItem={({ item }) => <WorkoutsLists {...item} />}
         keyExtractor={(item: IWorkouts) => item?.WorkOutID?.toString()}
       />
@@ -39,4 +47,10 @@ const Workouts = () => {
 
 export default Workouts;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    marginTop: 100,
+    justifyContent: "space-between",
+  },
+});

@@ -24,12 +24,14 @@ const Exercises = () => {
   }
 
   return (
-    <View>
-      <Text>Exercises</Text>
-
+    <View style={styles.container}>
       <FlatList
+        key="exercises_"
+        numColumns={2}
         alwaysBounceVertical={true}
         data={data?.exercise_results}
+        initialNumToRender={5}
+        maxToRenderPerBatch={5}
         renderItem={({ item }) => <ExercisesLists {...item} />}
         keyExtractor={(item: IExercises) => item?.ExerciseID?.toString()}
       />
@@ -39,4 +41,10 @@ const Exercises = () => {
 
 export default Exercises;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    marginTop: 100,
+    justifyContent: "space-between",
+  },
+});

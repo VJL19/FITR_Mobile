@@ -30,7 +30,9 @@ const Program = ({
     <TouchableOpacity activeOpacity={0.8} onPress={handlePress}>
       <View style={styles.box}>
         <View>
-          <Text style={styles.title}>{ProgramTitle}</Text>
+          <Text numberOfLines={1} style={styles.title}>
+            {ProgramTitle}
+          </Text>
           <Text style={styles.date}>{ProgramEntryDate?.substring(0, 10)}</Text>
         </View>
       </View>

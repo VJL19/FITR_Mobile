@@ -15,6 +15,9 @@ import { useGetTodayProgramsQuery } from "reducers/programReducer";
 import Program from "screens/view_detailed_screens/Programs/Program";
 import IProgram from "utils/types/program_planner.types";
 import { ScrollView } from "react-native-gesture-handler";
+import { useGetWorkoutsFavoritesQuery } from "reducers/favoriteReducer";
+import WorkoutFavoriteLists from "screens/view_detailed_screens/Favorites/WorkoutFavoriteLists";
+import { IWorkOutFavorites } from "utils/types/favorites.types";
 const Home = () => {
   const { value, name } = useSelector((state: RootState) => state.counter);
 
@@ -25,6 +28,14 @@ const Home = () => {
     isUninitialized,
     isFetching,
   } = useGetTodayProgramsQuery(data?.user?.UserID, {
+    refetchOnMountOrArgChange: true,
+  });
+
+  const {
+    data: workoutFavoritesData,
+    isUninitialized: isUninitializedW,
+    isFetching: isFetchingW,
+  } = useGetWorkoutsFavoritesQuery(data?.user?.UserID, {
     refetchOnMountOrArgChange: true,
   });
 
@@ -45,7 +56,10 @@ const Home = () => {
     Speech.stop();
   };
 
-  if (programs?.result.length === 0) {
+  if (
+    programs?.result.length === 0 &&
+    workoutFavoritesData?.result.length === 0
+  ) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <Text style={{ color: "#ff2e00", fontSize: 18 }}>
@@ -72,8 +86,8 @@ const Home = () => {
             justifyContent: "space-between",
           }}
         >
-          <Text style={{ fontWeight: "bold", fontSize: 25 }}>
-            Today's program
+          <Text style={{ fontWeight: "bold", fontSize: 23 }}>
+            Today's programs
           </Text>
           <Text style={{ color: "#ff2e00", fontWeight: "600" }}>SEE ALL</Text>
         </View>
@@ -93,8 +107,8 @@ const Home = () => {
             justifyContent: "space-between",
           }}
         >
-          <Text style={{ fontWeight: "bold", fontSize: 25 }}>
-            Suggested program
+          <Text style={{ fontWeight: "bold", fontSize: 23 }}>
+            Suggested programs
           </Text>
           <Text style={{ color: "#ff2e00", fontWeight: "600" }}>SEE ALL</Text>
         </View>
@@ -113,7 +127,7 @@ const Home = () => {
             justifyContent: "space-between",
           }}
         >
-          <Text style={{ fontWeight: "bold", fontSize: 25 }}>
+          <Text style={{ fontWeight: "bold", fontSize: 23 }}>
             Your favorites
           </Text>
           <Text style={{ color: "#ff2e00", fontWeight: "600" }}>SEE ALL</Text>
@@ -122,12 +136,12 @@ const Home = () => {
         <FlatList
           horizontal={true}
           alwaysBounceVertical={true}
-          data={programs?.result}
-          renderItem={({ item }) => <Program {...item} />}
-          keyExtractor={(item: IProgram) => item?.ProgramID?.toString()}
+          data={workoutFavoritesData?.result}
+          renderItem={({ item }) => <WorkoutFavoriteLists {...item} />}
+          keyExtractor={(item: IWorkOutFavorites) =>
+            item?.WorkOutID?.toString()
+          }
         />
-
-        {/* <Button title="Get Data" onPress={() => dispatch(fetchUsers())} /> */}
       </ScrollView>
     </View>
   );

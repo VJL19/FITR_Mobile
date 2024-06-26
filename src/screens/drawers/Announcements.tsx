@@ -23,17 +23,15 @@ const Announcements = () => {
   }
 
   const navigation = useNavigation<RootStackNavigationProp>();
+
+  const handlePress = () => {
+    navigation.navigate("DetailedScreens", {
+      screen: "View Announcement",
+    });
+  };
   return (
     <View style={styles.container}>
-      <Text
-        onPress={() =>
-          navigation.navigate("DetailedScreens", {
-            screen: "View Announcement",
-          })
-        }
-      >
-        Announcemnts
-      </Text>
+      <Text>Announcemnts</Text>
     </View>
   );
 };
