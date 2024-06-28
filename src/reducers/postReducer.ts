@@ -7,8 +7,6 @@ import {
 import { IPost } from "../utils/types/post.types";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import loadConfig from "global/config";
-import { IAuthState } from "utils/types/user.types";
-import { RootState } from "store/store";
 import * as SecureStore from "expo-secure-store";
 
 interface IPostState {

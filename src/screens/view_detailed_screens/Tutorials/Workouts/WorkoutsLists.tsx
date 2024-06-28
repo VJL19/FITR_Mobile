@@ -13,7 +13,7 @@ import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigat
 import { AppDispatch } from "store/store";
 import { useDispatch } from "react-redux";
 import { setWorkoutData } from "reducers/tutorialReducer";
-import { WorkoutIntensity } from "utils/enums/Workout";
+import dynamicColor from "utils/helpers/dynamicStyles";
 
 const WorkoutsLists = ({
   WorkOutID,
@@ -68,13 +68,7 @@ const WorkoutsLists = ({
             <View
               style={{
                 padding: 12,
-                backgroundColor:
-                  WorkOutIntensity.toUpperCase() === WorkoutIntensity.BEGINNER
-                    ? "green"
-                    : WorkOutIntensity.toUpperCase() ===
-                      WorkoutIntensity.INTERMEDIATE
-                    ? "orange"
-                    : "red",
+                backgroundColor: dynamicColor(WorkOutIntensity),
                 alignSelf: "flex-start",
               }}
             >

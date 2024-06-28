@@ -43,16 +43,16 @@ const CustomModal = ({
         <SafeAreaView
           style={[
             styles.centeredView,
-            { backgroundColor: "rgba(0, 0, 0, 0.5)" },
+            { backgroundColor: "rgba(0, 0, 0, 0.6)" },
           ]}
         >
+          <Ionicon
+            name="close-circle"
+            size={35}
+            color="red"
+            onPress={() => setModalVisible(!modalVisible)}
+          />
           <View style={styles.modalView}>
-            <Ionicon
-              name="close-circle"
-              size={35}
-              color="red"
-              onPress={() => setModalVisible(!modalVisible)}
-            />
             <Text style={styles.modalText}>{modalTitle}</Text>
             <View
               style={{
@@ -122,6 +122,7 @@ const styles = StyleSheet.create({
     padding: 20,
     width: "75%",
     alignItems: "flex-end",
+    justifyContent: "space-evenly",
     shadowColor: "#000",
     shadowOffset: {
       width: 0,

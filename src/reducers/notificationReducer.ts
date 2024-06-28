@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { INotifications } from "../utils/types/notifications.types";
 import {
   getNotificationAction,
@@ -6,6 +6,9 @@ import {
   notifyLikeAction,
   removeNotificationAction,
 } from "../actions/notificationAction";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import loadConfig from "global/config";
+import * as SecureStore from "expo-secure-store";
 
 interface INotificationState {
   message: string;
@@ -13,6 +16,7 @@ interface INotificationState {
   status: number;
   isLoading: boolean;
   result: INotifications[];
+  notificationCount: string | undefined;
 }
 
 const initialState: INotificationState = {
@@ -21,11 +25,73 @@ const initialState: INotificationState = {
   status: 0,
   isLoading: false,
   result: [],
+  notificationCount: 0,
 };
+
+const config = loadConfig();
+
+export const notificationApi = createApi({
+  reducerPath: "/user/notifications",
+  tagTypes: ["notifications"],
+  baseQuery: fetchBaseQuery({
+    baseUrl: config.BASE_URL,
+    prepareHeaders: async (headers: Headers, { getState }) => {
+      // const token = (getState() as RootState).authReducer.accessToken;
+      const token = await SecureStore.getItemAsync("accessToken");
+      // console.log("state", getState());
+      if (token) {
+        headers.set("authorization", `Bearer ${token}`);
+      }
+      return headers;
+    },
+  }),
+  endpoints: (builder) => ({
+    markAsReadNotifications: builder.mutation<
+      INotificationState,
+      { UserID: number | undefined }
+    >({
+      query: (arg) => ({
+        url: "/user/notifications/readNotifications",
+        method: "POST",
+        body: arg,
+      }),
+      invalidatesTags: ["notifications"],
+    }),
+    markAsUnreadNotifications: builder.mutation<
+      INotificationState,
+      { UserID: number | undefined }
+    >({
+      query: (arg) => ({
+        url: `/user/notifications/unreadNotifications`,
+        method: "POST",
+        body: arg,
+      }),
+      invalidatesTags: ["notifications"],
+    }),
+    getAllNotifications: builder.query<INotificationState, number | undefined>({
+      query: (UserID) => `/user/notifications/getNotifications/:${UserID}`,
+      providesTags: ["notifications"],
+    }),
+    getAllNotificationsCount: builder.query<
+      INotificationState,
+      number | undefined
+    >({
+      query: (UserID) => `/user/notifications/getNotificationsCount/:${UserID}`,
+      providesTags: ["notifications"],
+    }),
+  }),
+});
 const notificationSlice = createSlice({
   name: "notification",
   initialState,
-  reducers: {},
+  reducers: {
+    setNotificationCount: (
+      state,
+      action: PayloadAction<string | undefined>
+    ) => {
+      state.notificationCount = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     //reducers for notifying user for like.
     builder.addCase(notifyLikeAction.fulfilled, (state, action) => {
@@ -111,4 +177,11 @@ const notificationSlice = createSlice({
   },
 });
 
+export const { setNotificationCount } = notificationSlice.actions;
+export const {
+  useMarkAsReadNotificationsMutation,
+  useMarkAsUnreadNotificationsMutation,
+  useGetAllNotificationsQuery,
+  useGetAllNotificationsCountQuery,
+} = notificationApi;
 export default notificationSlice.reducer;

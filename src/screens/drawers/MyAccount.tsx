@@ -36,6 +36,7 @@ const MyAccount = () => {
 
   if (isFetching || isUninitialized) {
     return <LoadingIndicator />;
+    976;
   }
   if (isError) {
     return <CustomError />;

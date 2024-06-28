@@ -12,7 +12,9 @@ import postReducer, { postslice } from "../reducers/postReducer";
 import routeReducer from "../reducers/routeReducer";
 import newsfeedReducer, { newsfeedslice } from "../reducers/newsfeedReducer";
 import commentReducer from "../reducers/commentReducer";
-import notificationReducer from "../reducers/notificationReducer";
+import notificationReducer, {
+  notificationApi,
+} from "../reducers/notificationReducer";
 import uploadImageReducer from "../reducers/uploadImageReducer";
 import { authslice } from "../reducers/authReducer";
 import { setupListeners } from "@reduxjs/toolkit/query";
@@ -34,6 +36,7 @@ export const store = configureStore({
     [tutorialApi.reducerPath]: tutorialApi.reducer,
     [favoriteExerciseApi.reducerPath]: favoriteExerciseApi.reducer,
     [favoriteWorkoutApi.reducerPath]: favoriteWorkoutApi.reducer,
+    [notificationApi.reducerPath]: notificationApi.reducer,
     tutorial: tutorialReducer,
     program: programReducer,
     counter: counterReducer,
@@ -60,6 +63,7 @@ export const store = configureStore({
       tutorialApi.middleware,
       favoriteExerciseApi.middleware,
       favoriteWorkoutApi.middleware,
+      notificationApi.middleware,
     ]),
 });
 setupListeners(store.dispatch);

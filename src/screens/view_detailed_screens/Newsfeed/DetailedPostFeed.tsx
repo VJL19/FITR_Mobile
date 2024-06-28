@@ -1,4 +1,4 @@
-import { Button, Text, View } from "react-native";
+import { Button, Text, TouchableOpacity, View, Image } from "react-native";
 import React, { useEffect } from "react";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { DetailedRootStackNavigatorsParamList } from "utils/types/detailed_screens/DetailedRootStackNavigators";
@@ -22,6 +22,8 @@ import {
 } from "reducers/newsfeedReducer";
 import { useGetAccessTokenQuery } from "reducers/authReducer";
 import { setCommentData } from "reducers/commentReducer";
+import { IMAGE_VALUES } from "utils/enums/DefaultValues";
+import postDefault from "assets/post_default.webp";
 
 const DetailedPostFeed = () => {
   // const { user } = useSelector((state: RootState) => state.authReducer);
@@ -123,12 +125,31 @@ const DetailedPostFeed = () => {
   if (isFetching || isUninitialized) {
     return <LoadingIndicator />;
   }
+
+  const handlePress = () => {
+    navigation.navigate("DetailedScreens", {
+      screen: "View Image",
+      params: {
+        imageUrl: PostImage,
+      },
+    });
+  };
+
   return (
     <View>
-      <Text>DetailedPosts</Text>
+      <TouchableOpacity onPress={handlePress}>
+        <Image
+          resizeMode="contain"
+          source={
+            PostImage === IMAGE_VALUES.DEFAULT
+              ? postDefault
+              : { uri: PostImage }
+          }
+          style={{ height: 290, width: "100%" }}
+        />
+      </TouchableOpacity>
       <Text>{PostTitle}</Text>
       <Text>{PostDescription}</Text>
-      <Text>{PostImage}</Text>
       <Text>{PostAuthor}</Text>
       <Text>{PostDate}</Text>
       <FlatList

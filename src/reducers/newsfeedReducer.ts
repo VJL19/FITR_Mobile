@@ -190,9 +190,7 @@ export const newsfeedslice = createApi({
       }),
       invalidatesTags: ["newsfeed"],
     }),
-    getAllNotifications: builder.query<INotifications[], number | undefined>({
-      query: (UserID) => `/user/notifications/getNotifications/:${UserID}`,
-    }),
+   
   }),
 });
 // /user/unlike_post
@@ -333,6 +331,5 @@ export const {
   useDeleteLikesMutation,
   useDeleteCommentsMutation,
   useDeleteNotificationsMutation,
-  useGetAllNotificationsQuery,
 } = newsfeedslice;
 export default newsfeedSlice.reducer;

@@ -12,6 +12,7 @@ import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigat
 import { AppDispatch } from "store/store";
 import { useDispatch } from "react-redux";
 import { setExerciseData } from "reducers/tutorialReducer";
+import dynamicColor from "utils/helpers/dynamicStyles";
 
 const ExerciseFavoriteLists = ({
   ExerciseID,
@@ -50,11 +51,26 @@ const ExerciseFavoriteLists = ({
       >
         <View
           style={{
-            padding: 11,
-            alignSelf: "flex-start",
-            backgroundColor: "#202020",
+            flex: 1,
+            backgroundColor: "rgba(0,0,0, 0.45)",
+            flexDirection: "column",
+            padding: 15,
+            gap: 25,
+            borderRadius: 10,
           }}
         >
+          <View
+            style={{
+              padding: 11,
+              alignSelf: "flex-start",
+              backgroundColor: dynamicColor(ExerciseIntensity),
+              borderRadius: 8,
+            }}
+          >
+            <Text numberOfLines={1} style={styles.subTitle}>
+              {ExerciseIntensity.toUpperCase()}
+            </Text>
+          </View>
           <Text numberOfLines={1} style={styles.title}>
             {ExerciseName}
           </Text>
@@ -69,16 +85,19 @@ export default ExerciseFavoriteLists;
 const styles = StyleSheet.create({
   box: {
     flex: 1,
-    flexDirection: "row",
-    justifyContent: "space-between",
     width: 300,
-    padding: 15,
     marginTop: 15,
     borderRadius: 10,
     marginLeft: 10,
   },
   title: {
-    fontSize: 18,
+    fontSize: 22,
+    fontWeight: "800",
+    fontFamily: "Inter-Bold",
+    color: "#f5f5f5",
+  },
+  subTitle: {
+    fontSize: 13,
     fontWeight: "800",
     fontFamily: "Inter-Bold",
     color: "#f5f5f5",

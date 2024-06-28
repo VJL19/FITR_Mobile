@@ -18,6 +18,10 @@ import { ScrollView } from "react-native-gesture-handler";
 import { useGetWorkoutsFavoritesQuery } from "reducers/favoriteReducer";
 import WorkoutFavoriteLists from "screens/view_detailed_screens/Favorites/WorkoutFavoriteLists";
 import { IWorkOutFavorites } from "utils/types/favorites.types";
+import {
+  setNotificationCount,
+  useGetAllNotificationsCountQuery,
+} from "reducers/notificationReducer";
 const Home = () => {
   const { value, name } = useSelector((state: RootState) => state.counter);
 
@@ -31,6 +35,8 @@ const Home = () => {
     refetchOnMountOrArgChange: true,
   });
 
+  const { data: count } = useGetAllNotificationsCountQuery(data?.user?.UserID);
+
   const {
     data: workoutFavoritesData,
     isUninitialized: isUninitializedW,
@@ -43,6 +49,7 @@ const Home = () => {
   const dispatch: AppDispatch = useDispatch();
   useEffect(() => {
     dispatch(setRoute("Home"));
+    dispatch(setNotificationCount(count?.result?.[0].NotificationCount));
   }, []);
 
   const text =
@@ -79,69 +86,88 @@ const Home = () => {
   return (
     <View style={{ flex: 1, backgroundColor: "#f5f5f5", padding: 12 }}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <Text style={{ fontWeight: "bold", fontSize: 23 }}>
-            Today's programs
-          </Text>
-          <Text style={{ color: "#ff2e00", fontWeight: "600" }}>SEE ALL</Text>
-        </View>
+        {programs?.result.length !== 0 && (
+          <React.Fragment>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <Text style={{ fontWeight: "bold", fontSize: 23 }}>
+                Today's programs
+              </Text>
+              <Text style={{ color: "#ff2e00", fontWeight: "600" }}>
+                SEE ALL
+              </Text>
+            </View>
 
-        <FlatList
-          horizontal={true}
-          alwaysBounceVertical={true}
-          data={programs?.result}
-          renderItem={({ item }) => <Program {...item} />}
-          keyExtractor={(item: IProgram) => item?.ProgramID?.toString()}
-        />
+            <FlatList
+              horizontal={true}
+              alwaysBounceVertical={true}
+              data={programs?.result}
+              renderItem={({ item }) => <Program {...item} />}
+              keyExtractor={(item: IProgram) => item?.ProgramID?.toString()}
+            />
+          </React.Fragment>
+        )}
 
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <Text style={{ fontWeight: "bold", fontSize: 23 }}>
-            Suggested programs
-          </Text>
-          <Text style={{ color: "#ff2e00", fontWeight: "600" }}>SEE ALL</Text>
-        </View>
+        {programs?.result.length !== 0 && (
+          <React.Fragment>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <Text style={{ fontWeight: "bold", fontSize: 23 }}>
+                Suggested programs
+              </Text>
+              <Text style={{ color: "#ff2e00", fontWeight: "600" }}>
+                SEE ALL
+              </Text>
+            </View>
 
-        <FlatList
-          horizontal={true}
-          alwaysBounceVertical={true}
-          data={programs?.result}
-          renderItem={({ item }) => <Program {...item} />}
-          keyExtractor={(item: IProgram) => item?.ProgramID?.toString()}
-        />
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <Text style={{ fontWeight: "bold", fontSize: 23 }}>
-            Your favorites
-          </Text>
-          <Text style={{ color: "#ff2e00", fontWeight: "600" }}>SEE ALL</Text>
-        </View>
+            <FlatList
+              horizontal={true}
+              alwaysBounceVertical={true}
+              data={programs?.result}
+              renderItem={({ item }) => <Program {...item} />}
+              keyExtractor={(item: IProgram) => item?.ProgramID?.toString()}
+            />
+          </React.Fragment>
+        )}
 
-        <FlatList
-          horizontal={true}
-          alwaysBounceVertical={true}
-          data={workoutFavoritesData?.result}
-          renderItem={({ item }) => <WorkoutFavoriteLists {...item} />}
-          keyExtractor={(item: IWorkOutFavorites) =>
-            item?.WorkOutID?.toString()
-          }
-        />
+        {workoutFavoritesData?.result.length !== 0 && (
+          <React.Fragment>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <Text style={{ fontWeight: "bold", fontSize: 23 }}>
+                Your favorites
+              </Text>
+              <Text style={{ color: "#ff2e00", fontWeight: "600" }}>
+                SEE ALL
+              </Text>
+            </View>
+
+            <FlatList
+              horizontal={true}
+              alwaysBounceVertical={true}
+              data={workoutFavoritesData?.result}
+              renderItem={({ item }) => <WorkoutFavoriteLists {...item} />}
+              keyExtractor={(item: IWorkOutFavorites) =>
+                item?.WorkOutID?.toString()
+              }
+            />
+          </React.Fragment>
+        )}
       </ScrollView>
     </View>
   );

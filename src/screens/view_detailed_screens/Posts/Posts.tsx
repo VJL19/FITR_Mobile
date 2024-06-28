@@ -37,7 +37,9 @@ const Posts = ({
     <TouchableOpacity activeOpacity={0.8} onPress={handlePress}>
       <View style={styles.box}>
         <View>
-          <Text style={styles.title}>{PostTitle}</Text>
+          <Text numberOfLines={1} style={styles.title}>
+            {PostTitle}
+          </Text>
           <Text style={styles.date}>{PostDate?.substring(0, 10)}</Text>
         </View>
       </View>

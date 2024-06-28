@@ -9,23 +9,19 @@ import Notification from "./Notification";
 import { INotifications } from "utils/types/notifications.types";
 import LoadingIndicator from "components/LoadingIndicator";
 import { useGetAccessTokenQuery } from "reducers/authReducer";
-import { useGetAllNotificationsQuery } from "reducers/newsfeedReducer";
+import { useGetAllNotificationsQuery } from "reducers/notificationReducer";
 import CustomError from "components/CustomError";
 
 const Notifications = () => {
   const dispatch: AppDispatch = useDispatch();
 
-  const { data, isError } = useGetAccessTokenQuery();
+  const { data: user, isError } = useGetAccessTokenQuery();
 
-  const { user } = data!;
+  const { data, isFetching, error, status, isUninitialized } =
+    useGetAllNotificationsQuery(user?.user?.UserID, {
+      refetchOnMountOrArgChange: true,
+    });
 
-  const {
-    data: result,
-    isFetching,
-    error,
-    status,
-    isUninitialized,
-  } = useGetAllNotificationsQuery(user.UserID);
   // const { user, isAuthenticated } = useSelector(
   //   (state: RootState) => state.authReducer
   // );
@@ -43,11 +39,11 @@ const Notifications = () => {
   return (
     <View>
       <FlatList
-        data={result?.result}
-        renderItem={({ item }: { item: INotifications }) => (
-          <Notification {...item} />
-        )}
-        keyExtractor={(item) => item?.NotificationID?.toString()}
+        data={data?.result}
+        renderItem={({ item }) => <Notification {...item} />}
+        keyExtractor={(item: INotifications) =>
+          item?.NotificationID?.toString()
+        }
       />
     </View>
   );

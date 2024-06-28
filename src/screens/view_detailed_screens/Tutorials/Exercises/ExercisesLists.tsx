@@ -7,12 +7,12 @@ import {
 } from "react-native";
 import React, { memo } from "react";
 import { IExercises } from "utils/types/exercises.types";
-import { WorkoutIntensity } from "utils/enums/Workout";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
 import { setExerciseData } from "reducers/tutorialReducer";
 import { AppDispatch } from "store/store";
 import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
+import dynamicColor from "utils/helpers/dynamicStyles";
 
 const ExercisesLists = ({
   ExerciseID,
@@ -68,13 +68,7 @@ const ExercisesLists = ({
             <View
               style={{
                 padding: 12,
-                backgroundColor:
-                  ExerciseIntensity.toUpperCase() === WorkoutIntensity.BEGINNER
-                    ? "green"
-                    : ExerciseIntensity.toUpperCase() ===
-                      WorkoutIntensity.INTERMEDIATE
-                    ? "orange"
-                    : "red",
+                backgroundColor: dynamicColor(ExerciseIntensity),
                 alignSelf: "flex-start",
               }}
             >
