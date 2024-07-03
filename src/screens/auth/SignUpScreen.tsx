@@ -57,6 +57,13 @@ const SignUpScreen = () => {
     setValue("Birthday", Birthday);
   }, []);
 
+  useEffect(() => {
+    const subscription = watch((value, { name, type }) =>
+      dispatch(setPersonalInfoFields(value))
+    );
+    return () => subscription.unsubscribe();
+  }, [watch]);
+
   const onSubmit = async (data: IPersonalDetails) => {
     // const newObj: IForm = {
     //   ...data,
@@ -102,38 +109,13 @@ const SignUpScreen = () => {
     }
   };
 
-  useEffect(
-    () =>
-      navigation.addListener("beforeRemove", (e) => {
-        if (
-          getValues("LastName")?.length >= 1 ||
-          getValues("FirstName")?.length >= 1 ||
-          getValues("MiddleName")?.length >= 1 ||
-          getValues("Age")?.length >= 1
-        ) {
-          e.preventDefault();
-          // Prompt the user before leaving the screen
-          Alert.alert(
-            "Are you sure?",
-            "The values in the fields will not be saved. Are you sure to discard them and leave the screen?",
-            [
-              { text: "Don't leave", style: "cancel", onPress: () => {} },
-              {
-                text: "Ok",
-                style: "destructive",
-                // If the user confirmed, then we dispatch the action we blocked earlier
-                // This will continue the action that had triggered the removal of the screen
-                onPress: async () => {
-                  navigation.dispatch(e.data.action);
-                  dispatch(clearFormFields());
-                },
-              },
-            ]
-          );
-        }
-      }),
-    [navigation]
-  );
+  // useEffect(
+  //   () =>
+  //     navigation.addListener("beforeRemove", (e) => {
+
+  //     }),
+  //   [navigation]
+  // );
 
   return (
     <View

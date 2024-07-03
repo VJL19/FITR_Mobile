@@ -32,6 +32,7 @@ import ViewExercise from "./view_detailed_screens/Tutorials/Exercises/ViewExerci
 import ViewRFIDCard from "./view_detailed_screens/Attendance/ViewRFIDCard";
 import ViewAttendanceHistory from "./view_detailed_screens/Attendance/ViewAttendanceHistory";
 import ViewTutorialYoutube from "components/ViewTutorialYoutube";
+import RegistrationConfirmation from "./view_detailed_screens/SignUp/RegistrationConfirmation";
 
 const DetailedRootScreen = () => {
   const config = {
@@ -78,6 +79,18 @@ const DetailedRootScreen = () => {
         cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
       }}
     >
+      <DetailedScreenStacks.Screen
+        name="Registration Confirmation"
+        component={RegistrationConfirmation}
+        options={{
+          headerLeft: () => null,
+          cardOverlayEnabled: true,
+          presentation: "card",
+          gestureEnabled: true,
+          gestureDirection: "horizontal",
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+      />
       <DetailedScreenStacks.Screen
         name="View Attendance History"
         component={ViewAttendanceHistory}

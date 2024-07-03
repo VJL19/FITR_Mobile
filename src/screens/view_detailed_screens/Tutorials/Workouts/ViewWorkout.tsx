@@ -74,7 +74,7 @@ const ViewWorkout = () => {
     navigation.navigate("DetailedScreens", {
       screen: "View Tutorial Youtube",
       params: {
-        yt_url: `https://www.youtube.com/results?search_query=how+to+execute+${WorkOutName}`,
+        yt_url: `https://www.youtube.com/results?search_query=how+to+execute+${WorkOutName.toLowerCase()}`,
       },
     });
   };
@@ -109,12 +109,20 @@ const ViewWorkout = () => {
       <View
         style={{
           flexDirection: "row",
-          justifyContent: "space-evenly",
+          justifyContent: "space-around",
         }}
       >
         <View style={{ width: "50%" }}>
           <TouchableOpacity style={styles.buttonStyle} onPress={handleSpeak}>
             <AntDesign name="sound" size={35} color="#f5f5f5" />
+          </TouchableOpacity>
+        </View>
+        <View style={{ width: "50%" }}>
+          <TouchableOpacity
+            style={styles.buttonStyle}
+            onPress={handleDirectTutorial}
+          >
+            <AntDesign name="playcircleo" size={35} color="#f5f5f5" />
           </TouchableOpacity>
         </View>
         {workoutFavorite?.result[0]?.isWorkOutFavorite ? (
@@ -147,9 +155,6 @@ const ViewWorkout = () => {
           <Text style={styles.description}>
             {WorkOutExplanation.split(/[,"]+/).join("")}
           </Text>
-          <Pressable onPress={handleDirectTutorial}>
-            <Text>Watch on youtube?</Text>
-          </Pressable>
         </View>
       </ScrollView>
     </View>

@@ -1,5 +1,5 @@
 import Joi from "joi";
-import IForm from "../types/form.types";
+import IForm, { IOTP } from "../types/form.types";
 
 const personalDetailsSchema = Joi.object<IForm>({
   LastName: Joi.string().min(5).max(150).required().label("LastName"),
@@ -78,9 +78,18 @@ const formSchema = Joi.object<IForm>({
   Gender: Joi.string().required().label("Gender"),
   SubscriptionType: Joi.string().required().label("SubscriptionType"),
 });
+
+const otpSchema = Joi.object<IOTP>({
+  OTPCode: Joi.number()
+    .min(6)
+    .message("Entered OTP cannot be less than 6 digit")
+    .required()
+    .label("OTPCode"),
+});
 export {
   formSchema,
   personalDetailsSchema,
   contactDetailsSchema,
   accountDetailsSchema,
+  otpSchema,
 };

@@ -63,18 +63,18 @@ const Home = () => {
     Speech.stop();
   };
 
-  if (
-    programs?.result.length === 0 &&
-    workoutFavoritesData?.result.length === 0
-  ) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text style={{ color: "#ff2e00", fontSize: 18 }}>
-          Hello {data?.user?.FirstName}, What's your program today?
-        </Text>
-      </View>
-    );
-  }
+  // if (
+  //   programs?.result.length === 0 &&
+  //   workoutFavoritesData?.result.length === 0
+  // ) {
+  //   return (
+  //     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+  //       <Text style={{ color: "#ff2e00", fontSize: 18 }}>
+  //         Hello {data?.user?.FirstName}, What's your program today?
+  //       </Text>
+  //     </View>
+  //   );
+  // }
 
   if (isError) {
     return <CustomError />;

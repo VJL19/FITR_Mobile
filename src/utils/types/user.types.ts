@@ -52,6 +52,7 @@ export interface RegisterPayload {
 export interface IAuthState {
   status: number;
   user: IUser;
+  OTPToken: number;
   accessToken: string | undefined | null;
   message: string | unknown | undefined;
   isAuthenticated: boolean;

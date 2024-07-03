@@ -8,6 +8,14 @@ import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigat
 import { INewsFeed } from "utils/types/newsfeed.types";
 import { useGetAccessTokenQuery } from "reducers/authReducer";
 import { setCommentData } from "reducers/commentReducer";
+import { IMAGE_VALUES } from "utils/enums/DefaultValues";
+import avatar from "assets/avatar_default.jpeg";
+import {
+  useGetTotalCommentsQuery,
+  useGetTotalLikesQuery,
+} from "reducers/newsfeedReducer";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
+import AntDesign from "react-native-vector-icons/AntDesign";
 
 const Postsfeed = ({
   PostTitle,
@@ -19,10 +27,13 @@ const Postsfeed = ({
   UserID,
   Username,
   PostID,
+  ProfilePic,
 }: INewsFeed) => {
   const { data } = useGetAccessTokenQuery();
   const { user } = data!;
-  useEffect(() => {}, []);
+
+  const { data: total_likes } = useGetTotalLikesQuery(NewsfeedID);
+  const { data: total_comments } = useGetTotalCommentsQuery(NewsfeedID);
 
   const navigation = useNavigation<RootStackNavigationProp>();
 
@@ -48,16 +59,43 @@ const Postsfeed = ({
     });
   };
 
+  const totalComments = total_comments?.result?.[0].commentCounts;
+  const totalLikes = total_likes?.result?.[0].likeCounts;
+
   return (
     <TouchableOpacity activeOpacity={0.8} onPress={handlePress}>
       <View style={styles.box}>
-        <View>
+        <View style={{ width: "20%" }}>
+          <Image
+            source={
+              ProfilePic === IMAGE_VALUES.DEFAULT ? avatar : { uri: ProfilePic }
+            }
+            style={styles.image}
+          />
+        </View>
+
+        <View style={{ flex: 1 }}>
           <Text numberOfLines={1} style={styles.title}>
-            {PostTitle}
+            {PostAuthor}
           </Text>
 
-          <Text>@{Username}</Text>
-          <Text style={styles.date}>{PostDate?.substring(0, 10)}</Text>
+          <Text style={styles.username}>@{Username}</Text>
+          <Text style={styles.date}>
+            {new Date(PostDate?.substring(0, 10)).toDateString()}
+          </Text>
+          <View
+            style={{
+              flex: 1,
+              flexDirection: "row",
+              gap: 10,
+              alignItems: "center",
+            }}
+          >
+            <AntDesign name="like2" size={25} color="gray" />
+            <Text style={{ color: "gray" }}>{totalLikes}</Text>
+            <FontAwesome name="comments-o" size={25} color="gray" />
+            <Text style={{ color: "gray" }}>{totalComments}</Text>
+          </View>
         </View>
       </View>
     </TouchableOpacity>
@@ -69,12 +107,13 @@ export default Postsfeed;
 const styles = StyleSheet.create({
   box: {
     flex: 1,
+    gap: 20,
     flexDirection: "row",
+    alignItems: "center",
     justifyContent: "space-between",
     height: 120,
     width: 300,
-    padding: 15,
-    marginTop: 15,
+    marginTop: 10,
     borderBottomWidth: 2,
     borderColor: "#ccc",
   },
@@ -87,5 +126,16 @@ const styles = StyleSheet.create({
   date: {
     fontSize: 14,
     color: "#202020",
+  },
+  image: {
+    resizeMode: "cover",
+    width: "auto",
+    borderWidth: 1.5,
+    height: 60,
+    borderRadius: 150,
+    borderColor: "#ff2e00",
+  },
+  username: {
+    color: "gray",
   },
 });

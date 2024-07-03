@@ -28,10 +28,16 @@ interface IContactInfoField {
   Address: string;
 }
 
+interface IEmailState {
+  code: number;
+  result: { message: string; code: number };
+}
+
 const initialState: IAuthState = {
   status: 0,
   user: [],
   accessToken: "",
+  OTPToken: 0,
   message: "",
   isAuthenticated: false,
   isLoading: false,
@@ -100,6 +106,14 @@ export const authslice = createApi({
       }),
       invalidatesTags: ["auth"],
     }),
+    sendEmail: builder.mutation<IEmailState, { Email: string }>({
+      query: (arg) => ({
+        url: "/user/send_email",
+        method: "POST",
+        body: arg,
+      }),
+      invalidatesTags: ["auth"],
+    }),
   }),
 });
 
@@ -114,6 +128,9 @@ const authSlice = createSlice({
       // storeToken();
       state.accessToken = payload;
       state.isAuthenticated = true;
+    },
+    setOTPToken: (state, { payload }) => {
+      state.OTPToken = payload;
     },
     setAuthenticated: (state) => {
       state.isAuthenticated = true;
@@ -251,6 +268,7 @@ const authSlice = createSlice({
 export const {
   loadToken,
   setToken,
+  setOTPToken,
   deleteToken,
   getStoredToken,
   setAuthenticated,
@@ -263,5 +281,6 @@ export const {
   useLoginUserMutation,
   useGetAccessTokenQuery,
   useChangeAccountMutation,
+  useSendEmailMutation,
 } = authslice;
 export default authSlice.reducer;

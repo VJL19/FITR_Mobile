@@ -8,13 +8,14 @@ export interface INewsFeed {
   PostAuthor: string;
   Username: string;
   PostID: number;
+  ProfilePic?: string;
 }
 
 export interface IComments extends INewsFeed {
   UserID: number;
-  ProfilePic?: string;
   NewsfeedID: number;
   CommentID: number;
   CommentText: string;
   CommentDate?: string;
+  commentCounts?: number;
 }

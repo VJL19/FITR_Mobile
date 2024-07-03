@@ -7,11 +7,12 @@ import {
   likePostAction,
   unlikePostAction,
 } from "../actions/newsfeedAction";
-import { INewsFeed } from "../utils/types/newsfeed.types";
+import { IComments, INewsFeed } from "../utils/types/newsfeed.types";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import loadConfig from "global/config";
 import * as SecureStore from "expo-secure-store";
 import { INotifications } from "utils/types/notifications.types";
+import { ILikes } from "utils/types/likes.types";
 
 interface INewsfeedState {
   message: string;
@@ -19,6 +20,20 @@ interface INewsfeedState {
   status: number;
   isLoading: boolean;
   result: INewsFeed[];
+}
+interface ILikeState {
+  message: string;
+  error: string;
+  status: number;
+  isLoading: boolean;
+  result: ILikes[];
+}
+interface ICommentState {
+  message: string;
+  error: string;
+  status: number;
+  isLoading: boolean;
+  result: IComments[];
 }
 
 const initialState: INewsfeedState = {
@@ -67,6 +82,14 @@ export const newsfeedslice = createApi({
         `/user/newsfeed/all_posts/:${SubscriptionType}`,
       providesTags: ["newsfeed"],
     }),
+    getTotalLikes: builder.query<ILikeState, number | undefined>({
+      query: (NewsfeedID) => `/user/newsfeed/total_likes/:${NewsfeedID}`,
+      providesTags: ["newsfeed"],
+    }),
+    getTotalComments: builder.query<ICommentState, number | undefined>({
+      query: (NewsfeedID) => `/user/newsfeed/total_comments/:${NewsfeedID}`,
+      providesTags: ["newsfeed"],
+    }),
     likePostInFeed: builder.mutation<
       INewsfeedState,
       { UserID: number; NewsfeedID: number }
@@ -83,8 +106,9 @@ export const newsfeedslice = createApi({
       {
         UserID: number;
         PostID: number;
-        PostAuthor: string;
+        NotificationAuthor: string;
         Username: string;
+        NotificationDate: string;
         PostTitle: string;
       }
     >({
@@ -118,7 +142,7 @@ export const newsfeedslice = createApi({
       invalidatesTags: ["newsfeed"],
     }),
     checkLikePost: builder.mutation<
-      INewsfeedState,
+      ILikeState,
       { UserID: number; NewsfeedID: number }
     >({
       query: (arg) => ({
@@ -129,7 +153,7 @@ export const newsfeedslice = createApi({
       invalidatesTags: ["newsfeed"],
     }),
     commentPostInFeed: builder.mutation<
-      INewsfeedState,
+      ICommentState,
       {
         CommentText: string;
         UserID: number;
@@ -144,16 +168,23 @@ export const newsfeedslice = createApi({
       }),
       invalidatesTags: ["newsfeed"],
     }),
-    getAllComments: builder.query<INewsfeedState, void>({
-      query: () => "/user/newsfeed/all_comments",
-      providesTags: ["newsfeed"],
+    getAllComments: builder.mutation<
+      ICommentState,
+      { NewsfeedID: number | undefined }
+    >({
+      query: (arg) => ({
+        url: "/user/newsfeed/all_comments",
+        method: "POST",
+        body: arg,
+      }),
+      invalidatesTags: ["newsfeed"],
     }),
     notifyCommentPostInFeed: builder.mutation<
       INewsfeedState,
       {
         UserID: number;
         PostID: number;
-        PostAuthor: string;
+        NotificationAuthor: string;
         Username: string;
         NotificationDate: string;
         PostTitle: string;
@@ -190,7 +221,6 @@ export const newsfeedslice = createApi({
       }),
       invalidatesTags: ["newsfeed"],
     }),
-   
   }),
 });
 // /user/unlike_post
@@ -326,7 +356,9 @@ export const {
   useRemoveNotificationLikeMutation,
   useCheckLikePostMutation,
   useCommentPostInFeedMutation,
-  useGetAllCommentsQuery,
+  useGetTotalCommentsQuery,
+  useGetTotalLikesQuery,
+  useGetAllCommentsMutation,
   useNotifyCommentPostInFeedMutation,
   useDeleteLikesMutation,
   useDeleteCommentsMutation,

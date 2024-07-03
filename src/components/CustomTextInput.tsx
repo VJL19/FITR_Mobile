@@ -20,6 +20,7 @@ interface ICustomTextInputProps {
   placeholder: string;
   secureTextEntry?: boolean;
   isEditable?: boolean;
+  maxLength?: number;
 }
 
 const CustomTextInput = ({
@@ -31,9 +32,11 @@ const CustomTextInput = ({
   inputMode,
   secureTextEntry,
   isEditable,
+  maxLength,
 }: ICustomTextInputProps) => {
   return (
     <TextInput
+      maxLength={maxLength}
       editable={isEditable}
       secureTextEntry={secureTextEntry}
       inputMode={inputMode}

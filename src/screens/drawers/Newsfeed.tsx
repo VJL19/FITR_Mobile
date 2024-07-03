@@ -25,7 +25,6 @@ export const Newsfeed = () => {
     refetchOnMountOrArgChange: true,
   });
 
-  const navigation = useNavigation();
   const dispatch: AppDispatch = useDispatch();
   useEffect(() => {
     dispatch(setRoute("Newsfeed"));
@@ -38,9 +37,6 @@ export const Newsfeed = () => {
     return <CustomError />;
   }
 
-  // console.log("feed", result);
-  // console.log("feed", isAuthenticated);
-  // console.log("feed", message);
   return (
     <View style={styles.container}>
       <FlatList

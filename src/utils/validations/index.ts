@@ -4,6 +4,7 @@ import {
   personalDetailsSchema,
   contactDetailsSchema,
   accountDetailsSchema,
+  otpSchema,
 } from "./form.validations";
 import { loginSchema } from "./user.validations";
 import postSchema from "./post.validations";
@@ -18,4 +19,5 @@ export {
   myAccountSchema,
   contactDetailsSchema,
   accountDetailsSchema,
+  otpSchema,
 };

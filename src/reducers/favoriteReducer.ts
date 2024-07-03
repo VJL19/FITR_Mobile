@@ -26,6 +26,15 @@ export const favoriteExerciseApi = createApi({
   tagTypes: ["favorites_exercise"],
   baseQuery: fetchBaseQuery({
     baseUrl: config.BASE_URL,
+    prepareHeaders: async (headers: Headers, { getState }) => {
+      // const token = (getState() as RootState).authReducer.accessToken;
+      const token = await SecureStore.getItemAsync("accessToken");
+      // console.log("state", getState());
+      if (token) {
+        headers.set("authorization", `Bearer ${token}`);
+      }
+      return headers;
+    },
   }),
   endpoints: (builder) => ({
     addExerciseFavorites: builder.mutation<

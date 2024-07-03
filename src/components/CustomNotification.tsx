@@ -8,7 +8,11 @@ import { RootState } from "store/store";
 import { useGetAccessTokenQuery } from "reducers/authReducer";
 import { useGetAllNotificationsCountQuery } from "reducers/notificationReducer";
 
-const CustomNotification = (props) => {
+const CustomNotification = (props: {
+  tintColor?: string | undefined;
+  pressColor?: string | undefined;
+  pressOpacity?: number | undefined;
+}) => {
   const navigation = useNavigation<RootStackNavigationProp>();
 
   const { data, isError } = useGetAccessTokenQuery();
@@ -25,7 +29,7 @@ const CustomNotification = (props) => {
       background={TouchableNativeFeedback.Ripple("rgba(20,20,2,0.1)", true, 40)}
     >
       <View style={{ marginRight: 15 }}>
-        {count?.result?.[0].NotificationCount > 0 && (
+        {Number(count?.result?.[0].NotificationCount) > 0 && (
           <View style={{ position: "absolute", right: 25 }}>
             <Text
               style={{

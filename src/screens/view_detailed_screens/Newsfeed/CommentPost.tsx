@@ -1,4 +1,12 @@
-import { Alert, Button, StyleSheet, Text, TextInput, View } from "react-native";
+import {
+  Alert,
+  Button,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 import React, { useEffect } from "react";
 import { DetailedRootStackNavigatorsParamList } from "utils/types/detailed_screens/DetailedRootStackNavigators";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
@@ -16,12 +24,14 @@ import {
   useNotifyCommentPostInFeedMutation,
 } from "reducers/newsfeedReducer";
 import getCurrentDate from "utils/helpers/formatDate";
+import LoadingIndicator from "components/LoadingIndicator";
 
 const CommentPost = () => {
   const { data } = useGetAccessTokenQuery();
   const { user } = data!;
 
-  const [commentPost, {}] = useCommentPostInFeedMutation();
+  const [commentPost, { status: commentStatus, data: commentData, error }] =
+    useCommentPostInFeedMutation();
   const [notifyComment, {}] = useNotifyCommentPostInFeedMutation();
   const {
     handleSubmit,
@@ -32,12 +42,11 @@ const CommentPost = () => {
     resolver: joiResolver(commentSchema),
   });
 
-  useEffect(() => {}, []);
   const {
     UserID,
     PostTitle,
     NewsfeedID,
-    PostAuthor,
+    NotificationAuthor,
     Username,
     CommentDate,
     PostID,
@@ -52,11 +61,12 @@ const CommentPost = () => {
     console.log(errors);
   };
   const navigation = useNavigation();
+  const fullName = `${user.FirstName} ${user.LastName}`;
 
   const notify_arg = {
     UserID: UserID,
     PostID: PostID,
-    PostAuthor: PostAuthor,
+    NotificationAuthor: fullName,
     Username: Username,
     NotificationDate: getCurrentDate(),
     PostTitle: PostTitle,
@@ -66,7 +76,7 @@ const CommentPost = () => {
       CommentText: data.CommentText,
       UserID: user.UserID,
       NewsfeedID: NewsfeedID,
-      CommentDate: CommentDate,
+      CommentDate: getCurrentDate(),
     };
     commentPost(arg);
     notifyComment(notify_arg);
@@ -81,55 +91,70 @@ const CommentPost = () => {
     navigation.goBack();
     reset();
   };
+
+  if (commentStatus === "pending") {
+    return <LoadingIndicator />;
+  }
+
   return (
-    <View>
-      <Text>
-        You are commenting for {PostTitle} {UserID} {NewsfeedID}
-      </Text>
+    <View
+      style={{
+        flex: 1,
+        padding: 10,
+      }}
+    >
+      <ScrollView style={{ flex: 1 }}>
+        <Text>
+          You are commenting for {PostTitle} {UserID} {NewsfeedID}
+        </Text>
 
-      <Controller
-        control={control}
-        render={({ field: { onChange, onBlur, value } }) => (
-          <React.Fragment>
-            <Text
-              style={{
-                color: "#202020",
-                fontSize: 18,
-                fontFamily: "Inter-Bold",
-                letterSpacing: 1,
-              }}
-            >
-              Description
-            </Text>
+        <Controller
+          control={control}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <React.Fragment>
+              <Text
+                style={{
+                  color: "#202020",
+                  fontSize: 18,
+                  fontFamily: "Inter-Bold",
+                  letterSpacing: 1,
+                }}
+              >
+                Comment
+              </Text>
 
-            <TextInput
-              multiline={true}
-              textAlignVertical="top"
-              placeholder="Enter the description"
-              placeholderTextColor={"#202020"}
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-              style={{
-                borderWidth: 1,
-                height: 300,
-                borderRadius: 8,
-                padding: 15,
-                color: "#202020",
-                borderColor: errors.CommentText ? "#d9534f" : "#202020",
-                marginBottom: 10,
-                fontSize: 16,
-              }}
-            />
-          </React.Fragment>
-        )}
-        name="CommentText"
-      />
+              <TextInput
+                multiline={true}
+                textAlignVertical="top"
+                placeholder="Enter your comment"
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={value}
+                style={{
+                  borderWidth: 1,
+                  height: 350,
+                  borderRadius: 8,
+                  padding: 15,
+                  color: "#202020",
+                  borderColor: errors.CommentText ? "#d9534f" : "#202020",
+                  marginBottom: 10,
+                  fontSize: 16,
+                }}
+              />
+            </React.Fragment>
+          )}
+          name="CommentText"
+        />
 
-      <DisplayFormError errors={errors.CommentText} />
+        <DisplayFormError errors={errors.CommentText} />
+      </ScrollView>
 
-      <View>
-        <Button title="Comment" onPress={handleSubmit(onComment, onInvalid)} />
+      <View style={{ marginBottom: 10 }}>
+        <Button
+          title="Comment"
+          color={"#ff2e00"}
+          onPress={handleSubmit(onComment, onInvalid)}
+        />
       </View>
     </View>
   );

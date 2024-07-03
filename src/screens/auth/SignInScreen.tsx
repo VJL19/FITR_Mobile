@@ -7,7 +7,7 @@ import {
   ScrollView,
 } from "react-native";
 import { Controller } from "react-hook-form";
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import CustomButton from "components/CustomButton";
 import { useForm } from "react-hook-form";
@@ -28,9 +28,13 @@ import {
 } from "reducers/authReducer";
 import { getToken1 } from "actions/authAction";
 import * as SecureStore from "expo-secure-store";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import { TextInput } from "react-native-paper";
 
 const SignInScreen = () => {
   const navigation = useNavigation<RootStackNavigationProp>();
+  const [isPasswordSecure, setIsPasswordSecure] = useState(true);
 
   const defaultValue = {
     Username: "",
@@ -127,25 +131,23 @@ const SignInScreen = () => {
         <Controller
           control={control}
           render={({ field: { onChange, onBlur, value } }) => (
-            <React.Fragment>
-              <Text
-                style={{
-                  color: "#202020",
-                  fontSize: 18,
-                  fontFamily: "Inter-Bold",
-                  letterSpacing: 1,
-                }}
-              >
-                Username
-              </Text>
-              <CustomTextInput
-                error={errors.Username}
-                placeholder="Enter your Username"
-                onBlur={onBlur}
-                onChange={onChange}
-                value={value}
-              />
-            </React.Fragment>
+            <TextInput
+              left={
+                <TextInput.Icon
+                  icon={() => <Ionicons name={"person-outline"} size={28} />}
+                />
+              }
+              style={{
+                backgroundColor: "#f5f5f5",
+              }}
+              onChangeText={onChange}
+              onBlur={onBlur}
+              value={value}
+              label={"Username"}
+              placeholderTextColor={"#ccc"}
+              underlineColorAndroid="transparent"
+              mode="outlined"
+            />
           )}
           name="Username"
         />
@@ -153,26 +155,42 @@ const SignInScreen = () => {
         <Controller
           control={control}
           render={({ field: { onChange, onBlur, value } }) => (
-            <React.Fragment>
-              <Text
-                style={{
-                  color: "#202020",
-                  fontSize: 18,
-                  fontFamily: "Inter-Bold",
-                  letterSpacing: 1,
-                }}
-              >
-                Password
-              </Text>
-              <CustomTextInput
-                error={errors.Password}
-                secureTextEntry={true}
-                placeholder="Enter your Password"
-                onBlur={onBlur}
-                onChange={onChange}
-                value={value}
-              />
-            </React.Fragment>
+            <TextInput
+              secureTextEntry={isPasswordSecure}
+              left={
+                <TextInput.Icon
+                  icon={() => (
+                    <Ionicons name={"lock-closed-outline"} size={28} />
+                  )}
+                />
+              }
+              right={
+                <TextInput.Icon
+                  icon={() => (
+                    <MaterialCommunityIcons
+                      name={isPasswordSecure ? "eye-off" : "eye"}
+                      size={28}
+                    />
+                  )}
+                  onPress={() => {
+                    isPasswordSecure
+                      ? setIsPasswordSecure(false)
+                      : setIsPasswordSecure(true);
+                  }}
+                />
+              }
+              style={{
+                marginTop: 20,
+                backgroundColor: "#f5f5f5",
+              }}
+              onChangeText={onChange}
+              onBlur={onBlur}
+              value={value}
+              label={"Password"}
+              placeholderTextColor={"#ccc"}
+              mode="outlined"
+              underlineColorAndroid="transparent"
+            />
           )}
           name="Password"
         />
@@ -197,14 +215,14 @@ const SignInScreen = () => {
           <CustomButton
             buttonStyle={styles.btnPrimary}
             textStyle={styles.btnPrimaryText}
-            textValue="Sign In"
+            textValue="SIGN IN"
             onPress={handleSubmit(onSubmit)}
           />
         </View>
         <CustomButton
           buttonStyle={styles.btnSecondary}
           textStyle={styles.btnSecondaryText}
-          textValue="Sign Up"
+          textValue="SIGN UP"
           onPress={() =>
             navigation.navigate("AuthStackScreens", { screen: "Sign Up" })
           }

@@ -28,6 +28,7 @@ export type DetailedRootStackNavigatorsParamList = {
   "View RFID Card": undefined;
   "View Attendance History": undefined;
   "View Tutorial Youtube": { yt_url: string } | undefined;
+  "Registration Confirmation": undefined;
 };
 
 export type DetailedRootStackScreenProp = StackScreenProps<
@@ -58,6 +59,7 @@ export type DetailedRootStackScreenProp = StackScreenProps<
   | "View RFID Card"
   | "View Attendance History"
   | "View Tutorial Youtube"
+  | "Registration Confirmation"
 >;
 export type DetailedRootStackNavigationProp = StackNavigationProp<
   DetailedRootStackNavigatorsParamList,
@@ -87,4 +89,5 @@ export type DetailedRootStackNavigationProp = StackNavigationProp<
   | "View RFID Card"
   | "View Attendance History"
   | "View Tutorial Youtube"
+  | "Registration Confirmation"
 >;

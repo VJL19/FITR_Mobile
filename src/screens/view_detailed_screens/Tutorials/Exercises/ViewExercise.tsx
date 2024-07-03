@@ -73,6 +73,15 @@ const ViewExercise = () => {
     );
   };
 
+  const handleDirectTutorial = () => {
+    navigation.navigate("DetailedScreens", {
+      screen: "View Tutorial Youtube",
+      params: {
+        yt_url: `https://www.youtube.com/results?search_query=how+to+execute+${ExerciseName.toLowerCase()}`,
+      },
+    });
+  };
+
   const removeFavorites = async () => {
     removeExerciseFavorite(arg);
     checkExerciseFavorite(arg);
@@ -106,6 +115,14 @@ const ViewExercise = () => {
         <View style={{ width: "50%" }}>
           <TouchableOpacity style={styles.buttonStyle} onPress={handleSpeak}>
             <AntDesign name="sound" size={35} color="#f5f5f5" />
+          </TouchableOpacity>
+        </View>
+        <View style={{ width: "50%" }}>
+          <TouchableOpacity
+            style={styles.buttonStyle}
+            onPress={handleDirectTutorial}
+          >
+            <AntDesign name="playcircleo" size={35} color="#f5f5f5" />
           </TouchableOpacity>
         </View>
         {exerciseFavorite?.result[0]?.isExerciseFavorite ? (

@@ -48,7 +48,7 @@ export const notificationApi = createApi({
   endpoints: (builder) => ({
     markAsReadNotifications: builder.mutation<
       INotificationState,
-      { UserID: number | undefined }
+      { UserID: number | undefined; NotificationID: number | undefined }
     >({
       query: (arg) => ({
         url: "/user/notifications/readNotifications",
@@ -59,7 +59,7 @@ export const notificationApi = createApi({
     }),
     markAsUnreadNotifications: builder.mutation<
       INotificationState,
-      { UserID: number | undefined }
+      { UserID: number | undefined; NotificationID: number | undefined }
     >({
       query: (arg) => ({
         url: `/user/notifications/unreadNotifications`,

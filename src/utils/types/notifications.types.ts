@@ -1,4 +1,6 @@
-export interface INotifications {
+import IUser from "./user.types";
+
+export interface INotifications extends IUser {
   UserID: number;
   PostAuthor: string;
   NotificationID: number;

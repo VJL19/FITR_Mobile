@@ -33,7 +33,9 @@ const Program = ({
           <Text numberOfLines={1} style={styles.title}>
             {ProgramTitle}
           </Text>
-          <Text style={styles.date}>{ProgramEntryDate?.substring(0, 10)}</Text>
+          <Text style={styles.date}>
+            {new Date(ProgramEntryDate?.substring(0, 10)).toDateString()}
+          </Text>
         </View>
       </View>
     </TouchableOpacity>

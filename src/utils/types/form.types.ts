@@ -33,6 +33,10 @@ export interface IContactDetails {
   Address: string;
 }
 
+export interface IOTP {
+  OTPCode: number;
+}
+
 export interface IAccountSetup {
   Username: string;
   Password: string;

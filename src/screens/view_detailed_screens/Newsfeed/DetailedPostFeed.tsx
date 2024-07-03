@@ -1,62 +1,58 @@
-import { Button, Text, TouchableOpacity, View, Image } from "react-native";
+import {
+  Text,
+  TouchableOpacity,
+  View,
+  Image,
+  StyleSheet,
+  ScrollView,
+} from "react-native";
 import React, { useEffect } from "react";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
-import { DetailedRootStackNavigatorsParamList } from "utils/types/detailed_screens/DetailedRootStackNavigators";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "store/store";
 import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
-import { getAllCommentsAction } from "actions/commentAction";
 import { FlatList } from "react-native-gesture-handler";
 import { IComments } from "utils/types/newsfeed.types";
 import Comments from "./Comments";
 import LoadingIndicator from "components/LoadingIndicator";
-import { checkLikepostAction } from "actions/newsfeedAction";
 import DisplayAlert from "components/CustomAlert";
 import getCurrentDate from "utils/helpers/formatDate";
 import {
   useCheckLikePostMutation,
+  useGetAllCommentsMutation,
   useLikePostInFeedMutation,
   useNotifyLikePostInFeedMutation,
   useRemoveNotificationLikeMutation,
   useUnlikePostInFeedMutation,
 } from "reducers/newsfeedReducer";
 import { useGetAccessTokenQuery } from "reducers/authReducer";
-import { setCommentData } from "reducers/commentReducer";
 import { IMAGE_VALUES } from "utils/enums/DefaultValues";
 import postDefault from "assets/post_default.webp";
+import AntDesign from "react-native-vector-icons/AntDesign";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
 
 const DetailedPostFeed = () => {
-  // const { user } = useSelector((state: RootState) => state.authReducer);
-  const { comments, isLoading } = useSelector(
-    (state: RootState) => state.comment
-  );
-
   const [likePost, { data: likeData, error }] = useLikePostInFeedMutation();
   const [unLikePost, {}] = useUnlikePostInFeedMutation();
   const [notificationLike, {}] = useNotifyLikePostInFeedMutation();
   const [removeNotificationLike, {}] = useRemoveNotificationLikeMutation();
-  const [checkPostIsLike, { data: result }] = useCheckLikePostMutation();
+  const [checkPostIsLike, { data: result, isLoading }] =
+    useCheckLikePostMutation();
   const { data, isError, isFetching, isUninitialized } =
     useGetAccessTokenQuery();
 
   const { user } = data!;
-  // const {
-  //   message: nMessage,
-  //   status,
-  //   result,
-  // } = useSelector((state: RootState) => state.newsfeed);
 
-  // const { message, status: nStatus } = useSelector(
-  //   (state: RootState) => state.notification
-  // );
+  const [getAllComments, { data: comments, status }] =
+    useGetAllCommentsMutation();
+
   const navigation = useNavigation<RootStackNavigationProp>();
-  const dispatch: AppDispatch = useDispatch();
   const {
     PostTitle,
     PostDescription,
     PostImage,
-    PostAuthor,
     PostDate,
+    PostAuthor,
     NewsfeedID,
     UserID,
     Username,
@@ -68,47 +64,41 @@ const DetailedPostFeed = () => {
     NewsfeedID: NewsfeedID,
   };
 
-  console.log("PostTitle", PostTitle);
+  const comment_arg = {
+    NewsfeedID: NewsfeedID,
+  };
+
+  const fullName = `${user.FirstName} ${user.LastName}`;
+
   const notify_arg = {
     UserID: UserID,
     PostID: PostID,
-    PostAuthor: PostAuthor,
+    NotificationAuthor: fullName,
     Username: Username,
     NotificationDate: getCurrentDate(),
     PostTitle: PostTitle,
   };
   useEffect(() => {
-    // dispatch(getAccessToken());
-    // dispatch(getAllCommentsAction(NewsfeedID || 0));
-    // dispatch(getAllPostsAction());
-    // dispatch(checkLikepostAction(arg));
     checkPostIsLike(arg);
+    getAllComments(comment_arg);
   }, []);
 
-  const fullName = `${user.FirstName} ${user.LastName}`;
-
   const handleUnlike = () => {
-    // dispatch(unlikePostAction(arg));
     unLikePost(arg);
     removeNotificationLike({ Username: user.Username, PostID: PostID });
-    // dispatch(removeNotificationAction(notify_arg));
     DisplayAlert("Success message", "Unlike post successfully");
     navigation.goBack();
   };
 
   const handleLike = async () => {
-    // dispatch(likePostAction(arg));
     await new Promise((resolve) => setTimeout(resolve, 1000));
     likePost(arg);
     notificationLike(notify_arg);
     console.log("LIKE POST !", error);
     console.log("LIKE POST !", likeData);
-    // dispatch(notifyLikeAction(notify_arg));
     DisplayAlert("Success message", "Like post successfully!");
     navigation.goBack();
   };
-  // console.log("heyy notif message!", message);
-  // console.log("heyy notif status!", nStatus);
   const handleComment = () => {
     navigation.navigate("DetailedScreens", {
       screen: "Comment on Post",
@@ -122,7 +112,7 @@ const DetailedPostFeed = () => {
       </View>
     );
   }
-  if (isFetching || isUninitialized) {
+  if (status === "pending") {
     return <LoadingIndicator />;
   }
 
@@ -136,45 +126,95 @@ const DetailedPostFeed = () => {
   };
 
   return (
-    <View>
-      <TouchableOpacity onPress={handlePress}>
-        <Image
-          resizeMode="contain"
-          source={
-            PostImage === IMAGE_VALUES.DEFAULT
-              ? postDefault
-              : { uri: PostImage }
-          }
-          style={{ height: 290, width: "100%" }}
-        />
-      </TouchableOpacity>
-      <Text>{PostTitle}</Text>
-      <Text>{PostDescription}</Text>
-      <Text>{PostAuthor}</Text>
-      <Text>{PostDate}</Text>
-      <FlatList
-        alwaysBounceVertical={true}
-        data={comments}
-        renderItem={({ item }: { item: IComments }) => <Comments {...item} />}
-        keyExtractor={(item) => item.CommentID?.toString()}
-      />
-      {fullName == PostAuthor ||
-        (!isLoading && (
-          <Button
-            title={`${
-              result?.result[0]?.PostIsLike === "liked" ? "unliked" : "liked"
-            }post`}
-            onPress={
-              result?.result[0]?.PostIsLike === "liked"
-                ? handleUnlike
-                : handleLike
+    <View style={styles.container}>
+      <ScrollView>
+        <TouchableOpacity onPress={handlePress}>
+          <Image
+            resizeMode="contain"
+            source={
+              PostImage === IMAGE_VALUES.DEFAULT
+                ? postDefault
+                : { uri: PostImage }
             }
+            style={{ height: 290, width: "100%" }}
           />
-        ))}
-      {fullName == PostAuthor || (
-        <Button title="comment on post" onPress={handleComment} />
-      )}
+        </TouchableOpacity>
+
+        {fullName == PostAuthor || (
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-evenly",
+            }}
+          >
+            {result?.result[0]?.PostIsLike ? (
+              <View style={{ width: "50%" }}>
+                <TouchableOpacity
+                  style={styles.buttonStyle}
+                  onPress={handleUnlike}
+                >
+                  <AntDesign name="like1" size={35} color="#f5f5f5" />
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <View style={{ width: "50%" }}>
+                <TouchableOpacity
+                  style={styles.buttonStyle}
+                  onPress={handleLike}
+                >
+                  <AntDesign name="like2" size={35} color="#f5f5f5" />
+                </TouchableOpacity>
+              </View>
+            )}
+            <View style={{ width: "50%" }}>
+              <TouchableOpacity
+                style={styles.buttonStyle}
+                onPress={handleComment}
+              >
+                <FontAwesome name="comment" size={35} color="#f5f5f5" />
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
+
+        <Text>{PostTitle}</Text>
+        <Text>{PostDescription}</Text>
+        <Text>{PostAuthor}</Text>
+        <Text>{PostDate}</Text>
+
+        {comments?.result.length !== 0 && (
+          <Text style={styles.title}>Comments</Text>
+        )}
+        <FlatList
+          horizontal={true}
+          alwaysBounceVertical={true}
+          data={comments?.result}
+          renderItem={({ item }: { item: IComments }) => <Comments {...item} />}
+          keyExtractor={(item) => item.CommentID?.toString()}
+        />
+      </ScrollView>
     </View>
   );
 };
 export default DetailedPostFeed;
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 8,
+  },
+  title: {
+    fontSize: 21,
+  },
+  buttonStyle: {
+    alignItems: "center",
+    justifyContent: "center",
+    width: "40%",
+    position: "absolute",
+    bottom: 5,
+    right: 35,
+    height: 75,
+    backgroundColor: "#ff2e00",
+    borderRadius: 100,
+    elevation: 20,
+  },
+});

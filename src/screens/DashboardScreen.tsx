@@ -10,6 +10,8 @@ import { RootState } from "store/store";
 import * as SecureStore from "expo-secure-store";
 import global_axios from "global/axios";
 import {
+  CommonActions,
+  Route,
   getFocusedRouteNameFromRoute,
   useNavigation,
 } from "@react-navigation/native";
@@ -22,7 +24,7 @@ import { AuthContext } from "context/AuthContext";
 const DashboardScreen = ({ navigation }: RootStackScreenProp) => {
   const { route: nav } = useSelector((state: RootState) => state.route);
 
-  function getHeaderTitle(route) {
+  function getHeaderTitle(route: Partial<Route<string>>) {
     // If the focused route is not found, we need to assume it's the initial screen
     // This can happen during if there hasn't been any navigation inside the screen
     // In our case, it's "Feed" as that's the first screen inside the navigator

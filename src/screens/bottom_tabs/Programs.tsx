@@ -33,7 +33,7 @@ const Programs = () => {
   const navigation = useNavigation<RootStackNavigationProp>();
   const navigation2 = useNavigation<DashboardStackNavigationProp>();
 
-  const { data: user, isError } = useGetAccessTokenQuery();
+  const { data: user, isError, refetch } = useGetAccessTokenQuery();
   const { data, isFetching, isUninitialized } = useGetUserSpecificProgramsQuery(
     user?.user.UserID,
     { refetchOnMountOrArgChange: true }
@@ -44,6 +44,7 @@ const Programs = () => {
     dispatch(setRoute(route.name));
     dispatch(setBottomRoute(route.name));
     navigation2.setOptions({ headerTitle: "Programs" });
+    refetch();
   }, []);
 
   const handlePress = () => {

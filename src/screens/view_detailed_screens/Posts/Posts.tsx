@@ -40,7 +40,9 @@ const Posts = ({
           <Text numberOfLines={1} style={styles.title}>
             {PostTitle}
           </Text>
-          <Text style={styles.date}>{PostDate?.substring(0, 10)}</Text>
+          <Text style={styles.date}>
+            {new Date(PostDate?.substring(0, 10)).toDateString()}
+          </Text>
         </View>
       </View>
     </TouchableOpacity>

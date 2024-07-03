@@ -61,7 +61,13 @@ const MyPosts = () => {
   return (
     <View style={styles.container}>
       <View>
-        <Text style={{ color: "#131313", fontSize: 20, fontWeight: "bold" }}>
+        <Text
+          style={{
+            color: "#131313",
+            fontSize: 20,
+            fontFamily: "Inter-Bold",
+          }}
+        >
           What's on your mind? {user?.user?.FirstName}
         </Text>
       </View>
