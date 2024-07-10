@@ -12,12 +12,12 @@ const CustomDrawer = (props: DrawerContentComponentProps) => {
     <View style={{ flex: 1 }}>
       <View
         style={{
-          flex: 0.5,
+          flex: 0.45,
           backgroundColor: "#ff2e00",
           alignItems: "flex-start",
           justifyContent: "center",
           shadowColor: "#000000",
-          elevation: 54,
+          elevation: 10,
         }}
       >
         <Avatar />

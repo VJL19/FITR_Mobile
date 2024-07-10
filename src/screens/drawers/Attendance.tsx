@@ -15,48 +15,27 @@ import { getSecretCode, attendanceUser } from "actions/attendanceAction";
 import getCurrentDate, {
   advanceMonthlyEnd,
   advanceSessionEnd,
+  formatTime,
 } from "utils/helpers/formatDate";
 import LoadingIndicator from "components/LoadingIndicator";
 import { useNavigation } from "@react-navigation/native";
 import { DrawerStackNavigationProp } from "utils/types/navigators/DrawerStackNavigators";
 import SubscriptionEnum from "utils/enums/Subscription";
 import { setRoute } from "reducers/routeReducer";
-import QRCode from "react-native-qrcode-svg";
-import { encryptUserRecord } from "utils/helpers/hashQrData";
-import { RadioGroup } from "react-native-radio-buttons-group";
 import { BarCodeScanningResult } from "expo-camera/build/legacy/Camera.types";
 import { useGetAccessTokenQuery } from "reducers/authReducer";
-import { useCheckUserScanQrQuery } from "reducers/attendanceReducer";
+import {
+  useCheckUserTapRFIDQuery,
+  useTapRFIDCardUserMutation,
+} from "reducers/attendanceReducer";
 import CustomError from "components/CustomError";
 import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 const Attendance = () => {
   const [hasPermission, setHasPermission] = useState<boolean>();
-  const [scanned, setScanned] = useState(false);
   const [toggleScan, setToggleScan] = useState(false);
-  const [selectedSubscription, setSelectedSubscription] = useState("");
-  const [hashData, setHashData] = useState<string | unknown>("");
   const navigation = useNavigation<RootStackNavigationProp>();
-
-  // console.log(qrRef.current.toDataURL);
-
-  // const [userRecord, setUserRecord] = useState<IAttendance>({
-  //   UserID: 0,
-  //   ProfilePic: "",
-  //   LastName: "",
-  //   FirstName: "",
-  //   SubscriptionType: selectedSubscription,
-  //   SubscriptionExpectedEnd: new Date().toLocaleString(),
-  //   DateScanned: new Date().toLocaleString(),
-  //   IsPaid: false,
-  //   IsScanQR: false,
-  // });
-
-  const subscription_types = [
-    { id: "1", label: "Session", value: "1" },
-    { id: "2", label: "Monthly", value: "2" },
-  ];
 
   const dispatch: AppDispatch = useDispatch();
 
@@ -64,27 +43,11 @@ const Attendance = () => {
     useGetAccessTokenQuery();
 
   const { user } = data!;
-  const { data: IsScanQR } = useCheckUserScanQrQuery(user?.UserID, {
+  const { data: IsTapRFID } = useCheckUserTapRFIDQuery(user?.UserID, {
     refetchOnMountOrArgChange: true,
-    refetchOnFocus: true,
   });
-  console.log("is Scan Qr", IsScanQR);
-  const userRecord: IAttendance = {
-    UserID: user.UserID,
-    ProfilePic: user.ProfilePic,
-    LastName: user.LastName,
-    FirstName: user.FirstName,
-    SubscriptionType:
-      selectedSubscription == "1"
-        ? SubscriptionEnum.Session
-        : SubscriptionEnum.Monthly,
-    DateScanned: getCurrentDate(),
-    SubscriptionExpectedEnd:
-      selectedSubscription == "1" ? advanceSessionEnd() : advanceMonthlyEnd(),
-    IsPaid: false,
-    IsScanQR: true,
-    Username: `MJESHTER USER - ${user.Username} ${user.UserID}`,
-  };
+
+  const [tapRFID, { data: tapRFIDRes, error }] = useTapRFIDCardUserMutation();
 
   useEffect(() => {
     const getCameraPermissions = async () => {
@@ -95,41 +58,41 @@ const Attendance = () => {
     getCameraPermissions();
   }, []);
 
-  // const userRecord = {
-  //   UserID: user.UserID,
-  //   ProfilePic: user.ProfilePic,
-  //   LastName: user.LastName,
-  //   FirstName: user.FirstName,
-  //   SubscriptionType: selectedSubscription == "1" ? "Session" : "Monthly",
-  //   DateScanned: getCurrentDate(),
-  //   IsPaid: "false",
-  //   IsScanQR: "true",
-  // };
-
   useEffect(() => {
     dispatch(getSecretCode());
     dispatch(setRoute("Attendance"));
-
-    const encryptRecord = async () => {
-      const res = await encryptUserRecord(userRecord?.Username!);
-      setHashData(res);
-    };
-
-    encryptRecord();
   }, []);
 
-  console.log(user);
-  const handleBarCodeScanned = async ({
-    type,
-    data,
-  }: BarCodeScanningResult) => {
-    setScanned(true);
-    setToggleScan(false);
+  // const handleBarCodeScanned = async ({
+  //   type,
+  //   data,
+  // }: BarCodeScanningResult) => {
+  //   setToggleScan(false);
 
-    //validation for secret code stored in qr in admin.
-    alert(`Bar code with type ${type} and data ${data} has been scanned!`);
-    dispatch(attendanceUser(userRecord));
-    // navigation.navigate("HomeDrawer");
+  //   //validation for secret code stored in qr in admin.
+  //   alert(`Bar code with type ${type} and data ${data} has been scanned!`);
+  //   // dispatch(attendanceUser(userRecord));
+  //   // navigation.navigate("HomeDrawer");
+  // };
+
+  const handlePress = async () => {
+    const arg = {
+      UserID: user?.UserID,
+      ProfilePic: user?.ProfilePic,
+      LastName: user?.LastName,
+      FirstName: user?.FirstName,
+      SubscriptionType: user?.SubscriptionType,
+      DateTapped: getCurrentDate(),
+      SubscriptionExpectedEnd:
+        IsTapRFID === undefined
+          ? advanceMonthlyEnd()
+          : IsTapRFID?.user?.SubscriptionExpectedEnd,
+      IsPaid: "false",
+      TimeIn: formatTime(new Date()),
+      TimeOut: "NULL",
+    };
+
+    tapRFID(arg);
   };
 
   if (hasPermission === null) {
@@ -146,6 +109,10 @@ const Attendance = () => {
   if (isError) {
     return <CustomError />;
   }
+  console.log("is IsTapRFID", IsTapRFID === undefined);
+  console.log("is IsTapRFID error", error);
+  console.log("is IsTapRFID data", IsTapRFID?.user?.SubscriptionExpectedEnd);
+  console.log(user);
 
   return (
     <View style={styles.container}>
@@ -207,6 +174,8 @@ const Attendance = () => {
           </View>
         </TouchableNativeFeedback>
       </View>
+
+      <Button title="Tap RFID" onPress={handlePress} />
       {/* <Text style={styles.textTitle}>Tap Me!</Text>
 
         {hashData && (

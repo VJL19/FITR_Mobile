@@ -1,13 +1,11 @@
-import { Text, View, Button, FlatList, SafeAreaView } from "react-native";
+import { Text, View, FlatList, TouchableOpacity } from "react-native";
 import React, { useEffect, useState } from "react";
 import LoadingIndicator from "components/LoadingIndicator";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { AppDispatch, RootState } from "store/store";
-import { increment, incrementByAmount } from "reducers/counterReducer";
 import { setRoute } from "reducers/routeReducer";
-import { useRoute } from "@react-navigation/native";
-import useIsReady from "hooks/useIsReady";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import * as Speech from "expo-speech";
 import { useGetAccessTokenQuery } from "reducers/authReducer";
 import CustomError from "components/CustomError";
@@ -22,6 +20,11 @@ import {
   setNotificationCount,
   useGetAllNotificationsCountQuery,
 } from "reducers/notificationReducer";
+import { BottomTabsNavigationProp } from "utils/types/navigators/BottomTabNavigators";
+import { useGetAllTodaysAnnouncementsQuery } from "reducers/announcementReducer";
+import AnnouncementLists from "screens/view_detailed_screens/Announcements/AnnouncementLists";
+import { IAnnouncements } from "utils/types/announcement.types";
+import { DrawerStackNavigationProp } from "utils/types/navigators/DrawerStackNavigators";
 const Home = () => {
   const { value, name } = useSelector((state: RootState) => state.counter);
 
@@ -45,7 +48,16 @@ const Home = () => {
     refetchOnMountOrArgChange: true,
   });
 
-  const route = useRoute();
+  const { data: announcementsData } = useGetAllTodaysAnnouncementsQuery(
+    undefined,
+    {
+      refetchOnMountOrArgChange: true,
+    }
+  );
+
+  const navigation = useNavigation<BottomTabsNavigationProp>();
+  const navigationDrawer = useNavigation<DrawerStackNavigationProp>();
+
   const dispatch: AppDispatch = useDispatch();
   useEffect(() => {
     dispatch(setRoute("Home"));
@@ -55,12 +67,7 @@ const Home = () => {
   const text =
     "Alam mo ba girl (alam mo) Pagka wala ka dito promise ako concern (promise)'Di ka nagre-reply 'di mo pa 'ko ma-confirm (ano ba)  Ayaw mo ba sa 'kin porke wala 'kong skrt (skrt)   O ayaw mo sa 'kin kasi ikaw mas older (uh) 'Di ko pa mabigay mga luho mo't order  Malas lang 'ta mo nga 'tong hawak ko ngayon four pairs (ayos 'yan) Ako batang kalye lang kayo ay foreigners Inalok kita ng red horse sagot mo okur (okur)";
   const speak = () => {
-    // en-us-x-sfg-network
     Speech.speak(text, { language: "en-US" });
-  };
-
-  const stop = () => {
-    Speech.stop();
   };
 
   // if (
@@ -76,6 +83,19 @@ const Home = () => {
   //   );
   // }
 
+  if (
+    programs?.result.length === 0 &&
+    announcementsData?.result.length === 0 &&
+    workoutFavoritesData?.result.length === 0
+  ) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Text style={{ color: "#ff2e00", fontSize: 18 }}>
+          Hello {data?.user?.FirstName}, What's your program today?
+        </Text>
+      </View>
+    );
+  }
   if (isError) {
     return <CustomError />;
   }
@@ -83,6 +103,9 @@ const Home = () => {
   if (isFetching || isUninitialized) {
     return <LoadingIndicator />;
   }
+
+  console.log("hey", announcementsData?.result);
+
   return (
     <View style={{ flex: 1, backgroundColor: "#f5f5f5", padding: 12 }}>
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -98,9 +121,11 @@ const Home = () => {
               <Text style={{ fontWeight: "bold", fontSize: 23 }}>
                 Today's programs
               </Text>
-              <Text style={{ color: "#ff2e00", fontWeight: "600" }}>
-                SEE ALL
-              </Text>
+              <TouchableOpacity onPress={() => navigation.navigate("Programs")}>
+                <Text style={{ color: "#ff2e00", fontWeight: "600" }}>
+                  SEE ALL
+                </Text>
+              </TouchableOpacity>
             </View>
 
             <FlatList
@@ -113,7 +138,7 @@ const Home = () => {
           </React.Fragment>
         )}
 
-        {programs?.result.length !== 0 && (
+        {announcementsData?.result.length !== 0 && (
           <React.Fragment>
             <View
               style={{
@@ -122,20 +147,26 @@ const Home = () => {
                 justifyContent: "space-between",
               }}
             >
-              <Text style={{ fontWeight: "bold", fontSize: 23 }}>
-                Suggested programs
+              <Text style={{ fontWeight: "bold", fontSize: 21 }}>
+                Today's announcements
               </Text>
-              <Text style={{ color: "#ff2e00", fontWeight: "600" }}>
-                SEE ALL
-              </Text>
+              <TouchableOpacity
+                onPress={() => navigationDrawer.navigate("Announcements")}
+              >
+                <Text style={{ color: "#ff2e00", fontWeight: "600" }}>
+                  SEE ALL
+                </Text>
+              </TouchableOpacity>
             </View>
 
             <FlatList
               horizontal={true}
               alwaysBounceVertical={true}
-              data={programs?.result}
-              renderItem={({ item }) => <Program {...item} />}
-              keyExtractor={(item: IProgram) => item?.ProgramID?.toString()}
+              data={announcementsData?.result}
+              renderItem={({ item }) => <AnnouncementLists {...item} />}
+              keyExtractor={(item: IAnnouncements) =>
+                item?.AnnouncementID?.toString()
+              }
             />
           </React.Fragment>
         )}
@@ -152,9 +183,13 @@ const Home = () => {
               <Text style={{ fontWeight: "bold", fontSize: 23 }}>
                 Your favorites
               </Text>
-              <Text style={{ color: "#ff2e00", fontWeight: "600" }}>
-                SEE ALL
-              </Text>
+              <TouchableOpacity
+                onPress={() => navigation.navigate("Favorites")}
+              >
+                <Text style={{ color: "#ff2e00", fontWeight: "600" }}>
+                  SEE ALL
+                </Text>
+              </TouchableOpacity>
             </View>
 
             <FlatList

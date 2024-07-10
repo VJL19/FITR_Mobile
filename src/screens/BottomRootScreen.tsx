@@ -24,6 +24,7 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "store/store";
 import { setRoute } from "reducers/routeReducer";
 import { useGetAccessTokenQuery } from "reducers/authReducer";
+import Gym_TermsAndConditions from "./drawers/Gym_TermsAndConditions";
 
 const BottomRootScreen = ({
   route,
@@ -57,6 +58,9 @@ const BottomRootScreen = ({
         return <Subscription />;
       case "About MJeshter":
         return <About />;
+
+      case "Gym Terms and Conditions":
+        return <Gym_TermsAndConditions />;
 
       case "My Account":
         return <MyAccount />;

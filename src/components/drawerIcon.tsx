@@ -1,5 +1,4 @@
 import Ionicons from "react-native-vector-icons/Ionicons";
-import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 interface IDrawerIconProp {
   color: string;
   size: number;
@@ -9,9 +8,10 @@ interface IDrawerIconProp {
 
 const drawerIcon = ({ color, size, focused, name }: IDrawerIconProp) => {
   if (focused) {
-    return <MaterialIcons name={name} size={size} color={color} />;
+    return <Ionicons name={name} size={size} color={color} />;
   }
-  return <MaterialIcons name={`${name}`} size={size} color={color} />;
+
+  return <Ionicons name={`${name}-outline`} size={size} color={color} />;
 };
 
 export default drawerIcon;

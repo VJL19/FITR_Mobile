@@ -14,6 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   clearFormFields,
   setOTPToken,
+  useForgotPasswordMutation,
   useSendEmailMutation,
 } from "reducers/authReducer";
 import { Controller, useForm } from "react-hook-form";
@@ -24,17 +25,15 @@ import { IOTP } from "utils/types/form.types";
 import { otpSchema } from "utils/validations";
 import DisplayAlert from "components/CustomAlert";
 
-const RegistrationConfirmation = () => {
+const ForgotPasswordConfirmation = () => {
   const [timer, setTimer] = useState(60 * 2);
   const [valid, isValid] = useState(true);
-  const [
-    sendOTPEmail,
-    { data: emailCode, status: emailStat, error: emailErr },
-  ] = useSendEmailMutation();
+
+  const [forgotPassword, { data, status, error }] = useForgotPasswordMutation();
 
   const { OTPToken } = useSelector((state: RootState) => state.authReducer);
   const { Email } = useSelector(
-    (state: RootState) => state.authReducer.contactInfo
+    (state: RootState) => state.authReducer.forgotPasswordInfo
   );
   const navigation = useNavigation<RootStackNavigationProp>();
   const dispatch: AppDispatch = useDispatch();
@@ -52,11 +51,11 @@ const RegistrationConfirmation = () => {
     resolver: joiResolver(otpSchema),
   });
 
-  // useEffect(() => {
-  //   if (emailStat === "fulfilled") {
-  //     dispatch(setOTPToken(emailCode?.code));
-  //   }
-  // }, [emailStat]);
+  useEffect(() => {
+    if (status === "fulfilled") {
+      dispatch(setOTPToken(data?.code));
+    }
+  }, [status]);
 
   useEffect(() => {
     if (timer === 0 || timer < 0) {
@@ -82,12 +81,14 @@ const RegistrationConfirmation = () => {
     if (OTPToken === data.OTPCode) {
       const resetAction = CommonActions.reset({
         index: 0,
-        routes: [{ name: "DashboardScreen" }],
+        routes: [{ name: "Change Password" }],
       });
       navigation.dispatch(resetAction);
+      // navigation.replace("DetailedScreens", { screen: "Change Password" });
+      // navigation.navigate("DetailedScreens", { screen: "Change Password" });
       DisplayAlert(
         "Success message",
-        "Successfully complete the registration!"
+        "OTP is valid. You may now proceed on changing your password!"
       );
       dispatch(clearFormFields());
       reset();
@@ -97,7 +98,7 @@ const RegistrationConfirmation = () => {
   };
 
   const handleResend = () => {
-    sendOTPEmail({ Email: Email });
+    forgotPassword({ Email: Email });
     setTimer(60 * 2);
     isValid(true);
   };
@@ -146,7 +147,7 @@ const RegistrationConfirmation = () => {
   );
 };
 
-export default RegistrationConfirmation;
+export default ForgotPasswordConfirmation;
 
 const styles = StyleSheet.create({
   container: {

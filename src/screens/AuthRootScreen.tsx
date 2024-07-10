@@ -49,7 +49,7 @@ const AuthRootScreen = () => {
               // Prompt the user before leaving the screen
               Alert.alert(
                 "Are you sure?",
-                "The values in the fields will not be saved. Are you sure to discard them and leave the screen?",
+                "The values in the fields will not be saved until you leave this screen. Are you sure to discard them and leave the screen?",
                 [
                   { text: "Don't leave", style: "cancel", onPress: () => {} },
                   {

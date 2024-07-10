@@ -152,6 +152,10 @@ const ViewWorkout = () => {
       <ScrollView>
         <View style={{ padding: 15, marginBottom: 25 }}>
           <Text style={styles.title}>{WorkOutName}</Text>
+          <Text style={styles.subTitle}>{WorkOutCategory.toUpperCase()}</Text>
+          <Text style={styles.subTitle}>
+            {WorkOutTargetMuscle.toUpperCase()}
+          </Text>
           <Text style={styles.description}>
             {WorkOutExplanation.split(/[,"]+/).join("")}
           </Text>
@@ -174,6 +178,10 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: "Inter-Bold",
     fontSize: 32,
+  },
+  subTitle: {
+    fontFamily: "Inter-Bold",
+    fontSize: 22,
   },
   description: {
     fontFamily: "Inter-Regular",

@@ -3,7 +3,7 @@ import DrawerStack from "navigators/DrawerStack";
 import BottomRootScreen from "./BottomRootScreen";
 import CustomDrawer from "components/CustomDrawer";
 import drawerIcon from "components/drawerIcon";
-import { Alert, Button, TouchableNativeFeedback, View } from "react-native";
+import { View, Text } from "react-native";
 import CustomNotification from "components/CustomNotification";
 import { useSelector } from "react-redux";
 import { RootState } from "store/store";
@@ -133,7 +133,7 @@ const DashboardScreen = ({ navigation }: RootStackScreenProp) => {
           headerTitle: getHeaderTitle(route),
           title: "Announcements",
           drawerIcon: ({ color, focused, size }) => {
-            const name = "announcement";
+            const name = "megaphone";
             return drawerIcon({ color, size, focused, name });
           },
         })}
@@ -153,7 +153,7 @@ const DashboardScreen = ({ navigation }: RootStackScreenProp) => {
         component={BottomRootScreen}
         options={{
           drawerIcon: ({ color, focused, size }) => {
-            const name = "payment";
+            const name = "card";
             return drawerIcon({ color, size, focused, name });
           },
         }}
@@ -163,7 +163,7 @@ const DashboardScreen = ({ navigation }: RootStackScreenProp) => {
         component={BottomRootScreen}
         options={{
           drawerIcon: ({ color, focused, size }) => {
-            const name = "calculate";
+            const name = "calculator";
             return drawerIcon({ color, size, focused, name });
           },
         }}
@@ -173,7 +173,7 @@ const DashboardScreen = ({ navigation }: RootStackScreenProp) => {
         component={BottomRootScreen}
         options={{
           drawerIcon: ({ color, focused, size }) => {
-            const name = "article";
+            const name = "newspaper";
             return drawerIcon({ color, size, focused, name });
           },
         }}
@@ -183,7 +183,7 @@ const DashboardScreen = ({ navigation }: RootStackScreenProp) => {
         component={BottomRootScreen}
         options={{
           drawerIcon: ({ color, focused, size }) => {
-            const name = "person";
+            const name = "person-circle";
             return drawerIcon({ color, size, focused, name });
           },
         }}
@@ -198,7 +198,34 @@ const DashboardScreen = ({ navigation }: RootStackScreenProp) => {
             borderTopColor: "#ccc",
           },
           drawerIcon: ({ color, focused, size }) => {
-            const name = "info";
+            const name = "information-circle";
+            return drawerIcon({ color, size, focused, name });
+          },
+        }}
+      />
+      <DrawerStack.Screen
+        name="Gym Terms and Conditions"
+        component={BottomRootScreen}
+        options={{
+          headerStyle: {
+            height: 120,
+          },
+          headerTitle: ({ style: styles, children: title }) => {
+            return (
+              <Text
+                style={{
+                  fontSize: 22,
+                  color: "#f5f5f5",
+                }}
+                numberOfLines={2}
+              >
+                Terms and Conditions
+              </Text>
+            );
+          },
+          drawerIcon: ({ color, focused, size }) => {
+            const name = "information-circle";
+
             return drawerIcon({ color, size, focused, name });
           },
         }}

@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { FlatList, StyleSheet, Text, View } from "react-native";
 import React, { useEffect } from "react";
 import { WebView } from "react-native-webview";
 import CheckoutScreen from "components/CheckoutScreen";
@@ -9,17 +9,32 @@ import { AppDispatch, RootState } from "store/store";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { setRoute } from "reducers/routeReducer";
 import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
+import { useGetAllAnnoucementsQuery } from "reducers/announcementReducer";
+import AnnouncementLists from "screens/view_detailed_screens/Announcements/AnnouncementLists";
+import { IAnnouncements } from "utils/types/announcement.types";
+import { useGetAccessTokenQuery } from "reducers/authReducer";
+import CustomError from "components/CustomError";
 
 const Announcements = () => {
-  const { isReady } = useIsReady();
-
+  const { isError } = useGetAccessTokenQuery();
+  const {
+    data: announcementData,
+    isFetching,
+    isUninitialized,
+  } = useGetAllAnnoucementsQuery(undefined, {
+    refetchOnMountOrArgChange: true,
+  });
   const route = useRoute();
   const dispatch: AppDispatch = useDispatch();
   useEffect(() => {
     dispatch(setRoute("Announcements"));
   }, []);
-  if (!isReady) {
+  if (isFetching || isUninitialized) {
     return <LoadingIndicator />;
+  }
+
+  if (isError) {
+    return <CustomError />;
   }
 
   const navigation = useNavigation<RootStackNavigationProp>();
@@ -29,9 +44,18 @@ const Announcements = () => {
       screen: "View Announcement",
     });
   };
+
+  console.log(announcementData);
   return (
     <View style={styles.container}>
-      <Text>Announcemnts</Text>
+      <FlatList
+        alwaysBounceVertical={true}
+        data={announcementData?.result}
+        renderItem={({ item }) => <AnnouncementLists {...item} />}
+        keyExtractor={(item: IAnnouncements) =>
+          item?.AnnouncementID?.toString()
+        }
+      />
     </View>
   );
 };

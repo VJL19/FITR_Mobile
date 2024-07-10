@@ -23,7 +23,6 @@ import { useNavigation } from "@react-navigation/native";
 import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
 import { setRoute } from "reducers/routeReducer";
 import { useGetAccessTokenQuery } from "reducers/authReducer";
-import { useCheckUserScanQrQuery } from "reducers/attendanceReducer";
 import CustomError from "components/CustomError";
 import { isLoading } from "expo-font";
 import { RadioGroup } from "react-native-radio-buttons-group";
@@ -55,7 +54,7 @@ const Subscription = () => {
 
   const { data, isFetching, isUninitialized, isError } =
     useGetAccessTokenQuery();
-  const { data: subscription } = useCheckUserScanQrQuery(data?.user?.UserID);
+  // const { data: subscription } = useCheckUserScanQrQuery(data?.user?.UserID);
 
   const [sendPayment, { data: subscriptionData, status, error }] =
     useAddSubscriptionMutation();
@@ -88,8 +87,6 @@ const Subscription = () => {
   useEffect(() => {
     dispatch(setRoute("Subscription"));
   }, []);
-
-  console.log(subscription, "current subscription");
 
   // const handlePayment = () => {
   //   const checkOutDetails: ILineItems[] = [

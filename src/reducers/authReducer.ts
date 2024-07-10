@@ -12,6 +12,7 @@ import loadConfig from "../global/config";
 import { RootState } from "store/store";
 import { State } from "react-native-gesture-handler";
 import { IAccountSetup } from "utils/types/form.types";
+import { string } from "joi";
 
 interface IPersonalInfoField {
   Age: string;
@@ -33,6 +34,24 @@ interface IEmailState {
   result: { message: string; code: number };
 }
 
+interface IForgotPasswordState {
+  error: string;
+  status: number;
+  message: string;
+  result: IUser[];
+}
+
+interface IChangePasswordState {
+  error: string;
+  status: number;
+  message: string;
+  result: unknown[];
+}
+
+interface IForgotPasswordField {
+  Email: string;
+  Username: string;
+}
 const initialState: IAuthState = {
   status: 0,
   user: [],
@@ -61,6 +80,10 @@ const initialState: IAuthState = {
     Password: "",
     ConfirmPassword: "",
     Gender: "",
+  },
+  forgotPasswordInfo: {
+    Email: "",
+    Username: "",
   },
 };
 const config = loadConfig();
@@ -109,6 +132,25 @@ export const authslice = createApi({
     sendEmail: builder.mutation<IEmailState, { Email: string }>({
       query: (arg) => ({
         url: "/user/send_email",
+        method: "POST",
+        body: arg,
+      }),
+      invalidatesTags: ["auth"],
+    }),
+    forgotPassword: builder.mutation<IForgotPasswordState, { Email: string }>({
+      query: (arg) => ({
+        url: "/user/forgot_password",
+        method: "POST",
+        body: arg,
+      }),
+      invalidatesTags: ["auth"],
+    }),
+    changePassword: builder.mutation<
+      IChangePasswordState,
+      { Email: string; Password: string; ConfirmPassword: string }
+    >({
+      query: (arg) => ({
+        url: "/user/change_password",
         method: "POST",
         body: arg,
       }),
@@ -187,6 +229,12 @@ const authSlice = createSlice({
         Gender: "",
         SubscriptionType: "",
       };
+    },
+    setForgotPasswordFields: (
+      state,
+      action: PayloadAction<IForgotPasswordField>
+    ) => {
+      state.forgotPasswordInfo = action.payload;
     },
     loadToken: (state) => {
       // const ACCESS_TOKEN = "accessToken";
@@ -275,12 +323,15 @@ export const {
   setPersonalInfoFields,
   setContactInfoFields,
   setAccountInfoFields,
+  setForgotPasswordFields,
   clearFormFields,
 } = authSlice.actions;
 export const {
   useLoginUserMutation,
   useGetAccessTokenQuery,
   useChangeAccountMutation,
+  useChangePasswordMutation,
   useSendEmailMutation,
+  useForgotPasswordMutation,
 } = authslice;
 export default authSlice.reducer;

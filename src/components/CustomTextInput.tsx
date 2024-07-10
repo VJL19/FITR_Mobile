@@ -21,6 +21,7 @@ interface ICustomTextInputProps {
   secureTextEntry?: boolean;
   isEditable?: boolean;
   maxLength?: number;
+  readOnly?: boolean;
 }
 
 const CustomTextInput = ({
@@ -33,6 +34,7 @@ const CustomTextInput = ({
   secureTextEntry,
   isEditable,
   maxLength,
+  readOnly,
 }: ICustomTextInputProps) => {
   return (
     <TextInput
@@ -55,6 +57,7 @@ const CustomTextInput = ({
         fontSize: 16,
       }}
       placeholderTextColor={"#c2c2c2"}
+      readOnly={readOnly}
     />
   );
 };

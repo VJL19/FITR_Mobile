@@ -12,7 +12,10 @@ import CustomError from "components/CustomError";
 const GymEquipments = () => {
   const navigation = useNavigation<RootStackNavigationProp>();
 
-  const { data, isFetching, isUninitialized } = useGetAllGymEquipmentsQuery();
+  const { data, isFetching, isUninitialized } = useGetAllGymEquipmentsQuery(
+    undefined,
+    { refetchOnMountOrArgChange: true }
+  );
   const { isError } = useGetAccessTokenQuery();
 
   const handlePress = () => {
@@ -33,7 +36,11 @@ const GymEquipments = () => {
       <Text>GymEquipments</Text>
 
       <FlatList
+        key="_gym_equipments"
         alwaysBounceVertical={true}
+        numColumns={2}
+        maxToRenderPerBatch={5}
+        initialNumToRender={5}
         data={data?.gym_results}
         renderItem={({ item }) => <GymEquipmentsLists {...item} />}
         keyExtractor={(item: IGymEquipment) => item?.GymEquipmentID?.toString()}

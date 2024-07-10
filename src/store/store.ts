@@ -24,6 +24,10 @@ import {
   favoriteExerciseApi,
   favoriteWorkoutApi,
 } from "reducers/favoriteReducer";
+import announcementReducer, {
+  announcementApi,
+} from "reducers/announcementReducer";
+
 export const store = configureStore({
   reducer: {
     [authslice.reducerPath]: authslice.reducer,
@@ -37,6 +41,8 @@ export const store = configureStore({
     [favoriteExerciseApi.reducerPath]: favoriteExerciseApi.reducer,
     [favoriteWorkoutApi.reducerPath]: favoriteWorkoutApi.reducer,
     [notificationApi.reducerPath]: notificationApi.reducer,
+    [announcementApi.reducerPath]: announcementApi.reducer,
+    announcement: announcementReducer,
     tutorial: tutorialReducer,
     program: programReducer,
     counter: counterReducer,
@@ -64,6 +70,7 @@ export const store = configureStore({
       favoriteExerciseApi.middleware,
       favoriteWorkoutApi.middleware,
       notificationApi.middleware,
+      announcementApi.middleware,
     ]),
 });
 setupListeners(store.dispatch);

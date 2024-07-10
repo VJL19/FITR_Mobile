@@ -2,14 +2,16 @@ import IUser from "./user.types";
 
 interface IAttendance {
   UserID: number;
+  AttendanceID: number;
   ProfilePic: string;
   LastName: string;
   FirstName: string;
   SubscriptionType: string;
   SubscriptionExpectedEnd: string;
-  DateScanned: string;
+  TimeIn: string;
+  TimeOut: string;
+  DateTapped: string;
   IsPaid: boolean;
-  IsScanQR: boolean;
   Username?: string;
 }
 

@@ -29,6 +29,9 @@ export type DetailedRootStackNavigatorsParamList = {
   "View Attendance History": undefined;
   "View Tutorial Youtube": { yt_url: string } | undefined;
   "Registration Confirmation": undefined;
+  "Forgot Password": undefined;
+  "Change Password": undefined;
+  "Forgot Password Confirmation": undefined;
 };
 
 export type DetailedRootStackScreenProp = StackScreenProps<
@@ -60,6 +63,9 @@ export type DetailedRootStackScreenProp = StackScreenProps<
   | "View Attendance History"
   | "View Tutorial Youtube"
   | "Registration Confirmation"
+  | "Forgot Password"
+  | "Change Password"
+  | "Forgot Password Confirmation"
 >;
 export type DetailedRootStackNavigationProp = StackNavigationProp<
   DetailedRootStackNavigatorsParamList,
@@ -90,4 +96,7 @@ export type DetailedRootStackNavigationProp = StackNavigationProp<
   | "View Attendance History"
   | "View Tutorial Youtube"
   | "Registration Confirmation"
+  | "Forgot Password"
+  | "Change Password"
+  | "Forgot Password Confirmation"
 >;

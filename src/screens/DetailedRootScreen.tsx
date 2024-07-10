@@ -2,7 +2,7 @@ import "react-native-gesture-handler";
 import React from "react";
 import ProcessCheckout from "./view_detailed_screens/Checkout/ProcessCheckout";
 import DetailedScreenStacks from "../navigators/DetailedScreenStack";
-import { StyleSheet, TouchableNativeFeedback, View } from "react-native";
+import { Alert, StyleSheet, TouchableNativeFeedback, View } from "react-native";
 import { CardStyleInterpolators } from "@react-navigation/stack";
 import AddPrograms from "./view_detailed_screens/Programs/AddProgram";
 import ViewAnnouncements from "./view_detailed_screens/Announcements/ViewAnnouncements";
@@ -33,6 +33,9 @@ import ViewRFIDCard from "./view_detailed_screens/Attendance/ViewRFIDCard";
 import ViewAttendanceHistory from "./view_detailed_screens/Attendance/ViewAttendanceHistory";
 import ViewTutorialYoutube from "components/ViewTutorialYoutube";
 import RegistrationConfirmation from "./view_detailed_screens/SignUp/RegistrationConfirmation";
+import ForgotPassword from "./view_detailed_screens/MyAccount/ForgotPassword";
+import ChangePassword from "./view_detailed_screens/MyAccount/ChangePassword";
+import ForgotPasswordConfirmation from "./view_detailed_screens/MyAccount/ForgotPasswordConfirmation";
 
 const DetailedRootScreen = () => {
   const config = {
@@ -82,6 +85,41 @@ const DetailedRootScreen = () => {
       <DetailedScreenStacks.Screen
         name="Registration Confirmation"
         component={RegistrationConfirmation}
+        options={{
+          headerLeft: () => null,
+          cardOverlayEnabled: true,
+          presentation: "card",
+          gestureEnabled: true,
+          gestureDirection: "horizontal",
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+      />
+      <DetailedScreenStacks.Screen
+        name="Forgot Password"
+        component={ForgotPassword}
+        options={{
+          cardOverlayEnabled: true,
+          presentation: "card",
+          gestureEnabled: true,
+          gestureDirection: "horizontal",
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+      />
+      <DetailedScreenStacks.Screen
+        name="Forgot Password Confirmation"
+        component={ForgotPasswordConfirmation}
+        options={{
+          cardOverlayEnabled: true,
+          presentation: "card",
+          gestureEnabled: true,
+          gestureDirection: "horizontal",
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+      />
+      <DetailedScreenStacks.Screen
+        navigationKey="Change Password"
+        name="Change Password"
+        component={ChangePassword}
         options={{
           headerLeft: () => null,
           cardOverlayEnabled: true,

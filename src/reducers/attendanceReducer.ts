@@ -14,7 +14,6 @@ interface IAttendanceState {
   status: number;
   message: string;
   secretCode: string;
-  IsScanQR: boolean;
   isLoading: boolean;
   user: IAttendance;
   result: IAttendance[];
@@ -25,18 +24,19 @@ const initialState: IAttendanceState = {
   error: "",
   message: "",
   secretCode: "",
-  IsScanQR: false,
   isLoading: false,
   user: {
+    AttendanceID: 0,
     UserID: 0,
     ProfilePic: "",
     LastName: "",
     FirstName: "",
     SubscriptionType: "",
     SubscriptionExpectedEnd: "",
-    DateScanned: "",
+    DateTapped: "",
     IsPaid: false,
-    IsScanQR: false,
+    TimeIn: "",
+    TimeOut: "",
   },
   result: [],
 };
@@ -60,12 +60,41 @@ export const attendanceslice = createApi({
   }),
   endpoints: (builder) => ({
     getUserRecords: builder.query<IAttendanceState, number | undefined>({
-      query: (UserID) => `/user/specific_record/:${UserID}`,
+      query: (UserID) => `/user/attendance/specific_record/:${UserID}`,
       providesTags: ["attendance"],
     }),
-    checkUserScanQr: builder.query<IAttendanceState, number | undefined>({
-      query: (UserID) => `/user/check_IsScanQR/:${UserID}`,
+    getUserAttendanceHistory: builder.query<
+      IAttendanceState,
+      number | undefined
+    >({
+      query: (UserID) => `/user/attendance/attendance_history/:${UserID}`,
       providesTags: ["attendance"],
+    }),
+    checkUserTapRFID: builder.query<IAttendanceState, number | undefined>({
+      query: (UserID) => `/user/attendance/checkUserTapRFID/:${UserID}`,
+      providesTags: ["attendance"],
+    }),
+    tapRFIDCardUser: builder.mutation<
+      IAttendanceState,
+      {
+        UserID: number;
+        ProfilePic: string;
+        LastName: string;
+        FirstName: string;
+        SubscriptionType: string;
+        DateTapped: string;
+        SubscriptionExpectedEnd: string;
+        IsPaid: string;
+        TimeIn: string;
+        TimeOut: string;
+      }
+    >({
+      query: (arg) => ({
+        url: "/user/attendance/record_user",
+        method: "POST",
+        body: arg,
+      }),
+      invalidatesTags: ["attendance"],
     }),
   }),
 });
@@ -136,6 +165,10 @@ const attendanceSlice = createSlice({
   },
 });
 
-export const { useGetUserRecordsQuery, useCheckUserScanQrQuery } =
-  attendanceslice;
+export const {
+  useGetUserRecordsQuery,
+  useCheckUserTapRFIDQuery,
+  useTapRFIDCardUserMutation,
+  useGetUserAttendanceHistoryQuery,
+} = attendanceslice;
 export default attendanceSlice.reducer;

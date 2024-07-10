@@ -9,10 +9,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "store/store";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import {
-  RootStackNavigationProp,
-  RootStackScreenProp,
-} from "utils/types/navigators/RootStackNavigators";
+import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
 import AuthContextProvider, { AuthContext } from "context/AuthContext";
 import LoadingIndicator from "components/LoadingIndicator";
 import DetailedRootScreen from "screens/DetailedRootScreen";

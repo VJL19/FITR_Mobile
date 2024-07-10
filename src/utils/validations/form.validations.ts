@@ -1,5 +1,5 @@
 import Joi from "joi";
-import IForm, { IOTP } from "../types/form.types";
+import IForm, { IChangePassword, IEmail, IOTP } from "../types/form.types";
 
 const personalDetailsSchema = Joi.object<IForm>({
   LastName: Joi.string().min(5).max(150).required().label("LastName"),
@@ -86,10 +86,37 @@ const otpSchema = Joi.object<IOTP>({
     .required()
     .label("OTPCode"),
 });
+
+const emailSchema = Joi.object<IEmail>({
+  Email: Joi.string()
+    .email({ minDomainSegments: 2, tlds: { allow: ["com", "ph"] } })
+    .message("Only .com and .ph email are allowed")
+    .required()
+    .label("Email"),
+});
+const changePasswordSchema = Joi.object<IChangePassword>({
+  Password: Joi.string()
+    .alphanum()
+    .min(5)
+    .max(30)
+    .message("Your Password must be atleast 5 characters")
+    .required()
+    .label("Password"),
+  ConfirmPassword: Joi.any()
+    .valid(Joi.ref("Password"))
+    .required()
+    .messages({
+      "any.only": "Your Password do not match!",
+      "any.required": "ConfirmPassword is not allowed to be empty",
+    })
+    .label("ConfirmPassword"),
+});
 export {
   formSchema,
   personalDetailsSchema,
   contactDetailsSchema,
   accountDetailsSchema,
   otpSchema,
+  emailSchema,
+  changePasswordSchema,
 };

@@ -3,11 +3,12 @@ import {
   InteractionManager,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from "react-native";
 import React, { useEffect } from "react";
 import LoadingIndicator from "components/LoadingIndicator";
-import { useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "store/store";
 import { setBottomRoute, setRoute } from "reducers/routeReducer";
@@ -24,6 +25,7 @@ import {
 import CustomError from "components/CustomError";
 import ExerciseFavoriteLists from "screens/view_detailed_screens/Favorites/ExerciseFavoriteLists";
 import WorkoutFavoriteLists from "screens/view_detailed_screens/Favorites/WorkoutFavoriteLists";
+import { BottomTabsNavigationProp } from "utils/types/navigators/BottomTabNavigators";
 
 const Favorites = () => {
   const route = useRoute();
@@ -43,6 +45,7 @@ const Favorites = () => {
     refetchOnMountOrArgChange: true,
   });
 
+  const navigation = useNavigation<BottomTabsNavigationProp>();
   const dispatch: AppDispatch = useDispatch();
   useEffect(() => {
     InteractionManager.runAfterInteractions(() => {
@@ -62,6 +65,11 @@ const Favorites = () => {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <Text style={{ fontSize: 22 }}>Your favorite lists is empty!</Text>
+        <TouchableOpacity onPress={() => navigation.navigate("Tutorials")}>
+          <Text style={{ color: "#ff2e00", fontWeight: "600", fontSize: 22 }}>
+            Browse tutorials
+          </Text>
+        </TouchableOpacity>
       </View>
     );
   }

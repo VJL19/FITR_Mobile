@@ -2,10 +2,13 @@ import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { IGymEquipment } from "utils/types/gym_equipment.types";
 
-const GymEquipmentsLists = ({}: IGymEquipment) => {
+const GymEquipmentsLists = ({
+  GymEquipmentName,
+  GymEquipmentImage,
+}: IGymEquipment) => {
   return (
     <View>
-      <Text>GymEquipmentsLists</Text>
+      <Text>{GymEquipmentName}</Text>
     </View>
   );
 };

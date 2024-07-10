@@ -60,10 +60,12 @@ const Avatar = () => {
         }
         style={styles.avatarStyle}
       />
-      <Text style={styles.avatarNameStyle}>
+      <Text numberOfLines={1} style={styles.avatarNameStyle}>
         {data?.user.LastName}, {data?.user.FirstName}
       </Text>
-      <Text style={styles.avatarInfoStyle}>{data?.user?.Email}</Text>
+      <Text numberOfLines={1} style={styles.avatarInfoStyle}>
+        {data?.user?.Email}
+      </Text>
     </View>
   );
 };

@@ -78,6 +78,10 @@ export interface IAuthState {
     Gender: string;
     SubscriptionType: string;
   };
+  forgotPasswordInfo: {
+    Email: string;
+    Username: string;
+  };
 }
 
 export interface LoginPayload {

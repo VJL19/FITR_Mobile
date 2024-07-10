@@ -37,6 +37,15 @@ export interface IOTP {
   OTPCode: number;
 }
 
+export interface IEmail {
+  Email: string;
+}
+
+export interface IChangePassword {
+  Password: string;
+  ConfirmPassword: string;
+}
+
 export interface IAccountSetup {
   Username: string;
   Password: string;

@@ -13,14 +13,13 @@ const SubscriptionHistoryLists = ({
       ? SubscriptionTypeEnum.Session
       : SubscriptionTypeEnum.Monthly;
 
+  const formatDate = SubscriptionEntryDate.split(", ").join("");
   return (
     <View style={styles.container}>
       <View style={styles.box}>
         <Text style={styles.text}>PHP {SubscriptionAmount}</Text>
         <Text style={styles.text}>{SubscriptionStatus?.toUpperCase()}</Text>
-        <Text style={styles.text}>
-          DATE {SubscriptionEntryDate.split(",")[0]}
-        </Text>
+        <Text style={styles.text}>{new Date(formatDate).toDateString()}</Text>
         <Text style={styles.text}>FOR {getSubscriptionType} Subscription</Text>
         {SubscriptionStatus === "rejected" && (
           <Text style={{ fontSize: 18, color: "#d9534f", fontWeight: "700" }}>

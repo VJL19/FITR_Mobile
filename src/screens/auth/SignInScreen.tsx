@@ -5,6 +5,7 @@ import {
   Image,
   View,
   ScrollView,
+  TouchableOpacity,
 } from "react-native";
 import { Controller } from "react-hook-form";
 import React, { useContext, useEffect, useState } from "react";
@@ -63,6 +64,10 @@ const SignInScreen = () => {
   const onSubmit = async (data: ILoginForm) => {
     // console.log("in sign in screen", data);
     await loginUser(data);
+  };
+
+  const handleForgotPassword = () => {
+    navigation.navigate("DetailedScreens", { screen: "Forgot Password" });
   };
 
   // useEffect(() => {
@@ -196,6 +201,11 @@ const SignInScreen = () => {
         />
         <DisplayFormError errors={errors.Password} />
       </ScrollView>
+      <View style={{ flex: 1, alignSelf: "flex-end", marginRight: 25 }}>
+        <TouchableOpacity onPress={handleForgotPassword}>
+          <Text>Forgot Password?</Text>
+        </TouchableOpacity>
+      </View>
       <View
         style={{
           width: "100%",
