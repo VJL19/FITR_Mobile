@@ -104,7 +104,7 @@ const Home = () => {
     return <LoadingIndicator />;
   }
 
-  console.log("hey", announcementsData?.result);
+  console.log("heyy", announcementsData?.result);
 
   return (
     <View style={{ flex: 1, backgroundColor: "#f5f5f5", padding: 12 }}>

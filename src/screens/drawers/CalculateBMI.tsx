@@ -14,12 +14,17 @@ import getAccessToken from "actions/homeAction";
 import LoadingIndicator from "components/LoadingIndicator";
 import { useGetAccessTokenQuery } from "reducers/authReducer";
 import CustomError from "components/CustomError";
+import { RadioGroup } from "react-native-radio-buttons-group";
 export interface IBMIField {
+  Age: string;
+  Gender: string;
   Height: string;
   Weight: string;
 }
 
 const IDefaultValue: IBMIField = {
+  Age: "",
+  Gender: "",
   Height: "",
   Weight: "",
 };
@@ -42,10 +47,18 @@ const CalculateBMI = () => {
     defaultValues: IDefaultValue,
     resolver: joiResolver(bmiSchema),
   });
+
+  const gender = [
+    { id: "1", label: "Male", value: "1" },
+    { id: "2", label: "Female", value: "2" },
+  ];
+
   useEffect(() => {
     dispatch(setRoute("Calculate BMI"));
     setValue("Height", data?.user?.Height?.toString()!);
     setValue("Weight", data?.user?.Weight?.toString()!);
+    setValue("Age", data?.user?.Age?.toString()!);
+    setValue("Gender", data?.user?.Gender === "Male" ? "1" : "2");
   }, []);
 
   const onCalculate = async (data: IBMIField) => {
@@ -64,6 +77,60 @@ const CalculateBMI = () => {
   return (
     <View style={styles.container}>
       <View style={{ width: "90%" }}>
+        <Controller
+          control={control}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <React.Fragment>
+              <Text
+                style={{
+                  color: "#202020",
+                  fontSize: 18,
+                  fontFamily: "Inter-Bold",
+                  letterSpacing: 1,
+                }}
+              >
+                Age
+              </Text>
+
+              <CustomTextInput
+                inputMode="numeric"
+                error={errors.Age}
+                placeholder="Enter your Age"
+                onBlur={onBlur}
+                onChange={onChange}
+                value={value}
+              />
+            </React.Fragment>
+          )}
+          name="Age"
+        />
+        <DisplayFormError errors={errors.Age} />
+        <Controller
+          control={control}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <React.Fragment>
+              <Text
+                style={{
+                  color: "#202020",
+                  fontSize: 18,
+                  fontFamily: "Inter-Bold",
+                  letterSpacing: 1,
+                }}
+              >
+                Gender
+              </Text>
+
+              <RadioGroup
+                radioButtons={gender}
+                onPress={onChange}
+                selectedId={value}
+                containerStyle={{ flexDirection: "row" }}
+              />
+            </React.Fragment>
+          )}
+          name="Gender"
+        />
+        <DisplayFormError errors={errors.Gender} />
         <Controller
           control={control}
           render={({ field: { onChange, onBlur, value } }) => (

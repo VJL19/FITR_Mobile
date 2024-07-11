@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, Pressable } from "react-native";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
 import { useDispatch, useSelector } from "react-redux";
@@ -15,10 +15,13 @@ import { useGetAccessTokenQuery } from "reducers/authReducer";
 import { useGetPostsQuery } from "reducers/postReducer";
 import FloatingActionButton from "components/FloatingActionButton";
 import CustomError from "components/CustomError";
+import SearchBar from "components/SearchBar";
 
 const MyPosts = () => {
   const navigation = useNavigation<RootStackNavigationProp>();
   const { isError, data: user } = useGetAccessTokenQuery();
+  const [searchPost, setSearchPost] = useState("");
+  const [queryPost, setQueryPost] = useState<IPost[] | []>();
 
   const {
     data,
@@ -34,11 +37,30 @@ const MyPosts = () => {
     dispatch(setRoute("My posts"));
     // console.log("posts err", posterr);
   }, []);
+
+  useEffect(() => {
+    setQueryPost(data?.result);
+  }, [data?.result]);
   console.log("posts data", data);
   // console.log("user post", postItems);
 
   const handlePress = () => {
     navigation.navigate("DetailedScreens", { screen: "Add Post" });
+  };
+
+  const handleChange = (text: string) => {
+    const formattedQuery = text.toLowerCase();
+
+    if (formattedQuery) {
+      const filteredPost = data?.result.filter((post) =>
+        post.PostTitle.toLowerCase().includes(formattedQuery)
+      );
+
+      setQueryPost(filteredPost);
+    } else {
+      setQueryPost(data?.result);
+    }
+    setSearchPost(formattedQuery);
   };
 
   if (isFetching || isUninitialized) {
@@ -60,7 +82,7 @@ const MyPosts = () => {
 
   return (
     <View style={styles.container}>
-      <View>
+      <View style={{ marginTop: 10 }}>
         <Text
           style={{
             color: "#131313",
@@ -72,9 +94,16 @@ const MyPosts = () => {
         </Text>
       </View>
 
+      <View style={{ marginTop: 15, width: "100%" }}>
+        <SearchBar
+          value={searchPost}
+          placeholder="Search post"
+          handleChangeText={handleChange}
+        />
+      </View>
       <FlatList
         alwaysBounceVertical={true}
-        data={data?.result}
+        data={queryPost}
         renderItem={({ item }) => <Posts {...item} />}
         keyExtractor={(item: IPost) => item?.PostID?.toString()}
       />

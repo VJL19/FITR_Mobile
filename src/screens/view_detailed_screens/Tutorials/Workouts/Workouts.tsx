@@ -25,6 +25,7 @@ const Workouts = () => {
   const navigation = useNavigation<RootStackNavigationProp>();
   const [selectedTargetMuscle, setSelectedTargetMuscle] = useState("All");
   const [searchWorkout, setSearchWorkout] = useState("");
+  const [queryWorkouts, setQueryWorkouts] = useState<IWorkouts[]>();
 
   const {
     data: filteredWorkouts,
@@ -33,8 +34,6 @@ const Workouts = () => {
   } = useGetWorkOutByTargetMuscleQuery(selectedTargetMuscle, {
     refetchOnMountOrArgChange: true,
   });
-
-  const [queryWorkouts, setQueryWorkouts] = useState<IWorkouts[]>();
 
   const targetMuscles = [
     "All",

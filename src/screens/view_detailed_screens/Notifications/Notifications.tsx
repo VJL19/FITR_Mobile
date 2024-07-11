@@ -36,6 +36,15 @@ const Notifications = () => {
   if (isError) {
     return <CustomError />;
   }
+  if (data?.result?.length === 0) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Text style={{ fontSize: 25, fontWeight: "700" }}>
+          You have no notifications
+        </Text>
+      </View>
+    );
+  }
   return (
     <View>
       <FlatList

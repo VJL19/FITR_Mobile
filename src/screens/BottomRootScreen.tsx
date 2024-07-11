@@ -36,6 +36,7 @@ const BottomRootScreen = ({
     useGetAccessTokenQuery(undefined, {
       refetchOnMountOrArgChange: true,
     });
+
   useEffect(() => {
     dispatch(setRoute(route.name));
     // navigation.setOptions({ headerTitle: route.name });
@@ -75,6 +76,7 @@ const BottomRootScreen = ({
       screenOptions={({ route, navigation }) => ({
         unmountOnBlur: true,
         headerShown: false,
+        tabBarHideOnKeyboard: true,
         tabBarLabel: ({ focused, position, color, children }) => {
           return (
             <Text

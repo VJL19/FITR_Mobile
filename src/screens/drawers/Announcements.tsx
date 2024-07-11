@@ -1,5 +1,5 @@
 import { FlatList, StyleSheet, Text, View } from "react-native";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { WebView } from "react-native-webview";
 import CheckoutScreen from "components/CheckoutScreen";
 import useIsReady from "hooks/useIsReady";
@@ -14,6 +14,7 @@ import AnnouncementLists from "screens/view_detailed_screens/Announcements/Annou
 import { IAnnouncements } from "utils/types/announcement.types";
 import { useGetAccessTokenQuery } from "reducers/authReducer";
 import CustomError from "components/CustomError";
+import SearchBar from "components/SearchBar";
 
 const Announcements = () => {
   const { isError } = useGetAccessTokenQuery();
@@ -26,9 +27,18 @@ const Announcements = () => {
   });
   const route = useRoute();
   const dispatch: AppDispatch = useDispatch();
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const [queryAnnouncement, setQueryAnnouncement] = useState<
+    IAnnouncements[] | []
+  >();
   useEffect(() => {
     dispatch(setRoute("Announcements"));
   }, []);
+
+  useEffect(() => {
+    setQueryAnnouncement(announcementData?.result);
+  }, [announcementData?.result]);
   if (isFetching || isUninitialized) {
     return <LoadingIndicator />;
   }
@@ -45,12 +55,35 @@ const Announcements = () => {
     });
   };
 
+  const handleChange = (text: string) => {
+    const formattedQuery = text.toLowerCase();
+
+    if (formattedQuery) {
+      const filteredAnnouncement = announcementData?.result.filter(
+        (announcement) =>
+          announcement.AnnouncementTitle.toLowerCase().includes(formattedQuery)
+      );
+
+      setQueryAnnouncement(filteredAnnouncement);
+    } else {
+      setQueryAnnouncement(announcementData?.result);
+    }
+    setSearchQuery(formattedQuery);
+  };
+
   console.log(announcementData);
   return (
     <View style={styles.container}>
+      <View style={{ width: "100%", marginTop: 25 }}>
+        <SearchBar
+          placeholder="Search announcement"
+          handleChangeText={handleChange}
+          value={searchQuery}
+        />
+      </View>
       <FlatList
         alwaysBounceVertical={true}
-        data={announcementData?.result}
+        data={queryAnnouncement}
         renderItem={({ item }) => <AnnouncementLists {...item} />}
         keyExtractor={(item: IAnnouncements) =>
           item?.AnnouncementID?.toString()

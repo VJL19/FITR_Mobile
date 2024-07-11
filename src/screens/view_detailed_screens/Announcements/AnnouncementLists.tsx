@@ -89,6 +89,7 @@ const styles = StyleSheet.create({
   },
   date: {
     fontSize: 16,
+    fontWeight: "700",
     color: "#f5f5f5",
   },
 });
