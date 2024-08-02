@@ -32,8 +32,12 @@ const Postsfeed = ({
   const { data } = useGetAccessTokenQuery();
   const { user } = data!;
 
-  const { data: total_likes } = useGetTotalLikesQuery(NewsfeedID);
-  const { data: total_comments } = useGetTotalCommentsQuery(NewsfeedID);
+  const { data: total_likes } = useGetTotalLikesQuery(NewsfeedID, {
+    refetchOnMountOrArgChange: true,
+  });
+  const { data: total_comments } = useGetTotalCommentsQuery(NewsfeedID, {
+    refetchOnMountOrArgChange: true,
+  });
 
   const navigation = useNavigation<RootStackNavigationProp>();
 

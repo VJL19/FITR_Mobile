@@ -21,7 +21,12 @@ import { AppDispatch, RootState } from "store/store";
 import * as ImagePicker from "expo-image-picker";
 import avatar from "assets/avatar_default.jpeg";
 import uploadImageAction from "actions/uploadImageAction";
-import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import {
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+  deleteObject,
+} from "firebase/storage";
 import { storage } from "global/firebaseConfig";
 import {
   setToken,
@@ -51,7 +56,9 @@ const initialState: IChangeAccount = {
 
 const ChangeAccount = () => {
   const dispatch: AppDispatch = useDispatch();
-  const { image, pickImage, pickCameraImage, removePhoto } = useCameraFns();
+  const { image, pickImage, pickCameraImage, removePhoto } = useCameraFns({
+    allowsEditing: true,
+  });
   const [modalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -100,6 +107,14 @@ const ChangeAccount = () => {
   }, [status, dataChangeAcc?.message]);
 
   const onSubmit = async (data: IChangeAccount) => {
+    let imageRef = ref(storage, user?.user?.ProfilePic);
+
+    try {
+      await deleteObject(imageRef);
+      console.log("success");
+    } catch (err) {
+      console.log("there was an error in deleting an image");
+    }
     const url = await uploadImage(
       image,
       "ProfilePics",

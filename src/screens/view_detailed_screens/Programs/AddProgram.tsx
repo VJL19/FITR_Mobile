@@ -1,5 +1,16 @@
-import { StyleSheet, Text, View, TextInput, Button, Image } from "react-native";
-import React, { useEffect } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  Button,
+  Image,
+  SafeAreaView,
+  KeyboardAvoidingView,
+  Platform,
+  StatusBar,
+} from "react-native";
+import React, { LegacyRef, createRef, useEffect, useRef } from "react";
 import { FieldErrors, useForm } from "react-hook-form";
 import { Controller } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
@@ -14,6 +25,8 @@ import programSchema from "utils/validations/planner.validations";
 import IProgram from "utils/types/program_planner.types";
 import LoadingIndicator from "components/LoadingIndicator";
 import { useCreateUserProgramMutation } from "reducers/programReducer";
+import RichTextEdidor from "components/RichTextEdidor";
+import RichToolBar from "components/RichToolBar";
 
 const AddProgram = () => {
   const {
@@ -33,6 +46,8 @@ const AddProgram = () => {
   };
 
   const navigation = useNavigation();
+  const _editor = createRef();
+
   const {
     handleSubmit,
     control,
@@ -65,9 +80,10 @@ const AddProgram = () => {
 
     // console.log("post message", result?.[0].NewsfeedID!);
 
+    console.log(data.ProgramDescription);
     DisplayAlert("Success message", "Program added successfully!");
     await new Promise((resolve) => setTimeout(resolve, 1500));
-    // navigation.goBack();
+    navigation.goBack();
     reset();
   };
   console.log("add pressed", programRes);
@@ -115,6 +131,7 @@ const AddProgram = () => {
           <DisplayFormError errors={errors.ProgramTitle} />
 
           <Controller
+            name="ProgramDescription"
             control={control}
             render={({ field: { onChange, onBlur, value } }) => (
               <React.Fragment>
@@ -129,36 +146,19 @@ const AddProgram = () => {
                   Description
                 </Text>
 
-                <TextInput
-                  multiline={true}
-                  textAlignVertical="top"
-                  placeholder="Enter the description"
-                  placeholderTextColor={"#c2c2c2"}
+                <RichTextEdidor
+                  _editor={_editor}
                   onBlur={onBlur}
-                  onChangeText={onChange}
-                  value={value}
-                  style={{
-                    borderWidth: 1,
-                    height: 300,
-                    borderRadius: 8,
-                    padding: 15,
-                    color: "#202020",
-                    borderColor: errors.ProgramDescription
-                      ? "#d9534f"
-                      : "#202020",
-                    marginBottom: 10,
-                    fontSize: 16,
-                  }}
+                  onChange={onChange}
                 />
               </React.Fragment>
             )}
-            name="ProgramDescription"
           />
+          <DisplayFormError errors={errors.ProgramDescription} />
         </View>
-
-        <DisplayFormError errors={errors.ProgramDescription} />
       </ScrollView>
-      <View style={{ width: "90%", alignSelf: "center", marginBottom: 10 }}>
+      <View style={{ width: "90%", alignSelf: "center", bottom: 10 }}>
+        <RichToolBar _editor={_editor} />
         <Button
           title="Confirm"
           color={"#ff2e00"}

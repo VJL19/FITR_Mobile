@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { Controller } from "react-hook-form";
 import React, { useContext, useEffect, useState } from "react";
-import { useNavigation } from "@react-navigation/native";
+import { CommonActions, useNavigation } from "@react-navigation/native";
 import CustomButton from "components/CustomButton";
 import { useForm } from "react-hook-form";
 import { ILoginForm } from "utils/types/user.types";
@@ -23,15 +23,19 @@ import DisplayAlert from "components/CustomAlert";
 import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
 import logo from "assets/fitr_logo4.png";
 import {
+  setOTPToken,
   setToken,
+  setUserEmail,
   useGetAccessTokenQuery,
   useLoginUserMutation,
+  useSendEmailMutation,
 } from "reducers/authReducer";
 import { getToken1 } from "actions/authAction";
 import * as SecureStore from "expo-secure-store";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { TextInput } from "react-native-paper";
+import LoadingIndicator from "components/LoadingIndicator";
 
 const SignInScreen = () => {
   const navigation = useNavigation<RootStackNavigationProp>();
@@ -63,8 +67,15 @@ const SignInScreen = () => {
   // console.log("message", message);
   const onSubmit = async (data: ILoginForm) => {
     // console.log("in sign in screen", data);
+    await SecureStore.setItemAsync("user_name", data.Username);
+    await SecureStore.setItemAsync("user_pass", data.Password);
     await loginUser(data);
   };
+
+  const [
+    sendOTPEmail,
+    { data: emailCode, status: emailStat, error: emailErr },
+  ] = useSendEmailMutation();
 
   const handleForgotPassword = () => {
     navigation.navigate("DetailedScreens", { screen: "Forgot Password" });
@@ -87,6 +98,9 @@ const SignInScreen = () => {
   // }, []);
 
   useEffect(() => {
+    if (error?.data?.status === 401) {
+      sendOTPEmail({ Email: error?.data?.email });
+    }
     if (status === "rejected" && isSubmitted) {
       DisplayAlert("Error, message", error?.data?.details);
     }
@@ -101,6 +115,24 @@ const SignInScreen = () => {
       reset();
     }
   }, [status, res?.details]);
+
+  useEffect(() => {
+    if (emailStat === "fulfilled") {
+      dispatch(setOTPToken(emailCode?.code));
+      dispatch(setUserEmail(error?.data?.email));
+      const deplayRedirect = async () => {
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+        navigation.navigate("DetailedScreens", {
+          screen: "Registration Confirmation",
+        });
+      };
+      deplayRedirect();
+    }
+  }, [emailStat]);
+
+  if (emailStat === "pending") {
+    return <LoadingIndicator />;
+  }
 
   return (
     <ImageBackground style={styles.container}>

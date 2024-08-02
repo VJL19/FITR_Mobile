@@ -1,48 +1,44 @@
-import {
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  useWindowDimensions,
-} from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
-import IProgram from "utils/types/program_planner.types";
+import IProgram, { IProgramSuggested } from "utils/types/program_planner.types";
 import { useNavigation } from "@react-navigation/native";
 import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "store/store";
-import { setProgramData } from "reducers/programReducer";
+import { setSuggestedProgramData } from "reducers/programReducer";
 
-const Program = ({
-  ProgramTitle,
-  ProgramEntryDate,
-  ProgramID,
-  ProgramDescription,
-}: IProgram) => {
+const SuggestedProgram = ({
+  SuggestedProgramTitle,
+  SuggestedProgramID,
+  SuggestedProgramEntryDate,
+  SuggestedProgramDescription,
+}: IProgramSuggested) => {
   const navigation = useNavigation<RootStackNavigationProp>();
 
   const dispatch: AppDispatch = useDispatch();
   const handlePress = () => {
     const arg = {
-      ProgramID: ProgramID,
-      ProgramTitle: ProgramTitle,
-      ProgramDescription: ProgramDescription,
-      ProgramEntryDate: ProgramEntryDate,
+      SuggestedProgramID: SuggestedProgramID,
+      SuggestedProgramTitle: SuggestedProgramTitle,
+      SuggestedProgramDescription: SuggestedProgramDescription,
+      SuggestedProgramEntryDate: SuggestedProgramEntryDate,
     };
-    dispatch(setProgramData(arg));
-    navigation.navigate("DetailedScreens", { screen: "View Program" });
+    dispatch(setSuggestedProgramData(arg));
+    navigation.navigate("DetailedScreens", {
+      screen: "View Suggested Program",
+    });
   };
-
   return (
     <TouchableOpacity activeOpacity={0.8} onPress={handlePress}>
       <View style={styles.box}>
         <View>
           <Text numberOfLines={1} style={styles.title}>
-            {ProgramTitle}
+            {SuggestedProgramTitle}
           </Text>
-
           <Text style={styles.date}>
-            {new Date(ProgramEntryDate?.substring(0, 10)).toDateString()}
+            {new Date(
+              SuggestedProgramEntryDate?.substring(0, 10)
+            ).toDateString()}
           </Text>
         </View>
       </View>
@@ -50,7 +46,7 @@ const Program = ({
   );
 };
 
-export default Program;
+export default SuggestedProgram;
 
 const styles = StyleSheet.create({
   box: {

@@ -5,8 +5,8 @@ import CustomDrawer from "components/CustomDrawer";
 import drawerIcon from "components/drawerIcon";
 import { View, Text } from "react-native";
 import CustomNotification from "components/CustomNotification";
-import { useSelector } from "react-redux";
-import { RootState } from "store/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "store/store";
 import * as SecureStore from "expo-secure-store";
 import global_axios from "global/axios";
 import {
@@ -20,10 +20,57 @@ import {
   RootStackScreenProp,
 } from "utils/types/navigators/RootStackNavigators";
 import { AuthContext } from "context/AuthContext";
+import { useRefetchOnMessage } from "hooks/useRefetchOnMessage";
+import {
+  authslice,
+  setToken,
+  useGetAccessTokenQuery,
+} from "reducers/authReducer";
+import {
+  useGetAllNotificationsCountQuery,
+  notificationApi,
+  setNotificationCount,
+} from "reducers/notificationReducer";
+import { io } from "socket.io-client";
 
+const socket = io("ws://192.168.1.15:8082/");
 const DashboardScreen = ({ navigation }: RootStackScreenProp) => {
   const { route: nav } = useSelector((state: RootState) => state.route);
+  const { data, isError } = useGetAccessTokenQuery();
 
+  const { data: count } = useGetAllNotificationsCountQuery(data?.user?.UserID, {
+    refetchOnMountOrArgChange: true,
+  });
+
+  const dispatch: AppDispatch = useDispatch();
+
+  let messageType = "refresh_user";
+  useEffect(() => {
+    const handleMessage = (data: { refresh_token: string }) => {
+      dispatch(setToken(data?.refresh_token));
+      dispatch(authslice.util.invalidateTags(["auth"]));
+      const setTokenAsync = async () => {
+        await SecureStore.setItemAsync("accessToken", data?.refresh_token!);
+      };
+      setTokenAsync();
+      console.log("got the token in client", data);
+    };
+
+    //listens to any event emitted by the server and refetch the data
+    socket?.on(messageType, handleMessage);
+
+    return () => {
+      socket?.off(messageType, handleMessage);
+    };
+  }, [messageType, dispatch]);
+
+  //refresh notif counts when mutation is perform on the server.
+  useRefetchOnMessage("refresh_post", () => {
+    dispatch(notificationApi.util.invalidateTags(["notifications"]));
+  });
+  useEffect(() => {
+    dispatch(setNotificationCount(count?.result?.[0].NotificationCount));
+  }, []);
   function getHeaderTitle(route: Partial<Route<string>>) {
     // If the focused route is not found, we need to assume it's the initial screen
     // This can happen during if there hasn't been any navigation inside the screen

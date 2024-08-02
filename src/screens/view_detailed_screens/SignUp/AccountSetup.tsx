@@ -14,6 +14,7 @@ import { RadioGroup } from "react-native-radio-buttons-group";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "store/store";
 import { setAccountInfoFields } from "reducers/authReducer";
+import * as SecureStore from "expo-secure-store";
 
 const AccountSetup = () => {
   const { Username, Password, ConfirmPassword, Gender, SubscriptionType } =
@@ -59,6 +60,8 @@ const AccountSetup = () => {
 
   const onSubmit = async (data: IAccountSetup) => {
     console.log("account setup data", data);
+    await SecureStore.setItemAsync("user_name", data.Username);
+    await SecureStore.setItemAsync("user_pass", data.Password);
     dispatch(setAccountInfoFields(data));
     navigation.navigate("DetailedScreens", {
       screen: "TermsAndCondition",

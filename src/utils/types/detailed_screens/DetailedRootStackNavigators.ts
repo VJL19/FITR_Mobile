@@ -5,6 +5,7 @@ export type DetailedRootStackNavigatorsParamList = {
   "Process Checkout": { checkout_url: string } | undefined;
   "Add Program": undefined;
   "View Program": undefined;
+  "View Suggested Program": undefined;
   "View Announcement": undefined;
   "Add Post": undefined;
   "Edit Post": undefined;
@@ -40,6 +41,7 @@ export type DetailedRootStackScreenProp = StackScreenProps<
   | "Add Program"
   | "View Announcement"
   | "View Program"
+  | "View Suggested Program"
   | "Add Post"
   | "View Post Feed"
   | "View Post"
@@ -72,6 +74,7 @@ export type DetailedRootStackNavigationProp = StackNavigationProp<
   | "Process Checkout"
   | "Add Program"
   | "View Program"
+  | "View Suggested Program"
   | "View Announcement"
   | "Add Post"
   | "View Post Feed"

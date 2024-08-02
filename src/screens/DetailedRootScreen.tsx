@@ -36,6 +36,7 @@ import RegistrationConfirmation from "./view_detailed_screens/SignUp/Registratio
 import ForgotPassword from "./view_detailed_screens/MyAccount/ForgotPassword";
 import ChangePassword from "./view_detailed_screens/MyAccount/ChangePassword";
 import ForgotPasswordConfirmation from "./view_detailed_screens/MyAccount/ForgotPasswordConfirmation";
+import ViewSuggestedProgram from "./view_detailed_screens/Programs/ViewSuggestedProgram";
 
 const DetailedRootScreen = () => {
   const config = {
@@ -196,14 +197,18 @@ const DetailedRootScreen = () => {
         }}
       />
       <DetailedScreenStacks.Screen
-        name="Edit Program"
-        component={EditProgram}
+        name="View Suggested Program"
+        component={ViewSuggestedProgram}
         options={{
           presentation: "card",
           gestureEnabled: true,
           gestureDirection: "horizontal",
           cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
+      />
+      <DetailedScreenStacks.Screen
+        name="Edit Program"
+        component={EditProgram}
       />
       <DetailedScreenStacks.Screen
         name="View Announcement"
@@ -235,16 +240,7 @@ const DetailedRootScreen = () => {
           cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
       />
-      <DetailedScreenStacks.Screen
-        name="Edit Post"
-        component={EditPost}
-        options={{
-          presentation: "card",
-          gestureEnabled: true,
-          gestureDirection: "horizontal",
-          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
-        }}
-      />
+      <DetailedScreenStacks.Screen name="Edit Post" component={EditPost} />
       <DetailedScreenStacks.Screen
         name="View Post Feed"
         component={DetailedPostFeed}

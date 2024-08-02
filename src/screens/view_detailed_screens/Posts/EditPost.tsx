@@ -7,7 +7,7 @@ import {
   View,
   Image,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { createRef, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "store/store";
 import CustomTextInput from "components/CustomTextInput";
@@ -28,17 +28,22 @@ import CustomError from "components/CustomError";
 import CustomModal from "components/CustomModal";
 import postDefault from "assets/post_default.webp";
 import { IMAGE_VALUES } from "utils/enums/DefaultValues";
+import RichTextEdidor from "components/RichTextEdidor";
+import RichToolBar from "components/RichToolBar";
+import { deleteObject, ref } from "firebase/storage";
+import { storage } from "global/firebaseConfig";
 
 const EditPost = () => {
   const { PostTitle, PostImage, PostDescription, PostID } = useSelector(
     (state: RootState) => state.post.postData
   );
   const { image, pickImage, pickCameraImage, removePhoto, setImage } =
-    useCameraFns();
+    useCameraFns({ allowsEditing: true });
   const [modalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation<RootStackNavigationProp>();
 
+  const _editor = createRef();
   const { isError, data: user } = useGetAccessTokenQuery();
   const defaultValue = {
     PostTitle: "",
@@ -66,6 +71,14 @@ const EditPost = () => {
   const onSubmit = async (data: IPost) => {
     const { UserID, FirstName, LastName, Username } = user?.user!;
 
+    let imageRef = ref(storage, PostImage);
+
+    try {
+      await deleteObject(imageRef);
+      console.log("success");
+    } catch (err) {
+      console.log("there was an error in deleting an image");
+    }
     const url = await uploadImage(
       image,
       "Posts/",
@@ -131,7 +144,7 @@ const EditPost = () => {
             />
           </View>
         </View>
-        <View style={{ marginTop: 25 }}>
+        <View style={{ marginTop: 25, padding: 15 }}>
           <Controller
             control={control}
             render={({ field: { onChange, onBlur, value } }) => (
@@ -174,24 +187,11 @@ const EditPost = () => {
                   Description
                 </Text>
 
-                <TextInput
-                  multiline={true}
-                  textAlignVertical="top"
-                  placeholder="Enter the description"
-                  placeholderTextColor={"#c2c2c2"}
+                <RichTextEdidor
+                  initialContentHTML={PostDescription}
+                  _editor={_editor}
                   onBlur={onBlur}
-                  onChangeText={onChange}
-                  value={value}
-                  style={{
-                    borderWidth: 1,
-                    height: 300,
-                    borderRadius: 8,
-                    padding: 15,
-                    color: "#202020",
-                    borderColor: errors.PostDescription ? "#d9534f" : "#202020",
-                    marginBottom: 10,
-                    fontSize: 16,
-                  }}
+                  onChange={onChange}
                 />
               </React.Fragment>
             )}
@@ -202,6 +202,8 @@ const EditPost = () => {
         <DisplayFormError errors={errors.PostDescription} />
       </ScrollView>
       <View style={{ width: "95%", alignSelf: "center", marginBottom: 15 }}>
+        <RichToolBar _editor={_editor} />
+
         <Button
           title="Proceed"
           color={"#ff2e00"}

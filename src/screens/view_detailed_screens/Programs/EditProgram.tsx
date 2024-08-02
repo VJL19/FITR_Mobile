@@ -1,5 +1,13 @@
-import { StyleSheet, Text, View, TextInput, Button, Image } from "react-native";
-import React, { useEffect } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  Button,
+  Image,
+  KeyboardAvoidingView,
+} from "react-native";
+import React, { createRef, useEffect, useRef } from "react";
 import { FieldErrors, useForm } from "react-hook-form";
 import { Controller } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
@@ -20,6 +28,8 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "store/store";
 import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
+import RichToolBar from "components/RichToolBar";
+import RichTextEdidor from "components/RichTextEdidor";
 
 const EditProgram = () => {
   const {
@@ -41,6 +51,8 @@ const EditProgram = () => {
     ProgramDescription: "",
   };
 
+  const _editor = createRef();
+
   const navigation = useNavigation<RootStackNavigationProp>();
   const {
     handleSubmit,
@@ -54,6 +66,7 @@ const EditProgram = () => {
     resolver: joiResolver(editProgramSchema),
   });
   const { UserID, FirstName, LastName, Username } = user?.user!;
+  const richText = useRef(null);
   useEffect(() => {
     setValue("UserID", UserID);
     setValue("ProgramTitle", data.ProgramTitle);
@@ -100,7 +113,7 @@ const EditProgram = () => {
   return (
     <View style={{ flex: 1 }}>
       <ScrollView>
-        <View style={{ marginTop: 25 }}>
+        <View style={{ marginTop: 25, padding: 15 }}>
           <Controller
             control={control}
             render={({ field: { onChange, onBlur, value } }) => (
@@ -130,7 +143,8 @@ const EditProgram = () => {
 
           <Controller
             control={control}
-            render={({ field: { onChange, onBlur, value } }) => (
+            defaultValue={data.ProgramDescription}
+            render={({ field: { onChange, onBlur, value, ...restField } }) => (
               <React.Fragment>
                 <Text
                   style={{
@@ -143,36 +157,21 @@ const EditProgram = () => {
                   Description
                 </Text>
 
-                <TextInput
-                  multiline={true}
-                  textAlignVertical="top"
-                  placeholder="Enter the description"
-                  placeholderTextColor={"#c2c2c2"}
+                <RichTextEdidor
+                  initialContentHTML={data.ProgramDescription}
+                  _editor={_editor}
                   onBlur={onBlur}
-                  onChangeText={onChange}
-                  value={value}
-                  style={{
-                    borderWidth: 1,
-                    height: 300,
-                    borderRadius: 8,
-                    padding: 15,
-                    color: "#202020",
-                    borderColor: errors.ProgramDescription
-                      ? "#d9534f"
-                      : "#202020",
-                    marginBottom: 10,
-                    fontSize: 16,
-                  }}
+                  onChange={onChange}
                 />
               </React.Fragment>
             )}
             name="ProgramDescription"
           />
+          <DisplayFormError errors={errors.ProgramDescription} />
         </View>
-
-        <DisplayFormError errors={errors.ProgramDescription} />
       </ScrollView>
       <View style={{ width: "95%", alignSelf: "center", marginBottom: 15 }}>
+        <RichToolBar _editor={_editor} />
         <Button
           title="Edit Program"
           color={"#ff2e00"}

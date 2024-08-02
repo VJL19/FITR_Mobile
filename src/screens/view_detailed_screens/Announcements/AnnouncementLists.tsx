@@ -34,6 +34,10 @@ const AnnouncementLists = ({
     dispatch(setAnnouncementData(arg));
     navigation.navigate("DetailedScreens", { screen: "View Announcement" });
   };
+
+  console.log(AnnouncementDate);
+
+  const formatDate = AnnouncementDate.split(" ")[0];
   return (
     <TouchableOpacity onPress={handlePress}>
       <ImageBackground
@@ -59,9 +63,7 @@ const AnnouncementLists = ({
           <Text numberOfLines={1} style={styles.title}>
             {AnnouncementTitle}
           </Text>
-          <Text style={styles.date}>
-            {new Date(AnnouncementDate).toDateString()}
-          </Text>
+          <Text style={styles.date}>{new Date(formatDate).toDateString()}</Text>
         </View>
       </ImageBackground>
     </TouchableOpacity>

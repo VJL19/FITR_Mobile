@@ -87,12 +87,8 @@ const TermsAndConditions = () => {
         { text: "OK", onPress: () => {} },
       ]);
       // dispatch(clearFormFields());
-      const setTokenAsync = async () => {
-        await SecureStore.setItemAsync("accessToken", res?.accessToken!);
-      };
-      setTokenAsync();
       sendOTPEmail({ Email: Email });
-      dispatch(setAuthenticated());
+
       dispatch(setToken(res?.accessToken));
 
       // navigation.navigate("DetailedScreens", {screen: "Registration Confirmation"});

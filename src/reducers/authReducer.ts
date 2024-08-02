@@ -52,6 +52,12 @@ interface IForgotPasswordField {
   Email: string;
   Username: string;
 }
+
+interface IActivateUserAccount {
+  error: string;
+  message: string;
+  status: number;
+}
 const initialState: IAuthState = {
   status: 0,
   user: [],
@@ -85,6 +91,7 @@ const initialState: IAuthState = {
     Email: "",
     Username: "",
   },
+  email: "",
 };
 const config = loadConfig();
 
@@ -151,6 +158,17 @@ export const authslice = createApi({
     >({
       query: (arg) => ({
         url: "/user/change_password",
+        method: "POST",
+        body: arg,
+      }),
+      invalidatesTags: ["auth"],
+    }),
+    activateUserAccount: builder.mutation<
+      IActivateUserAccount,
+      { Email: string }
+    >({
+      query: (arg) => ({
+        url: "/user/activate_account",
         method: "POST",
         body: arg,
       }),
@@ -252,6 +270,9 @@ const authSlice = createSlice({
       //   loadAccessToken();
       // }, []);
     },
+    setUserEmail: (state, action) => {
+      state.email = action.payload;
+    },
   },
   extraReducers: (builder) => {
     //for login api call
@@ -325,6 +346,7 @@ export const {
   setAccountInfoFields,
   setForgotPasswordFields,
   clearFormFields,
+  setUserEmail,
 } = authSlice.actions;
 export const {
   useLoginUserMutation,
@@ -333,5 +355,6 @@ export const {
   useChangePasswordMutation,
   useSendEmailMutation,
   useForgotPasswordMutation,
+  useActivateUserAccountMutation,
 } = authslice;
 export default authSlice.reducer;

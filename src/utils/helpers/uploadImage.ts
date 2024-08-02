@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { storage } from "global/firebaseConfig";
+import { IMAGE_VALUES } from "utils/enums/DefaultValues";
 
 export const uploadImage = async (
   uri: string,
@@ -10,7 +11,7 @@ export const uploadImage = async (
   setLoading: (arg: boolean) => void
 ) => {
   try {
-    if (uri === undefined) return;
+    if (uri === IMAGE_VALUES.DEFAULT) return IMAGE_VALUES.DEFAULT;
     const response = await fetch(uri);
     const blob = await response.blob();
     setLoading(true);

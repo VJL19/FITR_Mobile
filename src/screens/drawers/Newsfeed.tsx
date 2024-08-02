@@ -9,9 +9,13 @@ import LoadingIndicator from "components/LoadingIndicator";
 import { INewsFeed } from "utils/types/newsfeed.types";
 import { useNavigation } from "@react-navigation/native";
 import { useGetAccessTokenQuery } from "reducers/authReducer";
-import { useGetAllPostInFeedQuery } from "reducers/newsfeedReducer";
+import {
+  newsfeedslice,
+  useGetAllPostInFeedQuery,
+} from "reducers/newsfeedReducer";
 import { useGetUserRecordsQuery } from "reducers/attendanceReducer";
 import CustomError from "components/CustomError";
+import { useRefetchOnMessage } from "hooks/useRefetchOnMessage";
 
 export const Newsfeed = () => {
   const { isError, data: user } = useGetAccessTokenQuery();
@@ -21,11 +25,18 @@ export const Newsfeed = () => {
     isFetching,
     isUninitialized,
     data: posts,
-  } = useGetAllPostInFeedQuery(userRecord?.result[0]?.SubscriptionType, {
+  } = useGetAllPostInFeedQuery(user?.user?.SubscriptionType, {
     refetchOnMountOrArgChange: true,
   });
-
   const dispatch: AppDispatch = useDispatch();
+
+  useRefetchOnMessage("refresh_post", () => {
+    dispatch(newsfeedslice.util.invalidateTags(["newsfeed"]));
+  });
+  useRefetchOnMessage("refresh_user", () => {
+    dispatch(newsfeedslice.util.invalidateTags(["newsfeed"]));
+  });
+
   useEffect(() => {
     dispatch(setRoute("Newsfeed"));
   }, []);

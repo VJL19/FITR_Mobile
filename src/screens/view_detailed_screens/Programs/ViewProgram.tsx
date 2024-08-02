@@ -1,4 +1,10 @@
-import { Button, StyleSheet, Text, View } from "react-native";
+import {
+  Button,
+  StyleSheet,
+  Text,
+  View,
+  useWindowDimensions,
+} from "react-native";
 import React from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "store/store";
@@ -6,6 +12,8 @@ import { useDeleteUserProgramMutation } from "reducers/programReducer";
 import DisplayAlert from "components/CustomAlert";
 import { useNavigation } from "@react-navigation/native";
 import DialogBox from "components/DialogBox";
+import WebView from "react-native-webview";
+import RenderHTML from "react-native-render-html";
 
 const ViewProgram = () => {
   const { ProgramID, ProgramTitle, ProgramDescription } = useSelector(
@@ -14,6 +22,8 @@ const ViewProgram = () => {
 
   const [finishProgram, { data, error }] = useDeleteUserProgramMutation();
 
+  const { width } = useWindowDimensions();
+  const html = `${ProgramDescription}`;
   const navigation = useNavigation();
   const handleFinish = async () => {
     DialogBox({
@@ -33,7 +43,8 @@ const ViewProgram = () => {
     <View style={styles.container}>
       <View>
         <Text style={styles.title}>{ProgramTitle}</Text>
-        <Text>{ProgramDescription}</Text>
+
+        <RenderHTML contentWidth={width} source={{ html }} />
       </View>
       <Button title="Finish this program" onPress={handleFinish} />
     </View>

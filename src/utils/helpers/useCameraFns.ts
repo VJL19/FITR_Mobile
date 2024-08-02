@@ -2,7 +2,7 @@ import { useState } from "react";
 import * as ImagePicker from "expo-image-picker";
 import { IMAGE_VALUES } from "utils/enums/DefaultValues";
 
-export const useCameraFns = () => {
+export const useCameraFns = ({ allowsEditing }: { allowsEditing: boolean }) => {
   const [image, setImage] = useState<string | null | undefined>(
     IMAGE_VALUES.DEFAULT
   );
@@ -11,7 +11,7 @@ export const useCameraFns = () => {
     // No permissions request is necessary for launching the image library
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
+      allowsEditing: allowsEditing,
       aspect: [4, 3],
       quality: 1,
       base64: true,

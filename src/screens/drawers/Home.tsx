@@ -17,14 +17,21 @@ import { useGetWorkoutsFavoritesQuery } from "reducers/favoriteReducer";
 import WorkoutFavoriteLists from "screens/view_detailed_screens/Favorites/WorkoutFavoriteLists";
 import { IWorkOutFavorites } from "utils/types/favorites.types";
 import {
+  notificationApi,
   setNotificationCount,
   useGetAllNotificationsCountQuery,
 } from "reducers/notificationReducer";
 import { BottomTabsNavigationProp } from "utils/types/navigators/BottomTabNavigators";
-import { useGetAllTodaysAnnouncementsQuery } from "reducers/announcementReducer";
+import {
+  announcementApi,
+  useGetAllTodaysAnnouncementsQuery,
+} from "reducers/announcementReducer";
 import AnnouncementLists from "screens/view_detailed_screens/Announcements/AnnouncementLists";
 import { IAnnouncements } from "utils/types/announcement.types";
 import { DrawerStackNavigationProp } from "utils/types/navigators/DrawerStackNavigators";
+import { useRefetchOnMessage } from "hooks/useRefetchOnMessage";
+import { newsfeedslice } from "reducers/newsfeedReducer";
+
 const Home = () => {
   const { value, name } = useSelector((state: RootState) => state.counter);
 
@@ -38,7 +45,9 @@ const Home = () => {
     refetchOnMountOrArgChange: true,
   });
 
-  const { data: count } = useGetAllNotificationsCountQuery(data?.user?.UserID);
+  const { data: count } = useGetAllNotificationsCountQuery(data?.user?.UserID, {
+    refetchOnMountOrArgChange: true,
+  });
 
   const {
     data: workoutFavoritesData,
@@ -54,6 +63,15 @@ const Home = () => {
       refetchOnMountOrArgChange: true,
     }
   );
+
+  //refresh today announcements when mutation is perform on the server.
+  useRefetchOnMessage("refresh_announcement", () => {
+    dispatch(announcementApi.util.invalidateTags(["announcement"]));
+  });
+  // //refresh notif counts when mutation is perform on the server.
+  useRefetchOnMessage("refresh_post", () => {
+    dispatch(notificationApi.util.invalidateTags(["notifications"]));
+  });
 
   const navigation = useNavigation<BottomTabsNavigationProp>();
   const navigationDrawer = useNavigation<DrawerStackNavigationProp>();
@@ -83,6 +101,7 @@ const Home = () => {
   //   );
   // }
 
+  console.log(data?.user?.UserID);
   if (
     programs?.result.length === 0 &&
     announcementsData?.result.length === 0 &&

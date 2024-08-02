@@ -9,12 +9,16 @@ import { AppDispatch, RootState } from "store/store";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { setRoute } from "reducers/routeReducer";
 import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
-import { useGetAllAnnoucementsQuery } from "reducers/announcementReducer";
+import {
+  announcementApi,
+  useGetAllAnnoucementsQuery,
+} from "reducers/announcementReducer";
 import AnnouncementLists from "screens/view_detailed_screens/Announcements/AnnouncementLists";
 import { IAnnouncements } from "utils/types/announcement.types";
 import { useGetAccessTokenQuery } from "reducers/authReducer";
 import CustomError from "components/CustomError";
 import SearchBar from "components/SearchBar";
+import { useRefetchOnMessage } from "hooks/useRefetchOnMessage";
 
 const Announcements = () => {
   const { isError } = useGetAccessTokenQuery();
@@ -35,6 +39,10 @@ const Announcements = () => {
   useEffect(() => {
     dispatch(setRoute("Announcements"));
   }, []);
+
+  useRefetchOnMessage("refresh_announcement", () => {
+    dispatch(announcementApi.util.invalidateTags(["announcement"]));
+  });
 
   useEffect(() => {
     setQueryAnnouncement(announcementData?.result);

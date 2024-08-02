@@ -82,6 +82,7 @@ export interface IAuthState {
     Email: string;
     Username: string;
   };
+  email: string;
 }
 
 export interface LoginPayload {

@@ -45,9 +45,11 @@ export const announcementApi = createApi({
   endpoints: (builder) => ({
     getAllAnnoucements: builder.query<IAnnouncementState, void>({
       query: () => "/admin/announcement/all_announcements",
+      providesTags: ["announcement"],
     }),
     getAllTodaysAnnouncements: builder.query<IAnnouncementState, void>({
       query: () => "/admin/announcement/all_todays_announcements",
+      providesTags: ["announcement"],
     }),
   }),
 });

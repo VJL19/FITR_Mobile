@@ -6,5 +6,11 @@ interface IProgram extends IUser {
   ProgramDescription: string;
   ProgramEntryDate: string;
 }
+export interface IProgramSuggested {
+  SuggestedProgramID: number;
+  SuggestedProgramTitle: string;
+  SuggestedProgramDescription: string;
+  SuggestedProgramEntryDate: string;
+}
 
 export default IProgram;

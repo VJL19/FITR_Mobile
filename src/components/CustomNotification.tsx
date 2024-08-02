@@ -1,12 +1,17 @@
 import { StyleSheet, Text, TouchableNativeFeedback, View } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
 import { RootStackNavigationProp } from "../utils/types/navigators/RootStackNavigators";
-import { useSelector } from "react-redux";
-import { RootState } from "store/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "store/store";
 import { useGetAccessTokenQuery } from "reducers/authReducer";
-import { useGetAllNotificationsCountQuery } from "reducers/notificationReducer";
+import {
+  notificationApi,
+  setNotificationCount,
+  useGetAllNotificationsCountQuery,
+} from "reducers/notificationReducer";
+import { useRefetchOnMessage } from "hooks/useRefetchOnMessage";
 
 const CustomNotification = (props: {
   tintColor?: string | undefined;
@@ -17,7 +22,19 @@ const CustomNotification = (props: {
 
   const { data, isError } = useGetAccessTokenQuery();
 
-  const { data: count } = useGetAllNotificationsCountQuery(data?.user?.UserID);
+  const { data: count } = useGetAllNotificationsCountQuery(data?.user?.UserID, {
+    refetchOnMountOrArgChange: true,
+  });
+
+  const dispatch: AppDispatch = useDispatch();
+
+  //refresh notif counts when mutation is perform on the server.
+  useRefetchOnMessage("refresh_post", () => {
+    dispatch(notificationApi.util.invalidateTags(["notifications"]));
+  });
+  useEffect(() => {
+    dispatch(setNotificationCount(count?.result?.[0].NotificationCount));
+  }, []);
 
   return (
     <TouchableNativeFeedback

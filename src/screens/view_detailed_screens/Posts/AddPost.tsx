@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, TextInput, Button, Image } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { createRef, useEffect, useState } from "react";
 import { FieldErrors, SubmitHandler, useForm } from "react-hook-form";
 import { Controller } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
@@ -19,17 +19,21 @@ import { useCameraFns } from "utils/helpers/useCameraFns";
 import { uploadImage } from "utils/helpers/uploadImage";
 import CustomError from "components/CustomError";
 import LoadingIndicator from "components/LoadingIndicator";
-import { isError } from "joi";
 import { IMAGE_VALUES } from "utils/enums/DefaultValues";
+import RichTextEdidor from "components/RichTextEdidor";
+import RichToolBar from "components/RichToolBar";
 
 const AddPost = () => {
   const { data: user } = useGetAccessTokenQuery();
-  const { image, pickImage, pickCameraImage, removePhoto } = useCameraFns();
+  const { image, pickImage, pickCameraImage, removePhoto } = useCameraFns({
+    allowsEditing: true,
+  });
   const [modalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [postUser, { data: postResult, status, isError, error }] =
     useAddPostMutation();
 
+  const _editor = createRef();
   const defaultValue = {
     PostTitle: "",
     PostDescription: "",
@@ -60,7 +64,7 @@ const AddPost = () => {
     console.log("your post image url is", url);
     const fullName = FirstName + " " + LastName;
     setValue("UserID", UserID);
-    setValue("PostImage", "mydefault_poster.png");
+    setValue("PostImage", "default_poster.png");
     setValue("PostTitle", data.PostTitle);
     setValue("PostDescription", data.PostDescription);
     setValue("PostDate", getCurrentDate());
@@ -69,7 +73,7 @@ const AddPost = () => {
 
     const postData = {
       UserID: UserID,
-      PostImage: url,
+      PostImage: url === IMAGE_VALUES.DEFAULT ? IMAGE_VALUES.DEFAULT : url,
       PostTitle: data.PostTitle,
       PostDate: getCurrentDate(),
       PostDescription: data.PostDescription,
@@ -163,24 +167,10 @@ const AddPost = () => {
                   Description
                 </Text>
 
-                <TextInput
-                  multiline={true}
-                  textAlignVertical="top"
-                  placeholder="Enter the description"
-                  placeholderTextColor={"#c2c2c2"}
+                <RichTextEdidor
+                  _editor={_editor}
+                  onChange={onChange}
                   onBlur={onBlur}
-                  onChangeText={onChange}
-                  value={value}
-                  style={{
-                    borderWidth: 1,
-                    height: 300,
-                    borderRadius: 8,
-                    padding: 15,
-                    color: "#202020",
-                    borderColor: errors.PostDescription ? "#d9534f" : "#202020",
-                    marginBottom: 10,
-                    fontSize: 16,
-                  }}
                 />
               </React.Fragment>
             )}
@@ -191,6 +181,7 @@ const AddPost = () => {
         <DisplayFormError errors={errors.PostDescription} />
       </ScrollView>
       <View style={{ width: "90%", alignSelf: "center", marginBottom: 10 }}>
+        <RichToolBar _editor={_editor} />
         <Button
           title="Confirm"
           color={"#ff2e00"}

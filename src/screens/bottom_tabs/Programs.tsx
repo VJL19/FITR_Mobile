@@ -22,12 +22,18 @@ import useIsReady from "hooks/useIsReady";
 import { DrawerStackNavigationProp } from "utils/types/navigators/DrawerStackNavigators";
 import Posts from "screens/view_detailed_screens/Posts/Posts";
 import { IPost } from "utils/types/post.types";
-import { useGetUserSpecificProgramsQuery } from "reducers/programReducer";
+import {
+  programApi,
+  useGetAdminSuggestedProgramQuery,
+  useGetUserSpecificProgramsQuery,
+} from "reducers/programReducer";
 import { useGetAccessTokenQuery } from "reducers/authReducer";
 import Program from "screens/view_detailed_screens/Programs/Program";
-import IProgram from "utils/types/program_planner.types";
+import IProgram, { IProgramSuggested } from "utils/types/program_planner.types";
 import FloatingActionButton from "components/FloatingActionButton";
 import CustomError from "components/CustomError";
+import SuggestedProgram from "screens/view_detailed_screens/Programs/SuggestedProgram";
+import { useRefetchOnMessage } from "hooks/useRefetchOnMessage";
 
 const Programs = () => {
   const navigation = useNavigation<RootStackNavigationProp>();
@@ -38,6 +44,16 @@ const Programs = () => {
     user?.user.UserID,
     { refetchOnMountOrArgChange: true }
   );
+
+  const { data: suggestedProgram } = useGetAdminSuggestedProgramQuery(
+    undefined,
+    { refetchOnMountOrArgChange: true }
+  );
+
+  //refresh the admin suggested program data if mutation perform on the server.
+  useRefetchOnMessage("refresh_suggested_programs", () => {
+    dispatch(programApi.util.invalidateTags(["program"]));
+  });
   const route = useRoute();
   const dispatch: AppDispatch = useDispatch();
   useEffect(() => {
@@ -50,7 +66,7 @@ const Programs = () => {
   const handlePress = () => {
     navigation.navigate("DetailedScreens", { screen: "Add Program" });
   };
-  if (data?.result.length === 0) {
+  if (data?.result.length === 0 && suggestedProgram?.result.length === 0) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <Text>Your program is empty!</Text>
@@ -67,24 +83,32 @@ const Programs = () => {
   }
   return (
     <View style={styles.container}>
-      <View style={styles.box}>
-        <Text style={{ fontWeight: "bold", fontSize: 25 }}>All programs</Text>
-        <FlatList
-          horizontal={true}
-          alwaysBounceVertical={true}
-          data={data?.result}
-          renderItem={({ item }) => <Program {...item} />}
-          keyExtractor={(item: IProgram) => item?.ProgramID?.toString()}
-        />
+      <View style={[styles.box, { flex: data?.result.length === 0 ? 0.5 : 1 }]}>
+        {data?.result.length !== 0 && (
+          <React.Fragment>
+            <Text style={{ fontWeight: "bold", fontSize: 25 }}>
+              My programs
+            </Text>
+            <FlatList
+              horizontal={true}
+              alwaysBounceVertical={true}
+              data={data?.result}
+              renderItem={({ item }) => <Program {...item} />}
+              keyExtractor={(item: IProgram) => item?.ProgramID?.toString()}
+            />
+          </React.Fragment>
+        )}
         <Text style={{ fontWeight: "bold", fontSize: 25 }}>
-          All suggested programs
+          Suggested programs
         </Text>
         <FlatList
           horizontal={true}
           alwaysBounceVertical={true}
-          data={data?.result}
-          renderItem={({ item }) => <Program {...item} />}
-          keyExtractor={(item: IProgram) => item?.ProgramID?.toString()}
+          data={suggestedProgram?.result}
+          renderItem={({ item }) => <SuggestedProgram {...item} />}
+          keyExtractor={(item: IProgramSuggested) =>
+            item?.SuggestedProgramID?.toString()
+          }
         />
       </View>
       <FloatingActionButton handlePress={handlePress} />
@@ -103,5 +127,5 @@ const styles = StyleSheet.create({
   textStyle: {
     color: "#202020",
   },
-  box: { flex: 0.87, width: "100%" },
+  box: { width: "100%" },
 });

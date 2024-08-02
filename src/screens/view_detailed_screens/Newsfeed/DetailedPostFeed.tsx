@@ -5,6 +5,7 @@ import {
   Image,
   StyleSheet,
   ScrollView,
+  useWindowDimensions,
 } from "react-native";
 import React, { useEffect } from "react";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
@@ -30,6 +31,7 @@ import { IMAGE_VALUES } from "utils/enums/DefaultValues";
 import postDefault from "assets/post_default.webp";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
+import RenderHTML from "react-native-render-html";
 
 const DetailedPostFeed = () => {
   const [likePost, { data: likeData, error }] = useLikePostInFeedMutation();
@@ -59,6 +61,8 @@ const DetailedPostFeed = () => {
     PostID,
   } = useSelector((state: RootState) => state.comment.commentData);
 
+  const { width } = useWindowDimensions();
+  const html = `${PostDescription}`;
   const arg = {
     UserID: user.UserID,
     NewsfeedID: NewsfeedID,
@@ -178,7 +182,7 @@ const DetailedPostFeed = () => {
         )}
 
         <Text>{PostTitle}</Text>
-        <Text>{PostDescription}</Text>
+        <RenderHTML contentWidth={width} source={{ html }} />
         <Text>{PostAuthor}</Text>
         <Text>{PostDate}</Text>
 

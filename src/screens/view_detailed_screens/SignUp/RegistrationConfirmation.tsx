@@ -13,7 +13,11 @@ import { AppDispatch, RootState } from "store/store";
 import { useDispatch, useSelector } from "react-redux";
 import {
   clearFormFields,
+  setAuthenticated,
   setOTPToken,
+  setToken,
+  useActivateUserAccountMutation,
+  useLoginUserMutation,
   useSendEmailMutation,
 } from "reducers/authReducer";
 import { Controller, useForm } from "react-hook-form";
@@ -23,19 +27,34 @@ import DisplayFormError from "components/DisplayFormError";
 import { IOTP } from "utils/types/form.types";
 import { otpSchema } from "utils/validations";
 import DisplayAlert from "components/CustomAlert";
+import * as SecureStore from "expo-secure-store";
 
 const RegistrationConfirmation = () => {
   const [timer, setTimer] = useState(60 * 2);
   const [valid, isValid] = useState(true);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [
     sendOTPEmail,
     { data: emailCode, status: emailStat, error: emailErr },
   ] = useSendEmailMutation();
 
+  const [activateAccount, { status: activateStatus }] =
+    useActivateUserAccountMutation();
+
+  const [loginUser, { res: loginRes, data: loginData, status }] =
+    useLoginUserMutation();
+
   const { OTPToken } = useSelector((state: RootState) => state.authReducer);
   const { Email } = useSelector(
     (state: RootState) => state.authReducer.contactInfo
   );
+
+  const accessToken = useSelector(
+    (state: RootState) => state.authReducer.accessToken
+  );
+
+  const email2 = useSelector((state: RootState) => state.authReducer.email);
   const navigation = useNavigation<RootStackNavigationProp>();
   const dispatch: AppDispatch = useDispatch();
   const seconds = String(timer % 60).padStart(2, 0);
@@ -52,12 +71,56 @@ const RegistrationConfirmation = () => {
     resolver: joiResolver(otpSchema),
   });
 
-  // useEffect(() => {
-  //   if (emailStat === "fulfilled") {
-  //     dispatch(setOTPToken(emailCode?.code));
-  //   }
-  // }, [emailStat]);
+  useEffect(() => {
+    const getStoredCredentials = async () => {
+      let _username = await SecureStore.getItemAsync("user_name");
+      let _userpass = await SecureStore.getItemAsync("user_pass");
+      if (_username) {
+        setUsername(_username);
+      }
+      if (_userpass) {
+        setPassword(_userpass);
+      }
+    };
+    getStoredCredentials();
+  }, []);
 
+  useEffect(() => {
+    if (emailStat === "fulfilled") {
+      dispatch(setOTPToken(emailCode?.code));
+    }
+  }, [emailStat]);
+
+  useEffect(() => {
+    if (activateStatus === "fulfilled") {
+      loginUser({ Username: username, Password: password });
+    }
+  }, [activateStatus]);
+
+  useEffect(() => {
+    if (status === "fulfilled") {
+      const setTokenAsync = async () => {
+        await SecureStore.setItemAsync("accessToken", loginData?.accessToken!);
+      };
+
+      const deplayRedirect = async () => {
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+        await SecureStore.deleteItemAsync("user_name");
+        await SecureStore.deleteItemAsync("user_pass");
+        const resetAction = CommonActions.reset({
+          index: 0,
+          routes: [{ name: "DashboardScreen" }],
+        });
+        navigation.dispatch(resetAction);
+      };
+      dispatch(setToken(loginData?.accessToken));
+      dispatch(setAuthenticated());
+      setTokenAsync();
+      deplayRedirect();
+    }
+  }, [status, loginData?.details]);
+  console.log("login stat", status);
+  console.log("hey", OTPToken);
   useEffect(() => {
     if (timer === 0 || timer < 0) {
       setTimer(0);
@@ -70,7 +133,6 @@ const RegistrationConfirmation = () => {
 
     return () => clearInterval(runTimer);
   }, [timer]);
-  console.log("heys", OTPToken);
   const handlePress = (data: IOTP) => {
     if (!valid) {
       DisplayAlert(
@@ -80,16 +142,14 @@ const RegistrationConfirmation = () => {
       return;
     }
     if (OTPToken === data.OTPCode) {
-      const resetAction = CommonActions.reset({
-        index: 0,
-        routes: [{ name: "DashboardScreen" }],
-      });
-      navigation.dispatch(resetAction);
       DisplayAlert(
         "Success message",
         "Successfully complete the registration!"
       );
+      activateAccount({ Email: Email || email2 });
+
       dispatch(clearFormFields());
+
       reset();
     } else {
       DisplayAlert("Error message", "Entered code does not match!");
@@ -97,7 +157,7 @@ const RegistrationConfirmation = () => {
   };
 
   const handleResend = () => {
-    sendOTPEmail({ Email: Email });
+    sendOTPEmail({ Email: Email || email2 });
     setTimer(60 * 2);
     isValid(true);
   };

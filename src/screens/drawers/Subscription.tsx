@@ -47,7 +47,9 @@ const Subscription = () => {
   const [selectedSubscription, setSelectedSubscription] = useState("");
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation<RootStackNavigationProp>();
-  const { image, pickImage, pickCameraImage, removePhoto } = useCameraFns();
+  const { image, pickImage, pickCameraImage, removePhoto } = useCameraFns({
+    allowsEditing: false,
+  });
   const [modalVisible, setModalVisible] = useState(false);
 
   const dispatch: AppDispatch = useDispatch();
@@ -66,10 +68,11 @@ const Subscription = () => {
     }
   );
 
-  console.log("specific subscriptions", userSubscriptions);
-  console.log("details status", status);
-  console.log("subs data", subscriptionData);
-  console.log("subs error", error);
+  console.log("user access token", data);
+  // console.log("specific subscriptions", userSubscriptions);
+  // console.log("details status", status);
+  // console.log("subs data", subscriptionData);
+  // console.log("subs error", error);
 
   const subscription_types = [
     { id: "1", label: "Session", value: "1" },
@@ -180,9 +183,9 @@ const Subscription = () => {
   return (
     <View style={styles.container}>
       <View style={{ flex: 1 }}>
-        <Text style={{ textAlign: "center", fontSize: 18 }}>
+        {/* <Text style={{ textAlign: "center", fontSize: 18 }}>
           Select a subscription you wanna inquire in the gym.
-        </Text>
+        </Text> */}
         <TouchableOpacity onPress={handlePress}>
           <View>
             <Text
@@ -198,12 +201,12 @@ const Subscription = () => {
             </Text>
           </View>
         </TouchableOpacity>
-        <RadioGroup
+        {/* <RadioGroup
           radioButtons={subscription_types}
           selectedId={selectedSubscription}
           onPress={setSelectedSubscription}
           containerStyle={{ flex: 1, flexDirection: "row" }}
-        />
+        /> */}
       </View>
 
       {image && (
@@ -213,10 +216,10 @@ const Subscription = () => {
           resizeMode="center"
         />
       )}
-      {selectedSubscription === "1" && (
+      {data?.user?.SubscriptionType === SubscriptionTypeEnum.Session && (
         <Text style={styles.textStyle}>You have a due amount of 90.00</Text>
       )}
-      {selectedSubscription === "2" && (
+      {data?.user?.SubscriptionType === SubscriptionTypeEnum.Monthly && (
         <Text style={styles.textStyle}>You have a due amount of 900.00</Text>
       )}
 
@@ -236,19 +239,17 @@ const Subscription = () => {
         />
       )} */}
 
-      {selectedSubscription === "" || (
-        <View style={{ flex: 0.3, width: "100%" }}>
-          <CustomModal
-            isButton={true}
-            modalTitle="Available methods"
-            handleCamera={pickCameraImage}
-            handleGallery={pickImage}
-            handleRemove={removePhoto}
-            modalVisible={modalVisible}
-            setModalVisible={setModalVisible}
-          />
-        </View>
-      )}
+      <View style={{ flex: 0.3, width: "100%" }}>
+        <CustomModal
+          isButton={true}
+          modalTitle="Available methods"
+          handleCamera={pickCameraImage}
+          handleGallery={pickImage}
+          handleRemove={removePhoto}
+          modalVisible={modalVisible}
+          setModalVisible={setModalVisible}
+        />
+      </View>
       {image !== IMAGE_VALUES.DEFAULT ? (
         <View style={{ width: "85%", alignSelf: "center", marginTop: 10 }}>
           <Button title="Upload payment" onPress={handleUpload} />

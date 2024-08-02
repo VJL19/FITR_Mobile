@@ -5,6 +5,8 @@ import {
   View,
   Image,
   TouchableOpacity,
+  useWindowDimensions,
+  ScrollView,
 } from "react-native";
 import React, { useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -25,6 +27,9 @@ import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigat
 import CustomError from "components/CustomError";
 import postDefault from "assets/post_default.webp";
 import { IMAGE_VALUES } from "utils/enums/DefaultValues";
+import RenderHTML from "react-native-render-html";
+import { storage } from "global/firebaseConfig";
+import { deleteObject, ref } from "firebase/storage";
 
 const ViewPost = () => {
   const {
@@ -58,6 +63,8 @@ const ViewPost = () => {
   } = postData;
 
   const navigation = useNavigation<RootStackNavigationProp>();
+  const { width } = useWindowDimensions();
+  const html = `${PostDescription}`;
 
   const handlePress = () => {
     navigation.navigate("DetailedScreens", {
@@ -69,6 +76,14 @@ const ViewPost = () => {
   };
 
   const handleDelete = async () => {
+    let imageRef = ref(storage, PostImage);
+
+    try {
+      await deleteObject(imageRef);
+      console.log("success");
+    } catch (err) {
+      console.log("there was an error in deleting an image");
+    }
     DialogBox({
       dialogTitle: "Delete post?",
       dialogDescription:
@@ -97,7 +112,7 @@ const ViewPost = () => {
   }
   return (
     <View style={styles.container}>
-      <View>
+      <ScrollView>
         <TouchableOpacity onPress={handlePress}>
           <Image
             resizeMode="contain"
@@ -112,9 +127,9 @@ const ViewPost = () => {
         <Text>ViewPost</Text>
         <Text>{PostID}</Text>
         <Text>{PostTitle}</Text>
-        <Text>{PostDescription}</Text>
+        <RenderHTML contentWidth={width} source={{ html }} />
         <Text>{PostDate}</Text>
-      </View>
+      </ScrollView>
       <Button title="Delete Post" onPress={handleDelete} />
     </View>
   );
