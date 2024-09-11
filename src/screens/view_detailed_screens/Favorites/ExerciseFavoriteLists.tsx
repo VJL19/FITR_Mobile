@@ -84,7 +84,7 @@ export default ExerciseFavoriteLists;
 
 const styles = StyleSheet.create({
   box: {
-    flex: 1,
+    height: 170,
     width: 300,
     marginTop: 15,
     borderRadius: 10,

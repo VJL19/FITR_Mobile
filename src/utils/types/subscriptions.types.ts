@@ -7,3 +7,7 @@ export interface ISubscriptions {
   SubscriptionType: string;
   SubscriptionEntryDate: string;
 }
+
+export interface ISubscriptionHistoryDate {
+  subscriptionDate: string;
+}

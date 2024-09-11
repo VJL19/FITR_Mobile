@@ -92,11 +92,13 @@ const AddPost = () => {
     navigation.goBack();
     reset();
     removePhoto();
+    console.log("hey", image);
   };
 
   console.log("post res", postResult?.message);
   console.log("post status", postResult?.status);
   console.log("post err", error);
+
   if (loading) {
     return <LoadingIndicator />;
   }

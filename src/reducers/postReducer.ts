@@ -17,6 +17,7 @@ interface IPostState {
   postItems: IPost[];
   result: IPost[];
   postData: IPost;
+  metadata: string | null;
 }
 
 const initialState: IPostState = {
@@ -36,6 +37,7 @@ const initialState: IPostState = {
     UserID: 0,
     Username: "",
   },
+  metadata: "",
 };
 
 const config = loadConfig();
@@ -97,6 +99,9 @@ const postSlice = createSlice({
     getPostData: (state) => {
       state.postData;
     },
+    setMetadata: (state, action: PayloadAction<string | null>) => {
+      state.metadata = action.payload;
+    },
   },
   extraReducers: (builder) => {
     //calling api to post the user data.
@@ -152,7 +157,7 @@ const postSlice = createSlice({
   },
 });
 
-export const { getPostData, setPostData } = postSlice.actions;
+export const { getPostData, setPostData, setMetadata } = postSlice.actions;
 export const {
   useAddPostMutation,
   useGetPostsQuery,

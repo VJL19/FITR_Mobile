@@ -106,7 +106,7 @@ const SignInScreen = () => {
     }
     if (status === "fulfilled" && isSubmitted) {
       DisplayAlert("Success, message", res?.details);
-      // console.log("rtk res", res?.accessToken);
+      console.log("rtk res", res?.accessToken);
       dispatch(setToken(res?.accessToken));
       const setTokenAsync = async () => {
         await SecureStore.setItemAsync("accessToken", res?.accessToken!);

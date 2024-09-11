@@ -58,6 +58,7 @@ const ChangeAccount = () => {
   const dispatch: AppDispatch = useDispatch();
   const { image, pickImage, pickCameraImage, removePhoto } = useCameraFns({
     allowsEditing: true,
+    isProfilePhoto: true,
   });
   const [modalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);

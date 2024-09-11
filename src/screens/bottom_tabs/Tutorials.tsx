@@ -15,19 +15,27 @@ import { Image } from "react-native";
 import gym_equipLogo from "assets/equipment.jpg";
 import workout_logo from "assets/workout.jpg";
 import exercise_logo from "assets/exercises.jpg";
+import { useGetAccessTokenQuery } from "reducers/authReducer";
+import CustomError from "components/CustomError";
 
 const Tutorials = () => {
   const [isReady, setIsReady] = useState(false);
+  const { data, isError, isFetching, isUninitialized, refetch } =
+    useGetAccessTokenQuery();
 
   const navigation = useNavigation<RootStackNavigationProp>();
   useEffect(() => {
     InteractionManager.runAfterInteractions(() => {
       setIsReady(true);
     });
+    refetch();
   }, []);
 
-  if (!isReady) {
+  if (isFetching || isUninitialized) {
     return <LoadingIndicator />;
+  }
+  if (isError) {
+    return <CustomError />;
   }
   return (
     <View style={styles.container}>

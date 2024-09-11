@@ -8,19 +8,23 @@ import LoadingIndicator from "./LoadingIndicator";
 import { useGetAccessTokenQuery } from "reducers/authReducer";
 import { IMAGE_VALUES } from "utils/enums/DefaultValues";
 import avatar from "assets/avatar_default.jpeg";
+import { useNavigation } from "@react-navigation/native";
 
 const Avatar = () => {
   const { user, accessToken } = useSelector(
     (state: RootState) => state.authReducer
   );
 
-  const { isUninitialized, isFetching, data, status, isError } =
+  const { isUninitialized, isFetching, data, status, error, isError } =
     useGetAccessTokenQuery(undefined, {
-      refetchOnMountOrArgChange: true,
       refetchOnFocus: true,
+      refetchOnMountOrArgChange: true,
     });
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    console.log("access in gloal state", accessToken);
+    console.log("in fetch access token", data?.accessToken);
+  }, []);
 
   if (isUninitialized || isFetching) {
     return (

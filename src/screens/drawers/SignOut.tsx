@@ -16,22 +16,37 @@ import { AppDispatch, RootState } from "store/store";
 import testToken from "actions/homeAction";
 import { AuthContext } from "context/AuthContext";
 import { logoutUser } from "actions/authAction";
-import { deleteToken } from "reducers/authReducer";
+import { deleteToken, useLogoutQuery } from "reducers/authReducer";
+import DisplayAlert from "components/CustomAlert";
+import LoadingIndicator from "components/LoadingIndicator";
 const SignOut = () => {
   const navigation = useNavigation<DrawerStackNavigationProp>();
   const rootNav = useNavigation<RootStackNavigationProp>();
 
   const { token, isAuthenticated } = useContext(AuthContext);
 
+  const { status, data, error } = useLogoutQuery();
+
   const dispatch: AppDispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(testToken());
-    dispatch(deleteToken());
-    const deleteTokenAsync = async () => {
-      await SecureStore.deleteItemAsync("accessToken");
-    };
-    deleteTokenAsync();
+    if (status === "fulfilled") {
+      DisplayAlert("Success message", data?.message);
+      dispatch(testToken());
+      dispatch(deleteToken());
+      const deleteTokenAsync = async () => {
+        await SecureStore.deleteItemAsync("accessToken");
+      };
+      deleteTokenAsync();
+      console.log("deleted successfully!");
+    }
+    if (status === "rejected") {
+      DisplayAlert("Error message", error?.data?.details);
+    }
+  }, [status, data?.message]);
+
+  console.log(error);
+  useEffect(() => {
     // navigation.addListener("focus", async () => {
     //   // await logOut();
     //   dispatch(deleteToken());
@@ -41,10 +56,9 @@ const SignOut = () => {
     //   // await SecureStore.deleteItemAsync("accessToken");
     // global_axios.defaults.headers.common["Authorization"] = "";
     // });
-    deleteTokenAsync();
+    // deleteTokenAsync();
     // rootNav.navigate("AuthStackScreens", { screen: "Sign In" });
-    Alert.alert("Message!", "Log out successfully!");
-    console.log("deleted successfully!");
+    // Alert.alert("Message!", "Log out successfully!");
   }, [isAuthenticated, token]);
 
   // useEffect(() => {
@@ -60,6 +74,9 @@ const SignOut = () => {
   //   loadToken();
   // }, [navigation]);
 
+  if (status === "pending") {
+    return <LoadingIndicator />;
+  }
   return (
     <View>
       <Text>SignOut</Text>

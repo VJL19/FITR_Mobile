@@ -33,8 +33,6 @@ const GymEquipments = () => {
   }
   return (
     <View>
-      <Text>GymEquipments</Text>
-
       <FlatList
         key="_gym_equipments"
         alwaysBounceVertical={true}

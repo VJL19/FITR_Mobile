@@ -18,7 +18,6 @@ import {
   getStoredToken,
   setAuthenticated,
   setToken,
-  useGetAccessTokenQuery,
 } from "reducers/authReducer";
 import { tokens } from "react-native-paper/lib/typescript/styles/themes/v3/tokens";
 import * as SecureStore from "expo-secure-store";
@@ -37,16 +36,18 @@ const RootApp = () => {
   // console.log("auth tokens", token);
 
   // console.log("double e", accessToken);
+
   useEffect(() => {
     const loadToken = async () => {
       const token = await SecureStore.getItemAsync("accessToken");
       if (token) {
         dispatch(setToken(token));
         dispatch(setAuthenticated());
+        console.log("in root app", token);
       }
     };
     loadToken();
-
+    // refetch();
     // dispatch(getToken());
     // global_axios.defaults.headers.common[
     //   "Authorization"

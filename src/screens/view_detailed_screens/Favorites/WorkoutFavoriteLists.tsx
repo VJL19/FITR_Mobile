@@ -88,9 +88,8 @@ export default WorkoutFavoriteLists;
 
 const styles = StyleSheet.create({
   box: {
-    flex: 1,
+    height: 170,
     width: 300,
-    height: 180,
     marginTop: 15,
     borderRadius: 10,
     marginLeft: 10,

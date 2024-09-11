@@ -30,18 +30,14 @@ import AnnouncementLists from "screens/view_detailed_screens/Announcements/Annou
 import { IAnnouncements } from "utils/types/announcement.types";
 import { DrawerStackNavigationProp } from "utils/types/navigators/DrawerStackNavigators";
 import { useRefetchOnMessage } from "hooks/useRefetchOnMessage";
-import { newsfeedslice } from "reducers/newsfeedReducer";
 
 const Home = () => {
   const { value, name } = useSelector((state: RootState) => state.counter);
 
-  const { data, isError } = useGetAccessTokenQuery();
+  const { data, isError, isUninitialized, isFetching } =
+    useGetAccessTokenQuery();
 
-  const {
-    data: programs,
-    isUninitialized,
-    isFetching,
-  } = useGetTodayProgramsQuery(data?.user?.UserID, {
+  const { data: programs } = useGetTodayProgramsQuery(data?.user?.UserID, {
     refetchOnMountOrArgChange: true,
   });
 
@@ -82,6 +78,7 @@ const Home = () => {
     dispatch(setNotificationCount(count?.result?.[0].NotificationCount));
   }, []);
 
+  // console.log("hey get access token", data?.isAuthenticated);
   const text =
     "Alam mo ba girl (alam mo) Pagka wala ka dito promise ako concern (promise)'Di ka nagre-reply 'di mo pa 'ko ma-confirm (ano ba)  Ayaw mo ba sa 'kin porke wala 'kong skrt (skrt)   O ayaw mo sa 'kin kasi ikaw mas older (uh) 'Di ko pa mabigay mga luho mo't order  Malas lang 'ta mo nga 'tong hawak ko ngayon four pairs (ayos 'yan) Ako batang kalye lang kayo ay foreigners Inalok kita ng red horse sagot mo okur (okur)";
   const speak = () => {
@@ -101,7 +98,7 @@ const Home = () => {
   //   );
   // }
 
-  console.log(data?.user?.UserID);
+  // console.log(data?.user?.UserID);
   if (
     programs?.result.length === 0 &&
     announcementsData?.result.length === 0 &&
@@ -123,7 +120,7 @@ const Home = () => {
     return <LoadingIndicator />;
   }
 
-  console.log("heyy", announcementsData?.result);
+  // console.log("hey get access token", data?.accessToken);
 
   return (
     <View style={{ flex: 1, backgroundColor: "#f5f5f5", padding: 12 }}>

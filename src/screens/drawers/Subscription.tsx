@@ -14,6 +14,7 @@ import { AppDispatch, RootState } from "store/store";
 import LoadingIndicator from "components/LoadingIndicator";
 import SubscriptionTypeEnum, {
   SubscriptionAmount,
+  SubscriptionMethod,
 } from "utils/enums/Subscription";
 import processPayment, {
   CheckoutPayload,
@@ -33,12 +34,16 @@ import DialogBox from "components/DialogBox";
 import { uploadImage } from "utils/helpers/uploadImage";
 import DisplayAlert from "components/CustomAlert";
 import {
+  subscriptionApi,
   useAddSubscriptionMutation,
   useGetSpecificSubscriptionQuery,
 } from "reducers/subscriptionReducer";
 import getCurrentDate from "utils/helpers/formatDate";
 import Subscriptions from "components/Subscriptions";
 import { ISubscriptions } from "utils/types/subscriptions.types";
+import { useRefetchOnMessage } from "hooks/useRefetchOnMessage";
+import DropdownComponent from "components/DropdownComponent";
+import { ScrollView } from "react-native";
 
 const Subscription = () => {
   const [paymentMethod, setPaymentMethod] = useState("");
@@ -49,6 +54,7 @@ const Subscription = () => {
   const navigation = useNavigation<RootStackNavigationProp>();
   const { image, pickImage, pickCameraImage, removePhoto } = useCameraFns({
     allowsEditing: false,
+    isProfilePhoto: true,
   });
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -68,15 +74,21 @@ const Subscription = () => {
     }
   );
 
+  useRefetchOnMessage("refresh_subscriptionPage", () => {
+    dispatch(subscriptionApi.util.invalidateTags(["subscriptions"]));
+  });
+
   console.log("user access token", data);
   // console.log("specific subscriptions", userSubscriptions);
   // console.log("details status", status);
   // console.log("subs data", subscriptionData);
   // console.log("subs error", error);
 
-  const subscription_types = [
-    { id: "1", label: "Session", value: "1" },
-    { id: "2", label: "Monthly", value: "2" },
+  const payment_methods = [
+    { id: "1", label: "G-Cash", value: "1" },
+    { id: "2", label: "Paymaya", value: "2" },
+    { id: "3", label: "Credit-Card", value: "3" },
+    { id: "4", label: "Cash", value: "4" },
   ];
 
   // const bank_transfer = [{ label: "BDO", value: "1" }];
@@ -124,10 +136,10 @@ const Subscription = () => {
   const handleUpload = () => {
     DialogBox({
       dialogTitle: "Upload payment?",
-      dialogDescription: "The gym owner will be review your uploaded payment.",
+      dialogDescription: "The gym owner will review your uploaded payment.",
       async handlePress(args) {
         const pathToFolder =
-          selectedSubscription === "1"
+          data?.user?.SubscriptionType === SubscriptionTypeEnum.Session
             ? "Payments/Session/"
             : "Payments/Monthly/";
 
@@ -143,13 +155,22 @@ const Subscription = () => {
         const arg = {
           UserID: data?.user?.UserID,
           SubscriptionAmount:
-            selectedSubscription === "1"
+            data?.user?.SubscriptionType === SubscriptionTypeEnum.Session
               ? SubscriptionAmount.SESSION
               : SubscriptionAmount.MONTHLY,
+          SubscriptionBy: `${data?.user?.FirstName} ${data?.user?.MiddleName}. ${data?.user?.LastName}`,
           SubscriptionType:
-            selectedSubscription === "1"
+            data?.user?.SubscriptionType === SubscriptionTypeEnum.Session
               ? SubscriptionTypeEnum.Session
               : SubscriptionTypeEnum.Monthly,
+          SubscriptionMethod:
+            paymentMethod === "1"
+              ? SubscriptionMethod.GCASH
+              : paymentMethod === "2"
+              ? SubscriptionMethod.PAYMAYA
+              : paymentMethod === "3"
+              ? SubscriptionMethod.CREDITCARD
+              : SubscriptionMethod.CASH,
           SubscriptionUploadedImage: url,
           SubscriptionEntryDate: getCurrentDate(),
         };
@@ -180,57 +201,59 @@ const Subscription = () => {
   if (userSubscriptions?.result[0]?.SubscriptionStatus) {
     return <Subscriptions {...userSubscriptions.result[0]} />;
   }
+  console.log("subscriptionData error", error);
+  console.log("subscriptionData", subscriptionData);
   return (
-    <View style={styles.container}>
-      <View style={{ flex: 1 }}>
-        {/* <Text style={{ textAlign: "center", fontSize: 18 }}>
+    <ScrollView>
+      <View style={styles.container}>
+        <View style={{ flex: 1 }}>
+          {/* <Text style={{ textAlign: "center", fontSize: 18 }}>
           Select a subscription you wanna inquire in the gym.
         </Text> */}
-        <TouchableOpacity onPress={handlePress}>
-          <View>
-            <Text
-              style={{
-                textDecorationLine: "underline",
-                fontStyle: "italic",
-                fontSize: 17,
-                color: "#ff2e00",
-                textAlign: "center",
-              }}
-            >
-              View Subscription History
-            </Text>
-          </View>
-        </TouchableOpacity>
-        {/* <RadioGroup
-          radioButtons={subscription_types}
+          <TouchableOpacity onPress={handlePress}>
+            <View>
+              <Text
+                style={{
+                  textDecorationLine: "underline",
+                  fontStyle: "italic",
+                  fontSize: 17,
+                  color: "#ff2e00",
+                  textAlign: "center",
+                }}
+              >
+                View Subscription History
+              </Text>
+            </View>
+          </TouchableOpacity>
+          {/* <RadioGroup
+          radioButtons={payment_methods}
           selectedId={selectedSubscription}
           onPress={setSelectedSubscription}
           containerStyle={{ flex: 1, flexDirection: "row" }}
         /> */}
-      </View>
+        </View>
 
-      {image && (
-        <Image
-          source={{ uri: image }}
-          style={{ height: 200, width: "100%" }}
-          resizeMode="center"
+        <DropdownComponent
+          searchPlaceholder="Select payment method..."
+          data={payment_methods}
+          handleChange={setPaymentMethod}
+          value={paymentMethod}
         />
-      )}
-      {data?.user?.SubscriptionType === SubscriptionTypeEnum.Session && (
-        <Text style={styles.textStyle}>You have a due amount of 90.00</Text>
-      )}
-      {data?.user?.SubscriptionType === SubscriptionTypeEnum.Monthly && (
-        <Text style={styles.textStyle}>You have a due amount of 900.00</Text>
-      )}
+        {image && (
+          <Image
+            source={{ uri: image }}
+            style={{ height: 200, width: "100%" }}
+            resizeMode="center"
+          />
+        )}
+        {data?.user?.SubscriptionType === SubscriptionTypeEnum.Session && (
+          <Text style={styles.textStyle}>You have a due amount of 90.00</Text>
+        )}
+        {data?.user?.SubscriptionType === SubscriptionTypeEnum.Monthly && (
+          <Text style={styles.textStyle}>You have a due amount of 900.00</Text>
+        )}
 
-      {/* <DropdownComponent
-        searchPlaceholder="Select a payment method..."
-        data={subscription_types}
-        handleChange={setPaymentMethod}
-        value={paymentMethod}
-      />
-
-      {paymentMethod !== "1" && paymentMethod !== "" && (
+        {/*paymentMethod !== "1" && paymentMethod !== "" && (
         <DropdownComponent
           searchPlaceholder="Select a bank..."
           data={paymentMethod == "3" ? e_wallets : bank_transfer}
@@ -239,27 +262,32 @@ const Subscription = () => {
         />
       )} */}
 
-      <View style={{ flex: 0.3, width: "100%" }}>
-        <CustomModal
-          isButton={true}
-          modalTitle="Available methods"
-          handleCamera={pickCameraImage}
-          handleGallery={pickImage}
-          handleRemove={removePhoto}
-          modalVisible={modalVisible}
-          setModalVisible={setModalVisible}
-        />
+        {paymentMethod !== "" && paymentMethod !== "4" ? (
+          <View style={{ flex: 0.3, width: "100%" }}>
+            <CustomModal
+              isButton={true}
+              modalTitle="Available methods"
+              handleCamera={pickCameraImage}
+              handleGallery={pickImage}
+              handleRemove={removePhoto}
+              modalVisible={modalVisible}
+              setModalVisible={setModalVisible}
+            />
+          </View>
+        ) : (
+          <View></View>
+        )}
+        {image !== IMAGE_VALUES.DEFAULT ? (
+          <View style={{ width: "85%", alignSelf: "center", marginTop: 10 }}>
+            <Button title="Upload payment" onPress={handleUpload} />
+          </View>
+        ) : selectedSubscription === "" ? (
+          <View></View>
+        ) : (
+          <View></View>
+        )}
       </View>
-      {image !== IMAGE_VALUES.DEFAULT ? (
-        <View style={{ width: "85%", alignSelf: "center", marginTop: 10 }}>
-          <Button title="Upload payment" onPress={handleUpload} />
-        </View>
-      ) : selectedSubscription === "" ? (
-        <View></View>
-      ) : (
-        <View></View>
-      )}
-    </View>
+    </ScrollView>
   );
 };
 

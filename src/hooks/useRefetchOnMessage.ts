@@ -1,7 +1,9 @@
+import loadConfig from "global/config";
 import { useEffect } from "react";
 import { io } from "socket.io-client";
 
-const socket = io("ws://192.168.1.15:8082/");
+const config = loadConfig();
+const socket = io(`${config.SOCKET_URL}`);
 export function useRefetchOnMessage(messageType: string, dispatch: () => void) {
   useEffect(() => {
     const handleMessage = () => {

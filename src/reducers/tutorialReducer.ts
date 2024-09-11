@@ -5,6 +5,7 @@ import { IExercises } from "utils/types/exercises.types";
 import { IWorkouts } from "utils/types/workouts.types";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import * as SecureStore from "expo-secure-store";
+import { RootState } from "store/store";
 
 interface ITutorialState {
   error: string;
@@ -30,6 +31,7 @@ const initialState: ITutorialSliceState = {
     GymEquipmentIntensity: "",
     GymEquipmentTargetMuscle: "",
     GymEquipmentCategory: "",
+    GymEquipmentInstructions: "",
     GymEquipmentTutorialVideos: [],
   },
   exercise_data: {
@@ -65,8 +67,8 @@ export const tutorialApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: config.BASE_URL,
     prepareHeaders: async (headers: Headers, { getState }) => {
-      // const token = (getState() as RootState).authReducer.accessToken;
-      const token = await SecureStore.getItemAsync("accessToken");
+      const token = (getState() as RootState).authReducer.accessToken;
+      // const token = await SecureStore.getItemAsync("accessToken");
       // console.log("state", getState());
       if (token) {
         headers.set("authorization", `Bearer ${token}`);

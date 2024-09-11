@@ -13,6 +13,11 @@ interface IAttendance {
   DateTapped: string;
   IsPaid: boolean;
   Username?: string;
+  RFIDNumber?: string;
+}
+
+export interface IAttendanceDate {
+  attendanceDate: string;
 }
 
 export default IAttendance;

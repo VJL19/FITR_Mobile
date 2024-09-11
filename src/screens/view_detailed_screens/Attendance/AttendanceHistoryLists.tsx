@@ -31,12 +31,14 @@ const styles = StyleSheet.create({
   },
   box: {
     padding: 20,
-    backgroundColor: "#E12900",
+    backgroundColor: "#f5f5f5",
     width: "90%",
     marginTop: 15,
     borderRadius: 10,
+    borderWidth: 1.5,
+    borderColor: "#E12900",
   },
   text: {
-    color: "#f5f5f5",
+    color: "#202020",
   },
 });

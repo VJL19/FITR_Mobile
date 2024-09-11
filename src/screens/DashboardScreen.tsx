@@ -32,11 +32,16 @@ import {
   setNotificationCount,
 } from "reducers/notificationReducer";
 import { io } from "socket.io-client";
-
-const socket = io("ws://192.168.1.15:8082/");
+import loadConfig from "global/config";
+const config = loadConfig();
+const socket = io(`${config.SOCKET_URL}`);
 const DashboardScreen = ({ navigation }: RootStackScreenProp) => {
   const { route: nav } = useSelector((state: RootState) => state.route);
-  const { data, isError } = useGetAccessTokenQuery();
+  const { isAuthenticated, accessToken } = useSelector(
+    (state: RootState) => state.authReducer
+  );
+
+  const { data, isError, refetch } = useGetAccessTokenQuery();
 
   const { data: count } = useGetAllNotificationsCountQuery(data?.user?.UserID, {
     refetchOnMountOrArgChange: true,
@@ -58,11 +63,12 @@ const DashboardScreen = ({ navigation }: RootStackScreenProp) => {
 
     //listens to any event emitted by the server and refetch the data
     socket?.on(messageType, handleMessage);
-
+    dispatch(setToken(accessToken));
+    refetch();
     return () => {
       socket?.off(messageType, handleMessage);
     };
-  }, [messageType, dispatch]);
+  }, [messageType]);
 
   //refresh notif counts when mutation is perform on the server.
   useRefetchOnMessage("refresh_post", () => {
@@ -70,6 +76,12 @@ const DashboardScreen = ({ navigation }: RootStackScreenProp) => {
   });
   useEffect(() => {
     dispatch(setNotificationCount(count?.result?.[0].NotificationCount));
+    // dispatch(setToken(data?.accessToken));
+    // const setTokenAsync = async () => {
+    //   await SecureStore.setItemAsync("accessToken", data?.accessToken!);
+    // };
+    // setTokenAsync();
+    // refetch();
   }, []);
   function getHeaderTitle(route: Partial<Route<string>>) {
     // If the focused route is not found, we need to assume it's the initial screen

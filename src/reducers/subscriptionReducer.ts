@@ -68,6 +68,17 @@ export const subscriptionApi = createApi({
       query: (UserID) => `/user/subscription/subscription_history:${UserID}`,
       providesTags: ["subscriptions"],
     }),
+    getSubscriptionHistoryByDate: builder.mutation<
+      ISubscriptionState,
+      { UserID: number; selectedDate: string }
+    >({
+      query: (arg) => ({
+        url: "/user/subscription/subscription_history_by_date",
+        method: "POST",
+        body: arg,
+      }),
+      invalidatesTags: ["subscriptions"],
+    }),
   }),
 });
 
@@ -102,4 +113,5 @@ export const {
   useGetSpecificSubscriptionQuery,
   useAddSubscriptionMutation,
   useGetSubscriptionHistoryQuery,
+  useGetSubscriptionHistoryByDateMutation,
 } = subscriptionApi;

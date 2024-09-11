@@ -7,7 +7,7 @@ import {
   ScrollView,
   useWindowDimensions,
 } from "react-native";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "store/store";
@@ -32,6 +32,10 @@ import postDefault from "assets/post_default.webp";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import RenderHTML from "react-native-render-html";
+import { Video, ResizeMode } from "expo-av";
+import { FIREBASE_VIDEO_FORMATS } from "utils/constants/FILE_EXTENSIONS";
+import { getMetadata, ref } from "firebase/storage";
+import { storage } from "global/firebaseConfig";
 
 const DetailedPostFeed = () => {
   const [likePost, { data: likeData, error }] = useLikePostInFeedMutation();
@@ -47,6 +51,8 @@ const DetailedPostFeed = () => {
 
   const [getAllComments, { data: comments, status }] =
     useGetAllCommentsMutation();
+
+  const [metadata, setMetadata] = useState<string | null>("");
 
   const navigation = useNavigation<RootStackNavigationProp>();
   const {
@@ -85,6 +91,21 @@ const DetailedPostFeed = () => {
   useEffect(() => {
     checkPostIsLike(arg);
     getAllComments(comment_arg);
+  }, []);
+
+  const mediaRef = ref(storage, PostImage);
+
+  useEffect(() => {
+    if (PostImage === IMAGE_VALUES.DEFAULT) {
+      return;
+    }
+    getMetadata(mediaRef)
+      .then((metaData) => {
+        setMetadata(metaData?.contentType);
+      })
+      .catch((err) => {
+        throw new Error(err);
+      });
   }, []);
 
   const handleUnlike = () => {
@@ -132,17 +153,27 @@ const DetailedPostFeed = () => {
   return (
     <View style={styles.container}>
       <ScrollView>
-        <TouchableOpacity onPress={handlePress}>
-          <Image
-            resizeMode="contain"
-            source={
-              PostImage === IMAGE_VALUES.DEFAULT
-                ? postDefault
-                : { uri: PostImage }
-            }
+        {FIREBASE_VIDEO_FORMATS.includes(metadata) ? (
+          <Video
+            source={{ uri: PostImage }}
             style={{ height: 290, width: "100%" }}
+            useNativeControls
+            resizeMode={ResizeMode.CONTAIN}
+            isLooping
           />
-        </TouchableOpacity>
+        ) : (
+          <TouchableOpacity onPress={handlePress}>
+            <Image
+              resizeMode="contain"
+              source={
+                PostImage === IMAGE_VALUES.DEFAULT
+                  ? postDefault
+                  : { uri: PostImage }
+              }
+              style={{ height: 290, width: "100%" }}
+            />
+          </TouchableOpacity>
+        )}
 
         {fullName == PostAuthor || (
           <View

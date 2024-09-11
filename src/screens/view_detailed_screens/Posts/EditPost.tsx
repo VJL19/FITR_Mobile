@@ -8,8 +8,8 @@ import {
   Image,
 } from "react-native";
 import React, { createRef, useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "store/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "store/store";
 import CustomTextInput from "components/CustomTextInput";
 import DisplayFormError from "components/DisplayFormError";
 import { Controller, FieldErrors, useForm } from "react-hook-form";
@@ -21,7 +21,7 @@ import DisplayAlert from "components/CustomAlert";
 import getCurrentDate from "utils/helpers/formatDate";
 import { useNavigation } from "@react-navigation/native";
 import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
-import { useEditPostMutation } from "reducers/postReducer";
+import { setMetadata, useEditPostMutation } from "reducers/postReducer";
 import { useCameraFns } from "utils/helpers/useCameraFns";
 import { uploadImage } from "utils/helpers/uploadImage";
 import CustomError from "components/CustomError";
@@ -30,13 +30,17 @@ import postDefault from "assets/post_default.webp";
 import { IMAGE_VALUES } from "utils/enums/DefaultValues";
 import RichTextEdidor from "components/RichTextEdidor";
 import RichToolBar from "components/RichToolBar";
-import { deleteObject, ref } from "firebase/storage";
+import { deleteObject, getMetadata, ref } from "firebase/storage";
 import { storage } from "global/firebaseConfig";
+import { Video, ResizeMode } from "expo-av";
+import { FIREBASE_VIDEO_FORMATS } from "utils/constants/FILE_EXTENSIONS";
 
 const EditPost = () => {
   const { PostTitle, PostImage, PostDescription, PostID } = useSelector(
     (state: RootState) => state.post.postData
   );
+
+  const metadata = useSelector((state: RootState) => state.post.metadata);
   const { image, pickImage, pickCameraImage, removePhoto, setImage } =
     useCameraFns({ allowsEditing: true });
   const [modalVisible, setModalVisible] = useState(false);
@@ -62,11 +66,27 @@ const EditPost = () => {
     resolver: joiResolver(postSchema),
   });
 
+  const dispatch: AppDispatch = useDispatch();
   useEffect(() => {
     // setValue("PostImage", PostImage);
     setImage(PostImage);
     setValue("PostTitle", PostTitle);
     setValue("PostDescription", PostDescription);
+  }, []);
+
+  const mediaRef = ref(storage, PostImage);
+
+  useEffect(() => {
+    if (PostImage === IMAGE_VALUES.DEFAULT) {
+      return;
+    }
+    getMetadata(mediaRef)
+      .then((metaData) => {
+        dispatch(setMetadata(metaData?.contentType));
+      })
+      .catch((err) => {
+        throw new Error(err);
+      });
   }, []);
   const onSubmit = async (data: IPost) => {
     const { UserID, FirstName, LastName, Username } = user?.user!;
@@ -127,15 +147,25 @@ const EditPost = () => {
     <View style={{ flex: 1 }}>
       <ScrollView>
         <View>
-          <Image
-            source={
-              image === IMAGE_VALUES.DEFAULT ? postDefault : { uri: image }
-            }
-            style={{ height: 250, width: "100%" }}
-          />
+          {FIREBASE_VIDEO_FORMATS.includes(metadata) ? (
+            <Video
+              source={{ uri: PostImage }}
+              style={{ height: 290, width: "100%" }}
+              useNativeControls
+              resizeMode={ResizeMode.CONTAIN}
+              isLooping
+            />
+          ) : (
+            <Image
+              source={
+                image === IMAGE_VALUES.DEFAULT ? postDefault : { uri: image }
+              }
+              style={{ height: 250, width: "100%" }}
+            />
+          )}
           <View style={{ position: "absolute", top: "45%", left: "45%" }}>
             <CustomModal
-              modalTitle="Upload a photo"
+              modalTitle="Upload a photo or video"
               handleCamera={pickCameraImage}
               handleGallery={pickImage}
               handleRemove={removePhoto}
@@ -144,6 +174,7 @@ const EditPost = () => {
             />
           </View>
         </View>
+
         <View style={{ marginTop: 25, padding: 15 }}>
           <Controller
             control={control}

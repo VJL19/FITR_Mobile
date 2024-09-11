@@ -1,4 +1,4 @@
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Text } from "react-native";
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "store/store";
@@ -43,6 +43,16 @@ export const Newsfeed = () => {
 
   if (isFetching || isUninitialized) {
     return <LoadingIndicator />;
+  }
+
+  if (posts?.result?.length === 0) {
+    return (
+      <View>
+        <Text>
+          There are no posts currently between {user?.user?.SubscriptionType}
+        </Text>
+      </View>
+    );
   }
   if (isError) {
     return <CustomError />;

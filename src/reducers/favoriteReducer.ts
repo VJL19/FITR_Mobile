@@ -5,6 +5,7 @@ import {
   IWorkOutFavorites,
 } from "utils/types/favorites.types";
 import * as SecureStore from "expo-secure-store";
+import { RootState } from "store/store";
 
 const config = loadConfig();
 
@@ -27,8 +28,8 @@ export const favoriteExerciseApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: config.BASE_URL,
     prepareHeaders: async (headers: Headers, { getState }) => {
-      // const token = (getState() as RootState).authReducer.accessToken;
-      const token = await SecureStore.getItemAsync("accessToken");
+      const token = (getState() as RootState).authReducer.accessToken;
+      // const token = await SecureStore.getItemAsync("accessToken");
       // console.log("state", getState());
       if (token) {
         headers.set("authorization", `Bearer ${token}`);

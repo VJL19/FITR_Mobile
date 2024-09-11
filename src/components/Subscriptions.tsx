@@ -14,6 +14,15 @@ const Subscriptions = ({
   const handlePress = () => {
     navigation.navigate("DetailedScreens", { screen: "View Payments" });
   };
+
+  const handleNavigate = () => {
+    navigation.navigate("DetailedScreens", {
+      screen: "View Image",
+      params: {
+        imageUrl: SubscriptionUploadedImage,
+      },
+    });
+  };
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={handlePress}>
@@ -22,10 +31,12 @@ const Subscriptions = ({
         </View>
       </TouchableOpacity>
       <View style={styles.box}>
-        <Image
-          source={{ uri: SubscriptionUploadedImage }}
-          style={{ height: 250, width: "100%" }}
-        />
+        <TouchableOpacity onPress={handleNavigate}>
+          <Image
+            source={{ uri: SubscriptionUploadedImage }}
+            style={{ height: 250, width: "100%" }}
+          />
+        </TouchableOpacity>
         <Text style={styles.label}>PHP {SubscriptionAmount}</Text>
         <Text style={styles.label}>
           Status - {SubscriptionStatus?.toUpperCase()}

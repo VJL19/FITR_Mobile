@@ -50,25 +50,26 @@ export default SuggestedProgram;
 
 const styles = StyleSheet.create({
   box: {
-    flex: 1,
     flexDirection: "row",
     justifyContent: "space-between",
-    height: 150,
+    height: 170,
     width: 300,
     padding: 15,
     marginTop: 15,
-    backgroundColor: "#E12900",
     borderRadius: 10,
     marginLeft: 10,
+    backgroundColor: "#f5f5f5",
+    borderColor: "#E12900",
+    borderWidth: 1.5,
   },
   title: {
     fontSize: 22,
     fontWeight: "800",
     fontFamily: "Inter-Bold",
-    color: "#f5f5f5",
+    color: "#202020",
   },
   date: {
     fontSize: 14,
-    color: "#f5f5f5",
+    color: "#202020",
   },
 });

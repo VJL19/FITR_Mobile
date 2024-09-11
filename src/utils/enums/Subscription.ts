@@ -8,4 +8,11 @@ export enum SubscriptionAmount {
   MONTHLY = 900,
 }
 
+export enum SubscriptionMethod {
+  GCASH = "GCash",
+  PAYMAYA = "Paymaya",
+  CREDITCARD = "Credit-Card",
+  CASH = "Cash",
+}
+
 export default SubscriptionTypeEnum;

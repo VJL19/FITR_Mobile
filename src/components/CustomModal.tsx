@@ -33,6 +33,7 @@ const CustomModal = ({
     <View style={styles.centeredView}>
       <Modal
         animationType="slide"
+        statusBarTranslucent
         transparent={true}
         visible={modalVisible}
         onRequestClose={() => {

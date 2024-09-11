@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
   },
   boxStyle: {
     flexDirection: "row",
-    flex: 0.2,
+    height: 100,
     gap: 15,
     justifyContent: "center",
     alignItems: "center",

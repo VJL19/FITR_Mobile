@@ -70,6 +70,24 @@ export const attendanceslice = createApi({
       query: (UserID) => `/user/attendance/attendance_history/:${UserID}`,
       providesTags: ["attendance"],
     }),
+    getUserAttendanceHistoryByDate: builder.mutation<
+      IAttendanceState,
+      { UserID: number; selectedDate: string }
+    >({
+      query: (arg) => ({
+        url: "/user/attendance/attendance_history_date",
+        method: "POST",
+        body: arg,
+      }),
+      invalidatesTags: ["attendance"],
+    }),
+    getUserRFIDNumberDetails: builder.query<
+      IAttendanceState,
+      number | undefined
+    >({
+      query: (UserID) => `/user/attendance/RFIDNumber/:${UserID}`,
+      providesTags: ["attendance"],
+    }),
     checkUserTapRFID: builder.query<IAttendanceState, number | undefined>({
       query: (UserID) => `/user/attendance/checkUserTapRFID/:${UserID}`,
       providesTags: ["attendance"],
@@ -169,6 +187,8 @@ export const {
   useGetUserRecordsQuery,
   useCheckUserTapRFIDQuery,
   useTapRFIDCardUserMutation,
+  useGetUserRFIDNumberDetailsQuery,
   useGetUserAttendanceHistoryQuery,
+  useGetUserAttendanceHistoryByDateMutation,
 } = attendanceslice;
 export default attendanceSlice.reducer;

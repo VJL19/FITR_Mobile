@@ -14,5 +14,6 @@ export interface IGymEquipment {
   GymEquipmentIntensity: string;
   GymEquipmentTargetMuscle: string;
   GymEquipmentCategory: string;
+  GymEquipmentInstructions: string;
   GymEquipmentTutorialVideos?: IGymEquipmentTutorial[];
 }

@@ -175,7 +175,7 @@ const Attendance = () => {
         </TouchableNativeFeedback>
       </View>
 
-      <Button title="Tap RFID" onPress={handlePress} />
+      {/* <Button title="Tap RFID" onPress={handlePress} /> */}
       {/* <Text style={styles.textTitle}>Tap Me!</Text>
 
         {hashData && (

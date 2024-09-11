@@ -110,43 +110,32 @@ const ViewWorkout = () => {
         style={{
           flexDirection: "row",
           justifyContent: "space-around",
+          width: "100%",
         }}
       >
-        <View style={{ width: "50%" }}>
-          <TouchableOpacity style={styles.buttonStyle} onPress={handleSpeak}>
-            <AntDesign name="sound" size={35} color="#f5f5f5" />
-          </TouchableOpacity>
-        </View>
-        <View style={{ width: "50%" }}>
+        <TouchableOpacity style={styles.buttonStyle} onPress={handleSpeak}>
+          <AntDesign name="sound" size={35} color="#f5f5f5" />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.buttonStyle}
+          onPress={handleDirectTutorial}
+        >
+          <AntDesign name="playcircleo" size={35} color="#f5f5f5" />
+        </TouchableOpacity>
+        {workoutFavorite?.result[0]?.isWorkOutFavorite ? (
           <TouchableOpacity
             style={styles.buttonStyle}
-            onPress={handleDirectTutorial}
+            onPress={removeFavorites}
           >
-            <AntDesign name="playcircleo" size={35} color="#f5f5f5" />
+            <MaterialIcons name="favorite" size={35} color="#f5f5f5" />
           </TouchableOpacity>
-        </View>
-        {workoutFavorite?.result[0]?.isWorkOutFavorite ? (
-          <View style={{ width: "50%" }}>
-            <TouchableOpacity
-              style={styles.buttonStyle}
-              onPress={removeFavorites}
-            >
-              <MaterialIcons name="favorite" size={35} color="#f5f5f5" />
-            </TouchableOpacity>
-          </View>
         ) : (
-          <View style={{ width: "50%" }}>
-            <TouchableOpacity
-              style={styles.buttonStyle}
-              onPress={handleFavorites}
-            >
-              <MaterialIcons
-                name="favorite-outline"
-                size={35}
-                color="#f5f5f5"
-              />
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity
+            style={styles.buttonStyle}
+            onPress={handleFavorites}
+          >
+            <MaterialIcons name="favorite-outline" size={35} color="#f5f5f5" />
+          </TouchableOpacity>
         )}
       </View>
       <ScrollView>
@@ -191,11 +180,9 @@ const styles = StyleSheet.create({
   buttonStyle: {
     alignItems: "center",
     justifyContent: "center",
-    width: "40%",
-    position: "absolute",
+    width: "25%",
     bottom: 5,
-    right: 35,
-    height: 75,
+    height: 80,
     backgroundColor: "#ff2e00",
     borderRadius: 100,
     elevation: 20,

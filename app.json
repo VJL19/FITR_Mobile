@@ -21,8 +21,7 @@
       }
     },
     "android": {
-      "jsEngine": "hermes"
-,
+      "jsEngine": "hermes",
       "adaptiveIcon": {
         "foregroundImage": "./src/assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -48,8 +47,17 @@
         }
       ],
       [
-        "expo-font", {
-          "fonts": ["./src/assets/fonts/static"]
+        "expo-font",
+        {
+          "fonts": [
+            "./src/assets/fonts/static"
+          ]
+        }
+      ],
+      [
+        "expo-av",
+        {
+          "microphonePermission": "Allow Fitr Application to access your microphone."
         }
       ]
     ]

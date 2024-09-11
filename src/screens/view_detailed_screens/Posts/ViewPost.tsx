@@ -8,7 +8,7 @@ import {
   useWindowDimensions,
   ScrollView,
 } from "react-native";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import DisplayAlert from "components/CustomAlert";
 import LoadingIndicator from "components/LoadingIndicator";
@@ -29,7 +29,9 @@ import postDefault from "assets/post_default.webp";
 import { IMAGE_VALUES } from "utils/enums/DefaultValues";
 import RenderHTML from "react-native-render-html";
 import { storage } from "global/firebaseConfig";
-import { deleteObject, ref } from "firebase/storage";
+import { deleteObject, getMetadata, ref } from "firebase/storage";
+import { ResizeMode, Video } from "expo-av";
+import { FIREBASE_VIDEO_FORMATS } from "utils/constants/FILE_EXTENSIONS";
 
 const ViewPost = () => {
   const {
@@ -44,6 +46,7 @@ const ViewPost = () => {
   const dispatch: AppDispatch = useDispatch();
 
   const { postData } = useSelector((state: RootState) => state.post);
+  const [metadata, setMetadata] = useState<string | null>("");
 
   const [deletePost, { data }] = useDeletePostsMutation();
   const [deletePostFeed, { data: feedData, status }] =
@@ -65,7 +68,20 @@ const ViewPost = () => {
   const navigation = useNavigation<RootStackNavigationProp>();
   const { width } = useWindowDimensions();
   const html = `${PostDescription}`;
+  const mediaRef = ref(storage, PostImage);
 
+  useEffect(() => {
+    if (PostImage === IMAGE_VALUES.DEFAULT) {
+      return;
+    }
+    getMetadata(mediaRef)
+      .then((metaData) => {
+        setMetadata(metaData?.contentType);
+      })
+      .catch((err) => {
+        throw new Error(err);
+      });
+  }, []);
   const handlePress = () => {
     navigation.navigate("DetailedScreens", {
       screen: "View Image",
@@ -113,18 +129,27 @@ const ViewPost = () => {
   return (
     <View style={styles.container}>
       <ScrollView>
-        <TouchableOpacity onPress={handlePress}>
-          <Image
-            resizeMode="contain"
-            source={
-              PostImage === IMAGE_VALUES.DEFAULT
-                ? postDefault
-                : { uri: PostImage }
-            }
+        {FIREBASE_VIDEO_FORMATS.includes(metadata) ? (
+          <Video
+            source={{ uri: PostImage }}
             style={{ height: 290, width: "100%" }}
+            useNativeControls
+            resizeMode={ResizeMode.CONTAIN}
+            isLooping
           />
-        </TouchableOpacity>
-        <Text>ViewPost</Text>
+        ) : (
+          <TouchableOpacity onPress={handlePress}>
+            <Image
+              resizeMode="contain"
+              source={
+                PostImage === IMAGE_VALUES.DEFAULT
+                  ? postDefault
+                  : { uri: PostImage }
+              }
+              style={{ height: 290, width: "100%" }}
+            />
+          </TouchableOpacity>
+        )}
         <Text>{PostID}</Text>
         <Text>{PostTitle}</Text>
         <RenderHTML contentWidth={width} source={{ html }} />
