@@ -1,4 +1,5 @@
 import {
+  Dimensions,
   ImageBackground,
   StyleSheet,
   Text,
@@ -13,6 +14,7 @@ import { setAnnouncementData } from "reducers/announcementReducer";
 import { useNavigation } from "@react-navigation/native";
 import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
 
+const { width, height } = Dimensions.get("window");
 const AnnouncementLists = ({
   AnnouncementID,
   AnnouncementImage,
@@ -44,6 +46,7 @@ const AnnouncementLists = ({
         imageStyle={{
           borderRadius: 10,
           backgroundColor: "rgb(255,0,0)",
+          width: "100%",
         }}
         style={styles.box}
         source={{
@@ -77,8 +80,8 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     justifyContent: "space-between",
-    height: 160,
-    width: 300,
+    height: width * 0.45,
+    width: width - 25,
     marginTop: 15,
     borderRadius: 10,
   },

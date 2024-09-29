@@ -6,6 +6,7 @@ import {
   StyleSheet,
   ScrollView,
   useWindowDimensions,
+  Dimensions,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
@@ -36,7 +37,7 @@ import { Video, ResizeMode } from "expo-av";
 import { FIREBASE_VIDEO_FORMATS } from "utils/constants/FILE_EXTENSIONS";
 import { getMetadata, ref } from "firebase/storage";
 import { storage } from "global/firebaseConfig";
-
+const { width, height } = Dimensions.get("window");
 const DetailedPostFeed = () => {
   const [likePost, { data: likeData, error }] = useLikePostInFeedMutation();
   const [unLikePost, {}] = useUnlikePostInFeedMutation();
@@ -156,7 +157,7 @@ const DetailedPostFeed = () => {
         {FIREBASE_VIDEO_FORMATS.includes(metadata) ? (
           <Video
             source={{ uri: PostImage }}
-            style={{ height: 290, width: "100%" }}
+            style={styles.video}
             useNativeControls
             resizeMode={ResizeMode.CONTAIN}
             isLooping
@@ -170,7 +171,7 @@ const DetailedPostFeed = () => {
                   ? postDefault
                   : { uri: PostImage }
               }
-              style={{ height: 290, width: "100%" }}
+              style={styles.image}
             />
           </TouchableOpacity>
         )}
@@ -240,6 +241,8 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 21,
   },
+  image: { height: width * 1.1, width: width },
+  video: { height: width * 1.1, width: width },
   buttonStyle: {
     alignItems: "center",
     justifyContent: "center",

@@ -47,7 +47,6 @@ const SuggestedProgram = ({
 };
 
 export default SuggestedProgram;
-
 const styles = StyleSheet.create({
   box: {
     flexDirection: "row",

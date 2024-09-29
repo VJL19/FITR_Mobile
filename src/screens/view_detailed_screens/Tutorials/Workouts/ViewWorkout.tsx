@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Pressable,
+  Dimensions,
 } from "react-native";
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
@@ -23,6 +24,7 @@ import LoadingIndicator from "components/LoadingIndicator";
 import DisplayAlert from "components/CustomAlert";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+const { width, height } = Dimensions.get("window");
 
 const ViewWorkout = () => {
   const { workout_data } = useSelector((state: RootState) => state.tutorial);
@@ -60,6 +62,16 @@ const ViewWorkout = () => {
   const handleSpeak = () => {
     Speech.speak(WorkOutExplanation, { language: "en-US" });
   };
+
+  //handle cancel the text-to-speech when user press back navigation
+  useEffect(() => {
+    function stopSpeech() {
+      Speech.stop();
+    }
+    navigation.addListener("blur", stopSpeech);
+
+    return () => navigation.removeListener("blur", stopSpeech);
+  }, [navigation]);
 
   const handleFavorites = async () => {
     addWorkoutFavorite(arg);
@@ -161,8 +173,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   image: {
-    height: 250,
-    width: "100%",
+    width: width,
+    height: width * 1.1,
   },
   title: {
     fontFamily: "Inter-Bold",

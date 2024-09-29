@@ -33,7 +33,6 @@ import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigat
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 const Attendance = () => {
-  const [hasPermission, setHasPermission] = useState<boolean>();
   const [toggleScan, setToggleScan] = useState(false);
   const navigation = useNavigation<RootStackNavigationProp>();
 
@@ -48,15 +47,6 @@ const Attendance = () => {
   });
 
   const [tapRFID, { data: tapRFIDRes, error }] = useTapRFIDCardUserMutation();
-
-  useEffect(() => {
-    const getCameraPermissions = async () => {
-      const { status } = await Camera.requestCameraPermissionsAsync();
-      setHasPermission(status === "granted");
-    };
-
-    getCameraPermissions();
-  }, []);
 
   useEffect(() => {
     dispatch(getSecretCode());
@@ -94,13 +84,6 @@ const Attendance = () => {
 
     tapRFID(arg);
   };
-
-  if (hasPermission === null) {
-    return <Text>Requesting for camera permission</Text>;
-  }
-  if (hasPermission === false) {
-    return <Text>No access to camera</Text>;
-  }
 
   if (isUninitialized || isFetching) {
     return <LoadingIndicator />;

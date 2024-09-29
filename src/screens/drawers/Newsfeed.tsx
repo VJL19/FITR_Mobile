@@ -8,7 +8,7 @@ import Postsfeed from "../view_detailed_screens/Newsfeed/Postsfeed";
 import LoadingIndicator from "components/LoadingIndicator";
 import { INewsFeed } from "utils/types/newsfeed.types";
 import { useNavigation } from "@react-navigation/native";
-import { useGetAccessTokenQuery } from "reducers/authReducer";
+import { authslice, useGetAccessTokenQuery } from "reducers/authReducer";
 import {
   newsfeedslice,
   useGetAllPostInFeedQuery,
@@ -35,6 +35,7 @@ export const Newsfeed = () => {
   });
   useRefetchOnMessage("refresh_user", () => {
     dispatch(newsfeedslice.util.invalidateTags(["newsfeed"]));
+    dispatch(authslice.util.invalidateTags(["auth"]));
   });
 
   useEffect(() => {

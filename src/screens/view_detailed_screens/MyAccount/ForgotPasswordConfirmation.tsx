@@ -24,7 +24,6 @@ import DisplayFormError from "components/DisplayFormError";
 import { IOTP } from "utils/types/form.types";
 import { otpSchema } from "utils/validations";
 import DisplayAlert from "components/CustomAlert";
-
 const ForgotPasswordConfirmation = () => {
   const [timer, setTimer] = useState(60 * 2);
   const [valid, isValid] = useState(true);

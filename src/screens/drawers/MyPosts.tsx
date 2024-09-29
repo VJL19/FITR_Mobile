@@ -74,7 +74,11 @@ const MyPosts = () => {
   if (data?.result.length === 0) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text>My posts is empty!</Text>
+        <Text
+          style={{ fontSize: 23, fontWeight: "bold", fontFamily: "Inter-Bold" }}
+        >
+          What's on your mind? {user?.user?.FirstName}
+        </Text>
         <FloatingActionButton handlePress={handlePress} />
       </View>
     );
@@ -82,18 +86,6 @@ const MyPosts = () => {
 
   return (
     <View style={styles.container}>
-      <View style={{ marginTop: 10 }}>
-        <Text
-          style={{
-            color: "#131313",
-            fontSize: 20,
-            fontFamily: "Inter-Bold",
-          }}
-        >
-          What's on your mind? {user?.user?.FirstName}
-        </Text>
-      </View>
-
       <View style={{ marginTop: 15, width: "100%" }}>
         <SearchBar
           value={searchPost}

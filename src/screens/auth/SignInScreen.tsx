@@ -36,6 +36,7 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { TextInput } from "react-native-paper";
 import LoadingIndicator from "components/LoadingIndicator";
+import { deleteItemStorage } from "utils/helpers/AsyncStorage";
 
 const SignInScreen = () => {
   const navigation = useNavigation<RootStackNavigationProp>();
@@ -77,7 +78,8 @@ const SignInScreen = () => {
     { data: emailCode, status: emailStat, error: emailErr },
   ] = useSendEmailMutation();
 
-  const handleForgotPassword = () => {
+  const handleForgotPassword = async () => {
+    await deleteItemStorage("onboarded");
     navigation.navigate("DetailedScreens", { screen: "Forgot Password" });
   };
 

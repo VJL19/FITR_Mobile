@@ -202,6 +202,7 @@ const CalculateBMI = () => {
         </View>
       </View>
       <View>
+        <Text style={styles.result}>Results: </Text>
         <Text style={styles.textStyle}>Your BMI is: {BMI}</Text>
         <Text style={styles.textStyle}>
           Your BMI is: classified as {classification}
@@ -220,7 +221,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#f5f5f5",
   },
+  result: {
+    color: "#202020",
+    fontSize: 21,
+    fontWeight: "bold",
+  },
   textStyle: {
     color: "#202020",
+    fontSize: 18,
   },
 });

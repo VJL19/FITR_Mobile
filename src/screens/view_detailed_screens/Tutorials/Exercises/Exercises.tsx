@@ -136,7 +136,7 @@ export default Exercises;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: 50,
+    marginTop: 25,
     justifyContent: "space-between",
   },
 });

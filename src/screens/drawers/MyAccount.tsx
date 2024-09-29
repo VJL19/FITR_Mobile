@@ -6,6 +6,7 @@ import {
   Image,
   ImageBackground,
   TouchableOpacity,
+  Dimensions,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -21,7 +22,7 @@ import LoadingIndicator from "components/LoadingIndicator";
 import { useGetAccessTokenQuery } from "reducers/authReducer";
 import CustomError from "components/CustomError";
 import { IMAGE_VALUES } from "utils/enums/DefaultValues";
-
+const { width, height } = Dimensions.get("window");
 const MyAccount = () => {
   const dispatch: AppDispatch = useDispatch();
 
@@ -107,8 +108,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#f5f5f5",
   },
   image: {
-    width: "100%",
-    height: 250,
+    width: width,
+    height: width * 0.9,
     borderColor: "#ff2e00",
   },
   title: {

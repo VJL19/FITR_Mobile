@@ -214,6 +214,9 @@ const DetailedRootScreen = () => {
         name="View Announcement"
         component={ViewAnnouncements}
         options={{
+          headerTitle: () => null,
+          headerTintColor: "#ff2e00",
+          headerTransparent: true,
           presentation: "card",
           gestureEnabled: true,
           gestureDirection: "horizontal",
@@ -245,6 +248,9 @@ const DetailedRootScreen = () => {
         name="View Post Feed"
         component={DetailedPostFeed}
         options={{
+          headerTitle: () => null,
+          headerTintColor: "#ff2e00",
+          headerTransparent: true,
           presentation: "card",
           gestureEnabled: true,
           gestureDirection: "horizontal",
@@ -302,6 +308,9 @@ const DetailedRootScreen = () => {
         name="View Gym Equipment"
         component={ViewGymEquipment}
         options={{
+          headerTitle: () => null,
+          headerTintColor: "#ff2e00",
+          headerTransparent: true,
           cardOverlayEnabled: true,
           presentation: "card",
           gestureEnabled: true,
@@ -324,6 +333,9 @@ const DetailedRootScreen = () => {
         name="View Workout"
         component={ViewWorkout}
         options={{
+          headerTintColor: "#ff2e00",
+          headerTitle: () => null,
+          headerTransparent: true,
           cardOverlayEnabled: true,
           presentation: "card",
           gestureEnabled: true,
@@ -348,8 +360,11 @@ const DetailedRootScreen = () => {
         options={{
           cardOverlayEnabled: true,
           presentation: "card",
+          headerTintColor: "#ff2e00",
+          headerTitle: () => null,
           gestureEnabled: true,
           gestureDirection: "horizontal",
+          headerTransparent: true,
           cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
       />

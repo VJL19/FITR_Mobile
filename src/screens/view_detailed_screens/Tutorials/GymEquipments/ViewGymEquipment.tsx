@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Button,
+  Dimensions,
 } from "react-native";
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
@@ -19,6 +20,7 @@ import AntDesign from "react-native-vector-icons/AntDesign";
 import DisplayAlert from "components/CustomAlert";
 import LoadingIndicator from "components/LoadingIndicator";
 
+const { width, height } = Dimensions.get("window");
 const ViewGymEquipment = () => {
   const { gym_data } = useSelector((state: RootState) => state.tutorial);
 
@@ -38,6 +40,14 @@ const ViewGymEquipment = () => {
 
   const navigation = useNavigation<RootStackNavigationProp>();
 
+  useEffect(() => {
+    function stopSpeech() {
+      Speech.stop();
+    }
+    navigation.addListener("blur", stopSpeech);
+
+    return () => navigation.removeListener("blur", stopSpeech);
+  }, [navigation]);
   const handlePress = () => {
     navigation.navigate("DetailedScreens", {
       screen: "View Image",
@@ -75,21 +85,18 @@ const ViewGymEquipment = () => {
         style={{
           flexDirection: "row",
           justifyContent: "space-evenly",
+          width: "100%",
         }}
       >
-        <View style={{ width: "50%" }}>
-          <TouchableOpacity style={styles.buttonStyle} onPress={handleSpeak}>
-            <AntDesign name="sound" size={35} color="#f5f5f5" />
-          </TouchableOpacity>
-        </View>
-        <View style={{ width: "50%" }}>
-          <TouchableOpacity
-            style={styles.buttonStyle}
-            onPress={handleDirectTutorial}
-          >
-            <AntDesign name="playcircleo" size={35} color="#f5f5f5" />
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity style={styles.buttonStyle} onPress={handleSpeak}>
+          <AntDesign name="sound" size={35} color="#f5f5f5" />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.buttonStyle}
+          onPress={handleDirectTutorial}
+        >
+          <AntDesign name="playcircleo" size={35} color="#f5f5f5" />
+        </TouchableOpacity>
       </View>
       <ScrollView>
         <View style={{ padding: 15, marginBottom: 25 }}>
@@ -121,8 +128,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   image: {
-    height: 250,
-    width: "100%",
+    width: width,
+    height: width * 1.1,
   },
   title: {
     fontFamily: "Inter-Bold",
@@ -141,11 +148,9 @@ const styles = StyleSheet.create({
   buttonStyle: {
     alignItems: "center",
     justifyContent: "center",
-    width: "40%",
-    position: "absolute",
+    width: "25%",
     bottom: 5,
-    right: 35,
-    height: 75,
+    height: 80,
     backgroundColor: "#ff2e00",
     borderRadius: 100,
     elevation: 20,

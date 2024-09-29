@@ -14,6 +14,7 @@ type RootStackParamList = {
   SideStackNavigations: NavigatorScreenParams<DrawerStackParamList>;
   BottomTab: undefined;
   DetailedScreens: NavigatorScreenParams<DetailedRootStackNavigatorsParamList>;
+  OnBoardingScreen: undefined;
 };
 
 type RootStackScreenProp = NativeStackScreenProps<
@@ -24,6 +25,7 @@ type RootStackScreenProp = NativeStackScreenProps<
   | "SideStackNavigations"
   | "BottomTab"
   | "DetailedScreens"
+  | "OnBoardingScreen"
 >;
 type RootStackNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -33,6 +35,7 @@ type RootStackNavigationProp = NativeStackNavigationProp<
   | "SideStackNavigations"
   | "BottomTab"
   | "DetailedScreens"
+  | "OnBoardingScreen"
 >;
 
 export type {

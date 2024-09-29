@@ -6,6 +6,7 @@ import {
   Image,
   FlatList,
   TouchableOpacity,
+  Platform,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
@@ -23,7 +24,7 @@ import processPayment, {
 import { useNavigation } from "@react-navigation/native";
 import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
 import { setRoute } from "reducers/routeReducer";
-import { useGetAccessTokenQuery } from "reducers/authReducer";
+import { authslice, useGetAccessTokenQuery } from "reducers/authReducer";
 import CustomError from "components/CustomError";
 import { isLoading } from "expo-font";
 import { RadioGroup } from "react-native-radio-buttons-group";
@@ -44,6 +45,7 @@ import { ISubscriptions } from "utils/types/subscriptions.types";
 import { useRefetchOnMessage } from "hooks/useRefetchOnMessage";
 import DropdownComponent from "components/DropdownComponent";
 import { ScrollView } from "react-native";
+import * as Linking from "expo-linking";
 
 const Subscription = () => {
   const [paymentMethod, setPaymentMethod] = useState("");
@@ -78,6 +80,10 @@ const Subscription = () => {
     dispatch(subscriptionApi.util.invalidateTags(["subscriptions"]));
   });
 
+  useRefetchOnMessage("refresh_user", () => {
+    dispatch(authslice.util.invalidateTags(["auth"]));
+  });
+
   console.log("user access token", data);
   // console.log("specific subscriptions", userSubscriptions);
   // console.log("details status", status);
@@ -86,7 +92,7 @@ const Subscription = () => {
 
   const payment_methods = [
     { id: "1", label: "G-Cash", value: "1" },
-    { id: "2", label: "Paymaya", value: "2" },
+    { id: "2", label: "PayMaya", value: "2" },
     { id: "3", label: "Credit-Card", value: "3" },
     { id: "4", label: "Cash", value: "4" },
   ];
@@ -183,6 +189,18 @@ const Subscription = () => {
     });
   };
 
+  const openAppSpecific = async (storeURL: string) => {
+    try {
+      const supported = await Linking.canOpenURL(storeURL);
+      if (supported) {
+        await Linking.openURL(storeURL);
+      } else {
+        console.log("error in opening the url!");
+      }
+    } catch (error) {
+      console.log("error in executing can open url method");
+    }
+  };
   const handlePress = () => {
     navigation.navigate("DetailedScreens", { screen: "View Payments" });
   };
@@ -233,12 +251,66 @@ const Subscription = () => {
         /> */}
         </View>
 
+        <View style={{ padding: 20 }}>
+          <Text style={styles.instructionTitle}>
+            Step by step on how to process payment from subscription using this
+            app.
+          </Text>
+          <Text style={styles.instructionText}>
+            Step 1. Select your payment method.
+          </Text>
+          <Text style={styles.instructionText}>
+            Step 2. for (gcash), (paymaya), and (credit-card) payments there
+            will be a account name, and number presented to further send your
+            payment.
+          </Text>
+          <Text style={styles.instructionText}>
+            Step 4. for those users who are paying on (gcash), (paymaya) you may
+            click the image to redirect this app to gcash/paymaya application.
+          </Text>
+          <Text style={styles.instructionText}>
+            Step 5. Last step is to screenshot the proof of payment or receipt
+            indicating that you sent the money to the account name, and number
+            indicated from the image. Note: if you choose a CASH payment please
+            disregard this step and you may proceed to upload directly your
+            payment.
+          </Text>
+        </View>
         <DropdownComponent
           searchPlaceholder="Select payment method..."
           data={payment_methods}
           handleChange={setPaymentMethod}
           value={paymentMethod}
         />
+        <View style={styles.redirectBtns}>
+          {paymentMethod === "2" && (
+            <Button
+              color={"green"}
+              title="Open paymaya app to pay"
+              onPress={() => {
+                const platform =
+                  Platform.OS === "android"
+                    ? "market://launch?id=com.paymaya"
+                    : "https://itunes.apple.com/us/app/gcash/id520020791";
+
+                openAppSpecific(platform);
+              }}
+            />
+          )}
+          {paymentMethod === "1" && (
+            <Button
+              title="Open gcash app to pay"
+              onPress={() => {
+                const platform =
+                  Platform.OS === "android"
+                    ? "market://launch?id=com.globe.gcash.android"
+                    : "https://itunes.apple.com/us/app/maya-savings-loans-cards/id991673877";
+
+                openAppSpecific(platform);
+              }}
+            />
+          )}
+        </View>
         {image && (
           <Image
             source={{ uri: image }}
@@ -247,10 +319,14 @@ const Subscription = () => {
           />
         )}
         {data?.user?.SubscriptionType === SubscriptionTypeEnum.Session && (
-          <Text style={styles.textStyle}>You have a due amount of 90.00</Text>
+          <Text style={styles.textStyle}>
+            You have a due amount of 90.00 PHP
+          </Text>
         )}
         {data?.user?.SubscriptionType === SubscriptionTypeEnum.Monthly && (
-          <Text style={styles.textStyle}>You have a due amount of 900.00</Text>
+          <Text style={styles.textStyle}>
+            You have a due amount of 900.00 PHP
+          </Text>
         )}
 
         {/*paymentMethod !== "1" && paymentMethod !== "" && (
@@ -277,7 +353,7 @@ const Subscription = () => {
         ) : (
           <View></View>
         )}
-        {image !== IMAGE_VALUES.DEFAULT ? (
+        {image !== IMAGE_VALUES.DEFAULT || paymentMethod === "4" ? (
           <View style={{ width: "85%", alignSelf: "center", marginTop: 10 }}>
             <Button title="Upload payment" onPress={handleUpload} />
           </View>
@@ -308,5 +384,22 @@ const styles = StyleSheet.create({
     color: "#d9534f",
     fontSize: 23,
     fontStyle: "italic",
+  },
+  redirectBtns: {
+    flex: 1,
+    gap: 15,
+    marginTop: 35,
+    justifyContent: "space-between",
+    flexDirection: "row",
+  },
+  instructionTitle: {
+    fontSize: 17,
+    fontWeight: "bold",
+    textTransform: "uppercase",
+  },
+  instructionText: {
+    fontSize: 15,
+    paddingVertical: 10,
+    lineHeight: 25,
   },
 });

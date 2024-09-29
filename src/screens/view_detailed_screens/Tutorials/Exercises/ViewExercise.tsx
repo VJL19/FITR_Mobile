@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Button,
+  Dimensions,
 } from "react-native";
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
@@ -24,6 +25,7 @@ import AntDesign from "react-native-vector-icons/AntDesign";
 import DisplayAlert from "components/CustomAlert";
 import LoadingIndicator from "components/LoadingIndicator";
 
+const { width, height } = Dimensions.get("window");
 const ViewExercise = () => {
   const { exercise_data } = useSelector((state: RootState) => state.tutorial);
 
@@ -59,6 +61,16 @@ const ViewExercise = () => {
   useEffect(() => {
     checkExerciseFavorite(arg);
   }, []);
+
+  //handle cancel the text-to-speech when user press back navigation
+  useEffect(() => {
+    function stopSpeech() {
+      Speech.stop();
+    }
+    navigation.addListener("blur", stopSpeech);
+
+    return () => navigation.removeListener("blur", stopSpeech);
+  }, [navigation]);
 
   const handleSpeak = () => {
     Speech.speak(ExerciseExplanation, { language: "en-US" });
@@ -161,8 +173,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   image: {
-    height: 250,
-    width: "100%",
+    width: width,
+    height: width * 1.1,
   },
   title: {
     fontFamily: "Inter-Bold",

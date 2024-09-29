@@ -6,6 +6,7 @@ import {
   Image,
   useWindowDimensions,
   ScrollView,
+  Dimensions,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
@@ -20,6 +21,8 @@ import { getMetadata, ref } from "@firebase/storage";
 import { FIREBASE_VIDEO_FORMATS } from "utils/constants/FILE_EXTENSIONS";
 import { WebView } from "react-native-webview";
 import { ResizeMode, Video } from "expo-av";
+
+const { width, height } = Dimensions.get("window");
 const ViewAnnouncements = () => {
   const {
     AnnouncementDate,
@@ -107,7 +110,7 @@ const ViewAnnouncements = () => {
           // />
           <Video
             source={{ uri: AnnouncementImage }}
-            style={{ height: 290, width: "100%" }}
+            style={styles.videoStyle}
             useNativeControls
             resizeMode={ResizeMode.CONTAIN}
             isLooping
@@ -121,7 +124,7 @@ const ViewAnnouncements = () => {
                   ? postDefault
                   : { uri: AnnouncementImage }
               }
-              style={{ height: 290, width: "100%" }}
+              style={styles.imageStyle}
             />
           </TouchableOpacity>
         )}
@@ -136,4 +139,7 @@ const ViewAnnouncements = () => {
 
 export default ViewAnnouncements;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  imageStyle: { height: width * 1.1, width: width },
+  videoStyle: { height: width * 1.1, width: width },
+});

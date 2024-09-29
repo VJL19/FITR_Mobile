@@ -21,6 +21,8 @@ import {
 } from "reducers/authReducer";
 import { tokens } from "react-native-paper/lib/typescript/styles/themes/v3/tokens";
 import * as SecureStore from "expo-secure-store";
+import OnBoardingScreen from "screens/onboarding/OnBoardingScreen";
+import { getItemStorage } from "utils/helpers/AsyncStorage";
 
 const RootApp = () => {
   const { isAuthenticated, accessToken } = useSelector(
@@ -29,6 +31,7 @@ const RootApp = () => {
 
   const navigation = useNavigation<RootStackNavigationProp>();
 
+  const [showOnBoarded, setShowOnBoarded] = useState<boolean | null>(null);
   const dispatch: AppDispatch = useDispatch();
   const { isReady } = useIsReady();
 
@@ -72,8 +75,65 @@ const RootApp = () => {
   //   "T headers: ",
   //   global_axios.defaults.headers.common["Authorization"]
   // );
+
+  useEffect(() => {
+    checkIfUserOnBoardedScreen();
+  }, []);
+  const checkIfUserOnBoardedScreen = async () => {
+    let getOnBoardedKey = await getItemStorage("onboarded");
+
+    if (getOnBoardedKey == 1) {
+      setShowOnBoarded(false);
+    } else {
+      setShowOnBoarded(true);
+    }
+  };
+
+  if (showOnBoarded == null) {
+    return null;
+  }
+  if (showOnBoarded) {
+    return (
+      <RootStack.Navigator
+        initialRouteName="OnBoardingScreen"
+        screenOptions={{ headerShown: false, freezeOnBlur: true }}
+      >
+        {!accessToken || !isAuthenticated ? (
+          <RootStack.Group>
+            <RootStack.Screen
+              name="OnBoardingScreen"
+              component={OnBoardingScreen}
+            />
+            <RootStack.Screen
+              name="AuthStackScreens"
+              component={AuthRootScreen}
+            />
+            <RootStack.Screen name="SplashScreen" component={SplashScreen} />
+            <RootStack.Screen
+              name="DetailedScreens"
+              component={DetailedRootScreen}
+            />
+          </RootStack.Group>
+        ) : (
+          <RootStack.Group>
+            <RootStack.Screen
+              name="DashboardScreen"
+              component={DashboardScreen}
+            />
+            <RootStack.Screen name="BottomTab" component={BottomRootScreen} />
+            <RootStack.Screen name="SplashScreen" component={SplashScreen} />
+            <RootStack.Screen
+              name="DetailedScreens"
+              component={DetailedRootScreen}
+            />
+          </RootStack.Group>
+        )}
+      </RootStack.Navigator>
+    );
+  }
   return (
     <RootStack.Navigator
+      initialRouteName="AuthStackScreens"
       screenOptions={{ headerShown: false, freezeOnBlur: true }}
     >
       {!accessToken || !isAuthenticated ? (

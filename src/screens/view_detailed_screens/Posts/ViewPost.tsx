@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   useWindowDimensions,
   ScrollView,
+  Dimensions,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -32,7 +33,7 @@ import { storage } from "global/firebaseConfig";
 import { deleteObject, getMetadata, ref } from "firebase/storage";
 import { ResizeMode, Video } from "expo-av";
 import { FIREBASE_VIDEO_FORMATS } from "utils/constants/FILE_EXTENSIONS";
-
+const { width, height } = Dimensions.get("window");
 const ViewPost = () => {
   const {
     isError,
@@ -132,7 +133,7 @@ const ViewPost = () => {
         {FIREBASE_VIDEO_FORMATS.includes(metadata) ? (
           <Video
             source={{ uri: PostImage }}
-            style={{ height: 290, width: "100%" }}
+            style={styles.video}
             useNativeControls
             resizeMode={ResizeMode.CONTAIN}
             isLooping
@@ -146,7 +147,7 @@ const ViewPost = () => {
                   ? postDefault
                   : { uri: PostImage }
               }
-              style={{ height: 290, width: "100%" }}
+              style={styles.image}
             />
           </TouchableOpacity>
         )}
@@ -171,4 +172,6 @@ const styles = StyleSheet.create({
     fontSize: 25,
     fontWeight: "bold",
   },
+  video: { height: width * 0.9, width: width },
+  image: { height: width * 0.9, width: width },
 });

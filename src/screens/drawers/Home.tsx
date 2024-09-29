@@ -105,8 +105,15 @@ const Home = () => {
     workoutFavoritesData?.result.length === 0
   ) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text style={{ color: "#ff2e00", fontSize: 18 }}>
+      <View style={{ padding: 15 }}>
+        <Text
+          style={{
+            color: "#ff2e00",
+            fontSize: 30,
+            fontFamily: "Inter-Bold",
+            lineHeight: 50,
+          }}
+        >
           Hello {data?.user?.FirstName}, What's your program today?
         </Text>
       </View>

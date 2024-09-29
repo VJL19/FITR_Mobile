@@ -140,7 +140,6 @@ const BottomRootScreen = ({
         name="Home_Bottom"
         component={RenderTabs}
         options={{
-          tabBarBadge: 3,
           title: "Home",
         }}
       />

@@ -6,6 +6,7 @@ import {
   ScrollView,
   Linking,
   TouchableOpacity,
+  Dimensions,
 } from "react-native";
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
@@ -18,6 +19,7 @@ import DialogBox from "components/DialogBox";
 import { useNavigation } from "@react-navigation/native";
 import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
 
+const { width, height } = Dimensions.get("window");
 const About = () => {
   const dispatch: AppDispatch = useDispatch();
   useEffect(() => {
@@ -110,8 +112,8 @@ const styles = StyleSheet.create({
     fontSize: 17,
   },
   image: {
-    height: 230,
-    width: "100%",
+    width: width,
+    height: width * 0.9,
     resizeMode: "cover",
   },
   link: {

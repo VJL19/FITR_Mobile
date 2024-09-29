@@ -66,7 +66,14 @@ const Favorites = () => {
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <Text style={{ fontSize: 22 }}>Your favorite lists is empty!</Text>
         <TouchableOpacity onPress={() => navigation.navigate("Tutorials")}>
-          <Text style={{ color: "#ff2e00", fontWeight: "600", fontSize: 22 }}>
+          <Text
+            style={{
+              color: "#ff2e00",
+              fontWeight: "600",
+              fontSize: 22,
+              textDecorationLine: "underline",
+            }}
+          >
             Browse tutorials
           </Text>
         </TouchableOpacity>
