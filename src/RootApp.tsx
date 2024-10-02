@@ -82,7 +82,7 @@ const RootApp = () => {
   const checkIfUserOnBoardedScreen = async () => {
     let getOnBoardedKey = await getItemStorage("onboarded");
 
-    if (getOnBoardedKey == 1) {
+    if (JSON.parse(getOnBoardedKey!) == 1) {
       setShowOnBoarded(false);
     } else {
       setShowOnBoarded(true);
@@ -95,7 +95,6 @@ const RootApp = () => {
   if (showOnBoarded) {
     return (
       <RootStack.Navigator
-        initialRouteName="OnBoardingScreen"
         screenOptions={{ headerShown: false, freezeOnBlur: true }}
       >
         {!accessToken || !isAuthenticated ? (

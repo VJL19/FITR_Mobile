@@ -1,7 +1,14 @@
 import { StyleSheet, Text, View, ScrollView } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
+import { AppDispatch } from "store/store";
+import { useDispatch } from "react-redux";
+import { setRoute } from "reducers/routeReducer";
 
 const Gym_TermsAndConditions = () => {
+  const dispatch: AppDispatch = useDispatch();
+  useEffect(() => {
+    dispatch(setRoute("Terms and Conditions"));
+  }, []);
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Data Privacy:</Text>

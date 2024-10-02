@@ -215,7 +215,12 @@ const DetailedRootScreen = () => {
         component={ViewAnnouncements}
         options={{
           headerTitle: () => null,
-          headerTintColor: "#ff2e00",
+          headerTintColor: "#fff",
+          headerLeftContainerStyle: {
+            padding: 2,
+            backgroundColor: "#ff2e00",
+            borderRadius: 50,
+          },
           headerTransparent: true,
           presentation: "card",
           gestureEnabled: true,
@@ -249,7 +254,12 @@ const DetailedRootScreen = () => {
         component={DetailedPostFeed}
         options={{
           headerTitle: () => null,
-          headerTintColor: "#ff2e00",
+          headerTintColor: "#fff",
+          headerLeftContainerStyle: {
+            padding: 2,
+            backgroundColor: "#ff2e00",
+            borderRadius: 50,
+          },
           headerTransparent: true,
           presentation: "card",
           gestureEnabled: true,
@@ -309,8 +319,13 @@ const DetailedRootScreen = () => {
         component={ViewGymEquipment}
         options={{
           headerTitle: () => null,
-          headerTintColor: "#ff2e00",
+          headerTintColor: "#fff",
           headerTransparent: true,
+          headerLeftContainerStyle: {
+            padding: 2,
+            backgroundColor: "#ff2e00",
+            borderRadius: 50,
+          },
           cardOverlayEnabled: true,
           presentation: "card",
           gestureEnabled: true,
@@ -333,7 +348,12 @@ const DetailedRootScreen = () => {
         name="View Workout"
         component={ViewWorkout}
         options={{
-          headerTintColor: "#ff2e00",
+          headerTintColor: "#fff",
+          headerLeftContainerStyle: {
+            padding: 2,
+            backgroundColor: "#ff2e00",
+            borderRadius: 50,
+          },
           headerTitle: () => null,
           headerTransparent: true,
           cardOverlayEnabled: true,
@@ -360,7 +380,12 @@ const DetailedRootScreen = () => {
         options={{
           cardOverlayEnabled: true,
           presentation: "card",
-          headerTintColor: "#ff2e00",
+          headerTintColor: "#fff",
+          headerLeftContainerStyle: {
+            padding: 2,
+            backgroundColor: "#ff2e00",
+            borderRadius: 50,
+          },
           headerTitle: () => null,
           gestureEnabled: true,
           gestureDirection: "horizontal",

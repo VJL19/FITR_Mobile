@@ -11,7 +11,7 @@ type DrawerStackParamList = {
   "My Posts": undefined;
   "Calculate BMI": { height: number; weight: number } | undefined;
   Pay: undefined;
-  "Gym Terms and Conditions": undefined;
+  "Terms and Conditions": undefined;
   "About MJeshter": undefined;
   "My Account": undefined;
   "Sign Out": undefined;
@@ -26,7 +26,7 @@ type DrawerStackScreenProp = DrawerScreenProps<
   | "My Posts"
   | "Calculate BMI"
   | "Pay"
-  | "Gym Terms and Conditions"
+  | "Terms and Conditions"
   | "About MJeshter"
   | "My Account"
   | "Sign Out"
@@ -40,7 +40,7 @@ type DrawerStackNavigationProp = DrawerNavigationProp<
   | "My Posts"
   | "Calculate BMI"
   | "Pay"
-  | "Gym Terms and Conditions"
+  | "Terms and Conditions"
   | "About MJeshter"
   | "My Account"
   | "Sign Out"

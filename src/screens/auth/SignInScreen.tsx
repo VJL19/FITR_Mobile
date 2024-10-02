@@ -6,6 +6,7 @@ import {
   View,
   ScrollView,
   TouchableOpacity,
+  Dimensions,
 } from "react-native";
 import { Controller } from "react-hook-form";
 import React, { useContext, useEffect, useState } from "react";
@@ -38,6 +39,7 @@ import { TextInput } from "react-native-paper";
 import LoadingIndicator from "components/LoadingIndicator";
 import { deleteItemStorage } from "utils/helpers/AsyncStorage";
 
+const { width, height } = Dimensions.get("window");
 const SignInScreen = () => {
   const navigation = useNavigation<RootStackNavigationProp>();
   const [isPasswordSecure, setIsPasswordSecure] = useState(true);
@@ -149,6 +151,7 @@ const SignInScreen = () => {
           style={{
             width: "100%",
             alignSelf: "center",
+            paddingVertical: 35,
           }}
         >
           <Text
@@ -164,7 +167,12 @@ const SignInScreen = () => {
           </Text>
           <Image
             source={logo}
-            style={{ height: 270, width: 270, alignSelf: "center" }}
+            style={{
+              height: width * 0.9,
+              width: width,
+              alignSelf: "center",
+              resizeMode: "contain",
+            }}
           />
         </View>
         <Controller
@@ -186,6 +194,7 @@ const SignInScreen = () => {
               placeholderTextColor={"#ccc"}
               underlineColorAndroid="transparent"
               mode="outlined"
+              error={errors.Username && true}
             />
           )}
           name="Username"
@@ -229,17 +238,26 @@ const SignInScreen = () => {
               placeholderTextColor={"#ccc"}
               mode="outlined"
               underlineColorAndroid="transparent"
+              error={errors.Password && true}
             />
           )}
           name="Password"
         />
         <DisplayFormError errors={errors.Password} />
+        <View style={{ flex: 1, alignSelf: "flex-end", marginRight: 25 }}>
+          <TouchableOpacity onPress={handleForgotPassword}>
+            <Text
+              style={{
+                fontWeight: "bold",
+                fontSize: 16,
+                textDecorationLine: "underline",
+              }}
+            >
+              Forgot Password?
+            </Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
-      <View style={{ flex: 1, alignSelf: "flex-end", marginRight: 25 }}>
-        <TouchableOpacity onPress={handleForgotPassword}>
-          <Text>Forgot Password?</Text>
-        </TouchableOpacity>
-      </View>
       <View
         style={{
           width: "100%",

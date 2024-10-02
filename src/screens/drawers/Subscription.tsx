@@ -283,10 +283,23 @@ const Subscription = () => {
           value={paymentMethod}
         />
         <View style={styles.redirectBtns}>
+          {paymentMethod === "1" && (
+            <Button
+              title="Open gcash app"
+              onPress={() => {
+                const platform =
+                  Platform.OS === "android"
+                    ? "market://launch?id=com.globe.gcash.android"
+                    : "https://itunes.apple.com/us/app/maya-savings-loans-cards/id991673877";
+
+                openAppSpecific(platform);
+              }}
+            />
+          )}
           {paymentMethod === "2" && (
             <Button
               color={"green"}
-              title="Open paymaya app to pay"
+              title="Open paymaya app"
               onPress={() => {
                 const platform =
                   Platform.OS === "android"
@@ -297,18 +310,34 @@ const Subscription = () => {
               }}
             />
           )}
-          {paymentMethod === "1" && (
-            <Button
-              title="Open gcash app to pay"
-              onPress={() => {
-                const platform =
-                  Platform.OS === "android"
-                    ? "market://launch?id=com.globe.gcash.android"
-                    : "https://itunes.apple.com/us/app/maya-savings-loans-cards/id991673877";
 
-                openAppSpecific(platform);
-              }}
-            />
+          {paymentMethod === "3" && (
+            <View style={{ flexDirection: "row", gap: 5 }}>
+              <Button
+                title="Open BDO app"
+                color={"blue"}
+                onPress={() => {
+                  const platform =
+                    Platform.OS === "android"
+                      ? "market://launch?id=ph.com.bdo.retail&hl=en"
+                      : "https://itunes.apple.com/us/app/bdo-online/id1551584630";
+
+                  openAppSpecific(platform);
+                }}
+              />
+              <Button
+                color={"violet"}
+                title="Open METRO BANK app"
+                onPress={() => {
+                  const platform =
+                    Platform.OS === "android"
+                      ? "market://launch?id=ph.com.metrobank.mcc.mbonline&hl=en"
+                      : "https://itunes.apple.com/us/app/metrobank-app/id1536081176";
+
+                  openAppSpecific(platform);
+                }}
+              />
+            </View>
           )}
         </View>
         {image && (

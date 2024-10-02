@@ -15,12 +15,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "store/store";
 import { setAccountInfoFields } from "reducers/authReducer";
 import * as SecureStore from "expo-secure-store";
-
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import { TextInput } from "react-native-paper";
+import Ionicons from "react-native-vector-icons/Ionicons";
 const AccountSetup = () => {
   const { Username, Password, ConfirmPassword, Gender, SubscriptionType } =
     useSelector((state: RootState) => state.authReducer.accountInfo);
   const dispatch: AppDispatch = useDispatch();
-
+  const [isPasswordSecure, setIsPasswordSecure] = useState(true);
+  const [isConfirmPasswordSecure, setIsConfirmPasswordSecure] = useState(true);
   const navigation = useNavigation<RootStackNavigationProp>();
 
   const {
@@ -69,11 +72,17 @@ const AccountSetup = () => {
   };
 
   return (
-    <View style={{ flex: 1, padding: 20, backgroundColor: "#f5f5f5" }}>
-      <ScrollView style={{ flex: 1, height: "100%" }}>
-        <View style={{ flex: 1, flexDirection: "row", gap: 15 }}>
-          {/* {renderNavs} */}
-        </View>
+    <View
+      style={{
+        flex: 1,
+        padding: 20,
+        backgroundColor: "#f5f5f5",
+        justifyContent: "center",
+      }}
+    >
+      <ScrollView
+        contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
+      >
         <Text style={styles.labelStyle}>Username</Text>
         <Controller
           control={control}
@@ -93,13 +102,43 @@ const AccountSetup = () => {
         <Controller
           control={control}
           render={({ field: { onChange, onBlur, value } }) => (
-            <CustomTextInput
-              secureTextEntry={true}
-              error={errors.Password}
+            <TextInput
+              secureTextEntry={isPasswordSecure}
+              left={
+                <TextInput.Icon
+                  icon={() => (
+                    <Ionicons name={"lock-closed-outline"} size={28} />
+                  )}
+                />
+              }
+              right={
+                <TextInput.Icon
+                  icon={() => (
+                    <MaterialCommunityIcons
+                      name={isPasswordSecure ? "eye-off" : "eye"}
+                      size={28}
+                    />
+                  )}
+                  onPress={() => {
+                    isPasswordSecure
+                      ? setIsPasswordSecure(false)
+                      : setIsPasswordSecure(true);
+                  }}
+                />
+              }
+              style={{
+                marginTop: 20,
+                backgroundColor: "#f5f5f5",
+                height: 55,
+              }}
+              onChangeText={onChange}
               onBlur={onBlur}
-              onChange={onChange}
               value={value}
-              placeholder="Enter your Password"
+              label={"Password"}
+              placeholderTextColor={"#ccc"}
+              mode="outlined"
+              underlineColorAndroid="transparent"
+              error={errors.Password && true}
             />
           )}
           name="Password"
@@ -109,13 +148,43 @@ const AccountSetup = () => {
         <Controller
           control={control}
           render={({ field: { onChange, onBlur, value } }) => (
-            <CustomTextInput
-              secureTextEntry={true}
-              error={errors.ConfirmPassword}
+            <TextInput
+              secureTextEntry={isConfirmPasswordSecure}
+              left={
+                <TextInput.Icon
+                  icon={() => (
+                    <Ionicons name={"lock-closed-outline"} size={28} />
+                  )}
+                />
+              }
+              right={
+                <TextInput.Icon
+                  icon={() => (
+                    <MaterialCommunityIcons
+                      name={isConfirmPasswordSecure ? "eye-off" : "eye"}
+                      size={28}
+                    />
+                  )}
+                  onPress={() => {
+                    isConfirmPasswordSecure
+                      ? setIsConfirmPasswordSecure(false)
+                      : setIsConfirmPasswordSecure(true);
+                  }}
+                />
+              }
+              style={{
+                marginTop: 20,
+                backgroundColor: "#f5f5f5",
+                height: 55,
+              }}
+              onChangeText={onChange}
               onBlur={onBlur}
-              onChange={onChange}
               value={value}
-              placeholder="Enter your ConfirmPassword"
+              label={"Confirm Password"}
+              placeholderTextColor={"#ccc"}
+              mode="outlined"
+              underlineColorAndroid="transparent"
+              error={errors.Password && true}
             />
           )}
           name="ConfirmPassword"
@@ -129,7 +198,7 @@ const AccountSetup = () => {
               radioButtons={gender}
               onPress={onChange}
               selectedId={value}
-              containerStyle={{ flex: 1, flexDirection: "row" }}
+              layout="row"
             />
           )}
           name="Gender"
@@ -143,7 +212,7 @@ const AccountSetup = () => {
               radioButtons={subscription_types}
               onPress={onChange}
               selectedId={value}
-              containerStyle={{ flex: 1, flexDirection: "row" }}
+              layout="row"
             />
           )}
           name="SubscriptionType"

@@ -1,5 +1,5 @@
 import { Button, StyleSheet, Text, View } from "react-native";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
 import CustomTextInput from "components/CustomTextInput";
@@ -13,6 +13,9 @@ import DisplayAlert from "components/CustomAlert";
 import LoadingIndicator from "components/LoadingIndicator";
 import { CommonActions, useNavigation } from "@react-navigation/native";
 import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import { TextInput } from "react-native-paper";
+import Ionicons from "react-native-vector-icons/Ionicons";
 
 const ChangePassword = () => {
   const {
@@ -20,6 +23,8 @@ const ChangePassword = () => {
     formState: { errors, isSubmitted },
     handleSubmit,
   } = useForm<IChangePassword>({ resolver: joiResolver(changePasswordSchema) });
+  const [isPasswordSecure, setIsPasswordSecure] = useState(true);
+  const [isConfirmPasswordSecure, setIsConfirmPasswordSecure] = useState(true);
 
   const [changePassword, { data, status, error }] = useChangePasswordMutation();
 
@@ -54,7 +59,7 @@ const ChangePassword = () => {
   }
 
   return (
-    <View>
+    <View style={{ padding: 15 }}>
       <Text style={styles.labelStyle}>Username</Text>
       {/* <Controller
         control={control}
@@ -76,29 +81,84 @@ const ChangePassword = () => {
       <Controller
         control={control}
         render={({ field: { onChange, onBlur, value } }) => (
-          <CustomTextInput
-            secureTextEntry={true}
-            error={errors.Password}
+          <TextInput
+            secureTextEntry={isPasswordSecure}
+            left={
+              <TextInput.Icon
+                icon={() => <Ionicons name={"lock-closed-outline"} size={28} />}
+              />
+            }
+            right={
+              <TextInput.Icon
+                icon={() => (
+                  <MaterialCommunityIcons
+                    name={isPasswordSecure ? "eye-off" : "eye"}
+                    size={28}
+                  />
+                )}
+                onPress={() => {
+                  isPasswordSecure
+                    ? setIsPasswordSecure(false)
+                    : setIsPasswordSecure(true);
+                }}
+              />
+            }
+            style={{
+              marginTop: 20,
+              backgroundColor: "#f5f5f5",
+            }}
+            onChangeText={onChange}
             onBlur={onBlur}
-            onChange={onChange}
             value={value}
-            placeholder="Enter your Password"
+            label={"Password"}
+            placeholderTextColor={"#ccc"}
+            mode="outlined"
+            underlineColorAndroid="transparent"
+            error={errors.Password && true}
           />
         )}
         name="Password"
       />
+
       <DisplayFormError errors={errors.Password} />
       <Text style={styles.labelStyle}>Confirm Password</Text>
       <Controller
         control={control}
         render={({ field: { onChange, onBlur, value } }) => (
-          <CustomTextInput
-            secureTextEntry={true}
-            error={errors.ConfirmPassword}
+          <TextInput
+            secureTextEntry={isConfirmPasswordSecure}
+            left={
+              <TextInput.Icon
+                icon={() => <Ionicons name={"lock-closed-outline"} size={28} />}
+              />
+            }
+            right={
+              <TextInput.Icon
+                icon={() => (
+                  <MaterialCommunityIcons
+                    name={isConfirmPasswordSecure ? "eye-off" : "eye"}
+                    size={28}
+                  />
+                )}
+                onPress={() => {
+                  isConfirmPasswordSecure
+                    ? setIsConfirmPasswordSecure(false)
+                    : setIsConfirmPasswordSecure(true);
+                }}
+              />
+            }
+            style={{
+              marginTop: 20,
+              backgroundColor: "#f5f5f5",
+            }}
+            onChangeText={onChange}
             onBlur={onBlur}
-            onChange={onChange}
             value={value}
-            placeholder="Enter your ConfirmPassword"
+            label={"Confirm Password"}
+            placeholderTextColor={"#ccc"}
+            mode="outlined"
+            underlineColorAndroid="transparent"
+            error={errors.Password && true}
           />
         )}
         name="ConfirmPassword"

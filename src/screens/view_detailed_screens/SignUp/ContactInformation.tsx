@@ -97,11 +97,17 @@ const ContactInformation = () => {
     </TouchableOpacity>
   ));
   return (
-    <View style={{ flex: 1, padding: 20, backgroundColor: "#f5f5f5" }}>
-      <ScrollView style={{ flex: 1, height: "100%" }}>
-        <View style={{ flex: 1, flexDirection: "row", gap: 15 }}>
-          {/* {renderNavs} */}
-        </View>
+    <View
+      style={{
+        flex: 1,
+        padding: 20,
+        backgroundColor: "#f5f5f5",
+        justifyContent: "center",
+      }}
+    >
+      <ScrollView
+        contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
+      >
         <Text style={styles.labelStyle}>Contact Number</Text>
         <Controller
           control={control}
@@ -148,7 +154,7 @@ const ContactInformation = () => {
           name="Email"
         />
         <DisplayFormError errors={errors.Email} />
-        <Text style={styles.labelStyle}>Height</Text>
+        <Text style={styles.labelStyle}>Height in cm</Text>
         <Controller
           control={control}
           render={({ field: { onChange, onBlur, value } }) => (
@@ -164,7 +170,7 @@ const ContactInformation = () => {
           name="Height"
         />
         <DisplayFormError errors={errors.Height} />
-        <Text style={styles.labelStyle}>Weight</Text>
+        <Text style={styles.labelStyle}>Weight in cm</Text>
         <Controller
           control={control}
           render={({ field: { onChange, onBlur, value } }) => (

@@ -60,7 +60,7 @@ const BottomRootScreen = ({
       case "About MJeshter":
         return <About />;
 
-      case "Gym Terms and Conditions":
+      case "Terms and Conditions":
         return <Gym_TermsAndConditions />;
 
       case "My Account":

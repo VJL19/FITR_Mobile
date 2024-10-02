@@ -3,7 +3,7 @@ import DrawerStack from "navigators/DrawerStack";
 import BottomRootScreen from "./BottomRootScreen";
 import CustomDrawer from "components/CustomDrawer";
 import drawerIcon from "components/drawerIcon";
-import { View, Text } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import CustomNotification from "components/CustomNotification";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "store/store";
@@ -179,6 +179,7 @@ const DashboardScreen = ({ navigation }: RootStackScreenProp) => {
         component={BottomRootScreen}
         options={{
           title: "Home",
+          headerTitleStyle: styles.title,
           drawerIcon: ({ color, focused, size }) => {
             const name = "home";
             return drawerIcon({ color, size, focused, name });
@@ -190,6 +191,7 @@ const DashboardScreen = ({ navigation }: RootStackScreenProp) => {
         component={BottomRootScreen}
         options={({ route }) => ({
           headerTitle: getHeaderTitle(route),
+          headerTitleStyle: styles.title,
           title: "Announcements",
           drawerIcon: ({ color, focused, size }) => {
             const name = "megaphone";
@@ -201,6 +203,7 @@ const DashboardScreen = ({ navigation }: RootStackScreenProp) => {
         name="Attendance"
         component={BottomRootScreen}
         options={{
+          headerTitleStyle: styles.title,
           drawerIcon: ({ color, focused, size }) => {
             const name = "newspaper";
             return drawerIcon({ color, size, focused, name });
@@ -211,6 +214,7 @@ const DashboardScreen = ({ navigation }: RootStackScreenProp) => {
         name="Pay"
         component={BottomRootScreen}
         options={{
+          headerTitleStyle: styles.title,
           drawerIcon: ({ color, focused, size }) => {
             const name = "card";
             return drawerIcon({ color, size, focused, name });
@@ -221,6 +225,7 @@ const DashboardScreen = ({ navigation }: RootStackScreenProp) => {
         name="Calculate BMI"
         component={BottomRootScreen}
         options={{
+          headerTitleStyle: styles.title,
           drawerIcon: ({ color, focused, size }) => {
             const name = "calculator";
             return drawerIcon({ color, size, focused, name });
@@ -231,6 +236,7 @@ const DashboardScreen = ({ navigation }: RootStackScreenProp) => {
         name="Newsfeed"
         component={BottomRootScreen}
         options={{
+          headerTitleStyle: styles.title,
           drawerIcon: ({ color, focused, size }) => {
             const name = "newspaper";
             return drawerIcon({ color, size, focused, name });
@@ -241,6 +247,7 @@ const DashboardScreen = ({ navigation }: RootStackScreenProp) => {
         name="My Posts"
         component={BottomRootScreen}
         options={{
+          headerTitleStyle: styles.title,
           drawerIcon: ({ color, focused, size }) => {
             const name = "person-circle";
             return drawerIcon({ color, size, focused, name });
@@ -252,6 +259,7 @@ const DashboardScreen = ({ navigation }: RootStackScreenProp) => {
         name="About MJeshter"
         component={BottomRootScreen}
         options={{
+          headerTitleStyle: styles.title,
           drawerItemStyle: {
             borderTopWidth: 1.5,
             borderTopColor: "#ccc",
@@ -263,25 +271,14 @@ const DashboardScreen = ({ navigation }: RootStackScreenProp) => {
         }}
       />
       <DrawerStack.Screen
-        name="Gym Terms and Conditions"
+        name="Terms and Conditions"
         component={BottomRootScreen}
         options={{
           headerStyle: {
             height: 120,
           },
-          headerTitle: ({ style: styles, children: title }) => {
-            return (
-              <Text
-                style={{
-                  fontSize: 22,
-                  color: "#f5f5f5",
-                }}
-                numberOfLines={2}
-              >
-                Terms and Conditions
-              </Text>
-            );
-          },
+
+          headerTitleStyle: styles.title,
           drawerIcon: ({ color, focused, size }) => {
             const name = "information-circle";
 
@@ -293,6 +290,7 @@ const DashboardScreen = ({ navigation }: RootStackScreenProp) => {
         name="My Account"
         component={BottomRootScreen}
         options={{
+          headerTitleStyle: styles.title,
           drawerIcon: ({ color, focused, size }) => {
             const name = "settings";
             return drawerIcon({ color, size, focused, name });
@@ -303,6 +301,7 @@ const DashboardScreen = ({ navigation }: RootStackScreenProp) => {
         name="Sign Out"
         component={BottomRootScreen}
         options={{
+          headerTitleStyle: styles.title,
           drawerIcon: ({ color, focused, size }) => {
             const name = "arrow-back";
             return drawerIcon({ color, size, focused, name });
@@ -314,3 +313,10 @@ const DashboardScreen = ({ navigation }: RootStackScreenProp) => {
 };
 
 export default DashboardScreen;
+
+const styles = StyleSheet.create({
+  title: {
+    fontFamily: "Inter-Bold",
+    fontSize: 22,
+  },
+});
