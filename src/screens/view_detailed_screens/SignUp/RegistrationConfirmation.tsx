@@ -28,6 +28,7 @@ import { IOTP } from "utils/types/form.types";
 import { otpSchema } from "utils/validations";
 import DisplayAlert from "components/CustomAlert";
 import * as SecureStore from "expo-secure-store";
+import { OtpInput } from "react-native-otp-entry";
 
 const RegistrationConfirmation = () => {
   const [timer, setTimer] = useState(60 * 2);
@@ -180,14 +181,22 @@ const RegistrationConfirmation = () => {
         <Controller
           control={control}
           render={({ field: { onChange, onBlur, value } }) => (
-            <CustomTextInput
-              maxLength={6}
-              inputMode="tel"
-              error={errors.OTPCode}
+            <OtpInput
+              numberOfDigits={6}
+              focusColor={"#ff2e00"}
+              onTextChange={onChange}
+              onFilled={(text) => {
+                const data = {
+                  OTPCode: +text,
+                };
+                console.log(data.OTPCode);
+                handlePress(data);
+              }}
+              textInputProps={{
+                accessibilityLabel: "One-Time Password",
+              }}
               onBlur={onBlur}
-              onChange={onChange}
               value={value?.toString()}
-              placeholder="Enter the OTP Code"
             />
           )}
           name="OTPCode"
@@ -196,11 +205,6 @@ const RegistrationConfirmation = () => {
         {!valid && (
           <Button title="Resend" color={"#ff2e00"} onPress={handleResend} />
         )}
-        <Button
-          title="Proceed"
-          color={"#ff2e00"}
-          onPress={handleSubmit(handlePress)}
-        />
       </View>
     </View>
   );
