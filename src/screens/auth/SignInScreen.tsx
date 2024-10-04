@@ -38,6 +38,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { TextInput } from "react-native-paper";
 import LoadingIndicator from "components/LoadingIndicator";
 import { deleteItemStorage } from "utils/helpers/AsyncStorage";
+import { NETWORK_ERR } from "utils/enums/Errors";
 
 const { width, height } = Dimensions.get("window");
 const SignInScreen = () => {
@@ -105,11 +106,17 @@ const SignInScreen = () => {
     if (error?.data?.status === 401) {
       sendOTPEmail({ Email: error?.data?.email });
     }
-    if (status === "rejected" && isSubmitted) {
-      DisplayAlert("Error, message", error?.data?.details);
+    if (error?.status === NETWORK_ERR.FETCH_ERROR && isSubmitted) {
+      DisplayAlert(
+        "Error message",
+        "Network Error. Please check your internet connection and try again this action"
+      );
+    }
+    if (status === "rejected" && error?.status !== NETWORK_ERR.FETCH_ERROR) {
+      DisplayAlert("Error message", error?.data?.details);
     }
     if (status === "fulfilled" && isSubmitted) {
-      DisplayAlert("Success, message", res?.details);
+      DisplayAlert("Success message", res?.details);
       console.log("rtk res", res?.accessToken);
       dispatch(setToken(res?.accessToken));
       const setTokenAsync = async () => {

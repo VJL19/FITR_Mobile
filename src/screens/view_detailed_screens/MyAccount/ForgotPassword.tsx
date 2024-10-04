@@ -17,6 +17,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "store/store";
 import { useNavigation } from "@react-navigation/native";
 import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
+import { NETWORK_ERR } from "utils/enums/Errors";
 
 const ForgotPassword = () => {
   const {
@@ -44,8 +45,14 @@ const ForgotPassword = () => {
   console.log("forgot password error", error);
 
   useEffect(() => {
-    if (status === "rejected" && isSubmitted) {
+    if (status === "rejected" && error?.status !== NETWORK_ERR.FETCH_ERROR) {
       DisplayAlert("Error message", error?.data?.message);
+    }
+    if (error?.status === NETWORK_ERR.FETCH_ERROR && isSubmitted) {
+      DisplayAlert(
+        "Error message",
+        "Network Error. Please check your internet connection and try again this action"
+      );
     }
     if (status === "fulfilled" && isSubmitted) {
       DisplayAlert("Success message", data?.message);
