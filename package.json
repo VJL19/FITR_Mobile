@@ -60,7 +60,8 @@
     "react-native-webview": "13.8.6",
     "react-redux": "^9.1.1",
     "socket.io-client": "^4.7.5",
-    "text-encoding-polyfill": "^0.6.7"
+    "text-encoding-polyfill": "^0.6.7",
+    "@react-native-community/netinfo": "11.3.1"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

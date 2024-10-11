@@ -15,23 +15,29 @@ import DisplayFormError from "components/DisplayFormError";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { IComments } from "utils/types/newsfeed.types";
 import { commentSchema } from "utils/validations";
-import { RootState } from "store/store";
-import { useSelector } from "react-redux";
+import { AppDispatch, RootState } from "store/store";
+import { useDispatch, useSelector } from "react-redux";
 import DisplayAlert from "components/CustomAlert";
 import { useGetAccessTokenQuery } from "reducers/authReducer";
 import {
+  newsfeedslice,
   useCommentPostInFeedMutation,
   useNotifyCommentPostInFeedMutation,
 } from "reducers/newsfeedReducer";
 import getCurrentDate from "utils/helpers/formatDate";
 import LoadingIndicator from "components/LoadingIndicator";
+import useIsNetworkConnected from "hooks/useIsNetworkConnected";
+import { NETWORK_ERROR } from "utils/enums/Errors";
+import { useRefetchOnMessage } from "hooks/useRefetchOnMessage";
 
 const CommentPost = () => {
   const { data } = useGetAccessTokenQuery();
   const { user } = data!;
 
-  const [commentPost, { status: commentStatus, data: commentData, error }] =
-    useCommentPostInFeedMutation();
+  const [
+    commentPost,
+    { status: commentStatus, data: commentData, error: commentErr },
+  ] = useCommentPostInFeedMutation();
   const [notifyComment, {}] = useNotifyCommentPostInFeedMutation();
   const {
     handleSubmit,
@@ -57,10 +63,49 @@ const CommentPost = () => {
     (state: RootState) => state.notification
   );
 
+  const dispatch: AppDispatch = useDispatch();
+  useRefetchOnMessage("refresh_post", () => {
+    dispatch(newsfeedslice.util.invalidateTags(["newsfeed"]));
+  });
+
   const onInvalid = (errors) => {
     console.log(errors);
   };
   const navigation = useNavigation();
+
+  const { isConnected } = useIsNetworkConnected();
+
+  useEffect(() => {
+    if (commentErr?.status === NETWORK_ERROR.FETCH_ERROR && !isConnected) {
+      DisplayAlert(
+        "Error message",
+        "Network Error. Please check your internet connection and try again this action"
+      );
+    }
+    if (commentErr?.status === NETWORK_ERROR.FETCH_ERROR && isConnected) {
+      DisplayAlert(
+        "Error message",
+        "There is a problem within the server side possible maintenance or it crash unexpectedly. We apologize for your inconveniency"
+      );
+    }
+    if (
+      commentStatus === "rejected" &&
+      commentErr?.status !== NETWORK_ERROR?.FETCH_ERROR
+    ) {
+      DisplayAlert("Error message", commentErr?.data?.error?.sqlMessage);
+    }
+    if (commentStatus === "fulfilled") {
+      notifyComment(notify_arg);
+      DisplayAlert("Success message", "Successfully commented on this post.");
+      reset();
+      const delayRedirect = async () => {
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+        navigation.goBack();
+      };
+      delayRedirect();
+    }
+  }, [commentStatus]);
+
   const fullName = `${user.FirstName} ${user.LastName}`;
 
   const notify_arg = {
@@ -79,17 +124,11 @@ const CommentPost = () => {
       CommentDate: getCurrentDate(),
     };
     commentPost(arg);
-    notifyComment(notify_arg);
     // dispatch(commentPostAction(arg));
     // dispatch(getAllCommentsAction(NewsfeedID || 0));
     // dispatch(notifyCommentAction(notify_arg));
     // console.log("notif comment res", message);
     // console.log("notif comment status", status);
-
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    DisplayAlert("Success message", "Successfully commented on this post.");
-    navigation.goBack();
-    reset();
   };
 
   if (commentStatus === "pending") {

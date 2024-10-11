@@ -18,6 +18,12 @@ interface IPostState {
   result: IPost[];
   postData: IPost;
   metadata: string | null;
+
+  postCreateData: IPostCreateData;
+}
+interface IPostCreateData {
+  PostTitle: string;
+  PostDescription: string;
 }
 
 const initialState: IPostState = {
@@ -38,6 +44,10 @@ const initialState: IPostState = {
     Username: "",
   },
   metadata: "",
+  postCreateData: {
+    PostTitle: "",
+    PostDescription: "",
+  },
 };
 
 const config = loadConfig();
@@ -95,6 +105,9 @@ const postSlice = createSlice({
   reducers: {
     setPostData: (state, action: PayloadAction<IPost>) => {
       state.postData = action.payload;
+    },
+    setPostCreateData: (state, action: PayloadAction<IPostCreateData>) => {
+      state.postCreateData = action.payload;
     },
     getPostData: (state) => {
       state.postData;
@@ -157,7 +170,8 @@ const postSlice = createSlice({
   },
 });
 
-export const { getPostData, setPostData, setMetadata } = postSlice.actions;
+export const { getPostData, setPostData, setMetadata, setPostCreateData } =
+  postSlice.actions;
 export const {
   useAddPostMutation,
   useGetPostsQuery,

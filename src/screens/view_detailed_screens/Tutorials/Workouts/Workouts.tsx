@@ -1,5 +1,6 @@
 import {
   FlatList,
+  Keyboard,
   ScrollView,
   StyleSheet,
   Text,
@@ -132,6 +133,8 @@ const Workouts = () => {
         <ScrollView horizontal={true}>{renderTargetMuscles}</ScrollView>
       </View>
       <FlatList
+        onScrollEndDrag={() => Keyboard.dismiss()}
+        onScrollBeginDrag={() => Keyboard.dismiss()}
         key="_"
         numColumns={2}
         alwaysBounceVertical={true}

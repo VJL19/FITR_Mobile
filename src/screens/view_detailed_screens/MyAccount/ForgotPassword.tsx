@@ -17,7 +17,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "store/store";
 import { useNavigation } from "@react-navigation/native";
 import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
-import { NETWORK_ERR } from "utils/enums/Errors";
+import { NETWORK_ERROR } from "utils/enums/Errors";
+import useIsNetworkConnected from "hooks/useIsNetworkConnected";
 
 const ForgotPassword = () => {
   const {
@@ -35,6 +36,7 @@ const ForgotPassword = () => {
 
   const [forgotPassword, { data, status, error }] = useForgotPasswordMutation();
 
+  const { isConnected } = useIsNetworkConnected();
   const dispatch: AppDispatch = useDispatch();
 
   const onSubmit = (data: IEmail) => {
@@ -45,14 +47,20 @@ const ForgotPassword = () => {
   console.log("forgot password error", error);
 
   useEffect(() => {
-    if (status === "rejected" && error?.status !== NETWORK_ERR.FETCH_ERROR) {
-      DisplayAlert("Error message", error?.data?.message);
-    }
-    if (error?.status === NETWORK_ERR.FETCH_ERROR && isSubmitted) {
+    if (error?.status === NETWORK_ERROR.FETCH_ERROR && !isConnected) {
       DisplayAlert(
         "Error message",
         "Network Error. Please check your internet connection and try again this action"
       );
+    }
+    if (error?.status === NETWORK_ERROR.FETCH_ERROR && isConnected) {
+      DisplayAlert(
+        "Error message",
+        "There is a problem within the server side possible maintenance or it crash unexpectedly. We apologize for your inconveniency"
+      );
+    }
+    if (status === "rejected" && error?.status !== NETWORK_ERROR.FETCH_ERROR) {
+      DisplayAlert("Error message", error?.data?.error?.sqlMessage);
     }
     if (status === "fulfilled" && isSubmitted) {
       DisplayAlert("Success message", data?.message);

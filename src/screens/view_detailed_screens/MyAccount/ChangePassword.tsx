@@ -16,6 +16,8 @@ import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigat
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { TextInput } from "react-native-paper";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import useIsNetworkConnected from "hooks/useIsNetworkConnected";
+import { NETWORK_ERROR } from "utils/enums/Errors";
 
 const ChangePassword = () => {
   const {
@@ -28,6 +30,8 @@ const ChangePassword = () => {
 
   const [changePassword, { data, status, error }] = useChangePasswordMutation();
 
+  const { isConnected } = useIsNetworkConnected();
+
   const { Email, Username } = useSelector(
     (state: RootState) => state.authReducer.forgotPasswordInfo
   );
@@ -35,7 +39,19 @@ const ChangePassword = () => {
   const navigation = useNavigation<RootStackNavigationProp>();
 
   useEffect(() => {
-    if (status === "rejected" && isSubmitted) {
+    if (error?.status === NETWORK_ERROR.FETCH_ERROR && !isConnected) {
+      DisplayAlert(
+        "Error message",
+        "Network Error. Please check your internet connection and try again this action"
+      );
+    }
+    if (error?.status === NETWORK_ERROR.FETCH_ERROR && isConnected) {
+      DisplayAlert(
+        "Error message",
+        "There is a problem within the server side possible maintenance or it crash unexpectedly. We apologize for your inconveniency"
+      );
+    }
+    if (status === "rejected" && error?.status !== NETWORK_ERROR.FETCH_ERROR) {
       DisplayAlert("Error message", "Something went wrong.");
     }
     if (status === "fulfilled" && isSubmitted) {

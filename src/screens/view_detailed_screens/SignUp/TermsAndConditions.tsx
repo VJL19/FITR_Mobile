@@ -29,6 +29,9 @@ import {
 import { IMAGE_VALUES } from "utils/enums/DefaultValues";
 import DialogBox from "components/DialogBox";
 import LoadingIndicator from "components/LoadingIndicator";
+import DisplayAlert from "components/CustomAlert";
+import useIsNetworkConnected from "hooks/useIsNetworkConnected";
+import { NETWORK_ERROR } from "utils/enums/Errors";
 
 const TermsAndConditions = () => {
   const [IsChecked, setIsChecked] = useState<boolean>();
@@ -45,6 +48,8 @@ const TermsAndConditions = () => {
   const { ContactNumber, Email, Height, Weight, Address } = useSelector(
     (state: RootState) => state.authReducer.contactInfo
   );
+
+  const { isConnected } = useIsNetworkConnected();
 
   const { Username, Password, ConfirmPassword, Gender, SubscriptionType } =
     useSelector((state: RootState) => state.authReducer.accountInfo);
@@ -67,26 +72,24 @@ const TermsAndConditions = () => {
 
   useEffect(() => {
     //if the status code of request is 400, then alert something!
-
-    if (status === "rejected" && isSubmitted) {
-      Alert.alert("Error message", error?.data?.error?.sqlMessage, [
-        {
-          text: "Cancel",
-          onPress: () => {},
-          style: "cancel",
-        },
-        { text: "OK", onPress: () => {} },
-      ]);
+    if (error?.status === NETWORK_ERROR.FETCH_ERROR && !isConnected) {
+      DisplayAlert(
+        "Error message",
+        "Network Error. Please check your internet connection and try again this action"
+      );
+    }
+    if (error?.status === NETWORK_ERROR.FETCH_ERROR && isConnected) {
+      DisplayAlert(
+        "Error message",
+        "There is a problem within the server side possible maintenance or it crash unexpectedly. We apologize for your inconveniency"
+      );
+    }
+    if (status === "rejected" && error?.status !== NETWORK_ERROR?.FETCH_ERROR) {
+      DisplayAlert("Error message", error?.data?.error?.sqlMessage);
     }
     if (status === "fulfilled" && isSubmitted) {
-      Alert.alert("Success message", "Successfully! register", [
-        {
-          text: "Cancel",
-          onPress: () => {},
-          style: "cancel",
-        },
-        { text: "OK", onPress: () => {} },
-      ]);
+      DisplayAlert("Success message", "Successfully! register");
+
       // dispatch(clearFormFields());
       sendOTPEmail({ Email: Email });
 
@@ -97,6 +100,24 @@ const TermsAndConditions = () => {
   }, [status, error]);
 
   useEffect(() => {
+    if (emailErr?.status === NETWORK_ERROR.FETCH_ERROR && !isConnected) {
+      DisplayAlert(
+        "Error message",
+        "Network Error. Please check your internet connection and try again this action"
+      );
+    }
+    if (emailErr?.status === NETWORK_ERROR.FETCH_ERROR && isConnected) {
+      DisplayAlert(
+        "Error message",
+        "There is a problem within the server side possible maintenance or it crash unexpectedly. We apologize for your inconveniency"
+      );
+    }
+    if (
+      status === "rejected" &&
+      emailErr?.status !== NETWORK_ERROR?.FETCH_ERROR
+    ) {
+      DisplayAlert("Error message", emailErr?.data?.details);
+    }
     if (emailStat === "fulfilled") {
       dispatch(setOTPToken(emailCode?.code));
       const resetAction = CommonActions.reset({

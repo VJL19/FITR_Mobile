@@ -1,4 +1,4 @@
-import { FlatList, StyleSheet, Text, View } from "react-native";
+import { FlatList, Keyboard, StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import { WebView } from "react-native-webview";
 import CheckoutScreen from "components/CheckoutScreen";
@@ -90,6 +90,8 @@ const Announcements = () => {
         />
       </View>
       <FlatList
+        onScrollEndDrag={() => Keyboard.dismiss()}
+        onScrollBeginDrag={() => Keyboard.dismiss()}
         alwaysBounceVertical={true}
         data={queryAnnouncement}
         renderItem={({ item }) => <AnnouncementLists {...item} />}

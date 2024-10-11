@@ -46,6 +46,8 @@ import { useRefetchOnMessage } from "hooks/useRefetchOnMessage";
 import DropdownComponent from "components/DropdownComponent";
 import { ScrollView } from "react-native";
 import * as Linking from "expo-linking";
+import useIsNetworkConnected from "hooks/useIsNetworkConnected";
+import { NETWORK_ERROR } from "utils/enums/Errors";
 
 const Subscription = () => {
   const [paymentMethod, setPaymentMethod] = useState("");
@@ -75,6 +77,8 @@ const Subscription = () => {
       refetchOnMountOrArgChange: true,
     }
   );
+
+  const { isConnected } = useIsNetworkConnected();
 
   useRefetchOnMessage("refresh_subscriptionPage", () => {
     dispatch(subscriptionApi.util.invalidateTags(["subscriptions"]));
@@ -108,6 +112,29 @@ const Subscription = () => {
   useEffect(() => {
     dispatch(setRoute("Subscription"));
   }, []);
+
+  useEffect(() => {
+    if (error?.status === NETWORK_ERROR.FETCH_ERROR && !isConnected) {
+      DisplayAlert(
+        "Error message",
+        "Network Error. Please check your internet connection and try again this action"
+      );
+    }
+    if (error?.status === NETWORK_ERROR.FETCH_ERROR && isConnected) {
+      DisplayAlert(
+        "Error message",
+        "There is a problem within the server side possible maintenance or it crash unexpectedly. We apologize for your inconveniency"
+      );
+    }
+    if (status === "rejected" && error?.status !== NETWORK_ERROR?.FETCH_ERROR) {
+      DisplayAlert("Error message", error?.data?.error?.sqlMessage);
+    }
+    if (status === "fulfilled") {
+      DisplayAlert("Success message", "Payment Uploaded successfully!");
+      removePhoto();
+      setSelectedSubscription("");
+    }
+  }, [status]);
 
   // const handlePayment = () => {
   //   const checkOutDetails: ILineItems[] = [
@@ -181,10 +208,6 @@ const Subscription = () => {
           SubscriptionEntryDate: getCurrentDate(),
         };
         sendPayment(arg);
-
-        DisplayAlert("Success message", "Payment Uploaded successfully!");
-        removePhoto();
-        setSelectedSubscription("");
       },
     });
   };

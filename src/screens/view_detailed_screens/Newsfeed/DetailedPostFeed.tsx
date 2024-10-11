@@ -8,7 +8,7 @@ import {
   useWindowDimensions,
   Dimensions,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useInsertionEffect, useState } from "react";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "store/store";
@@ -20,6 +20,7 @@ import LoadingIndicator from "components/LoadingIndicator";
 import DisplayAlert from "components/CustomAlert";
 import getCurrentDate from "utils/helpers/formatDate";
 import {
+  newsfeedslice,
   useCheckLikePostMutation,
   useGetAllCommentsMutation,
   useLikePostInFeedMutation,
@@ -37,10 +38,16 @@ import { Video, ResizeMode } from "expo-av";
 import { FIREBASE_VIDEO_FORMATS } from "utils/constants/FILE_EXTENSIONS";
 import { getMetadata, ref } from "firebase/storage";
 import { storage } from "global/firebaseConfig";
+import useIsNetworkConnected from "hooks/useIsNetworkConnected";
+import { NETWORK_ERROR } from "utils/enums/Errors";
+import { useRefetchOnMessage } from "hooks/useRefetchOnMessage";
+import { postslice } from "reducers/postReducer";
 const { width, height } = Dimensions.get("window");
 const DetailedPostFeed = () => {
-  const [likePost, { data: likeData, error }] = useLikePostInFeedMutation();
-  const [unLikePost, {}] = useUnlikePostInFeedMutation();
+  const [likePost, { data: likeData, error: likeErr, status: likeStat }] =
+    useLikePostInFeedMutation();
+  const [unLikePost, { error: unlikeErr, status: unlikeStat }] =
+    useUnlikePostInFeedMutation();
   const [notificationLike, {}] = useNotifyLikePostInFeedMutation();
   const [removeNotificationLike, {}] = useRemoveNotificationLikeMutation();
   const [checkPostIsLike, { data: result, isLoading }] =
@@ -48,10 +55,16 @@ const DetailedPostFeed = () => {
   const { data, isError, isFetching, isUninitialized } =
     useGetAccessTokenQuery();
 
-  const { user } = data!;
-
   const [getAllComments, { data: comments, status }] =
     useGetAllCommentsMutation();
+
+  const { user } = data!;
+  useRefetchOnMessage("refresh_post", () => {
+    dispatch(newsfeedslice.util.invalidateTags(["newsfeed"]));
+    dispatch(postslice.util.invalidateTags(["posts"]));
+  });
+
+  const dispatch: AppDispatch = useDispatch();
 
   const [metadata, setMetadata] = useState<string | null>("");
 
@@ -89,6 +102,10 @@ const DetailedPostFeed = () => {
     NotificationDate: getCurrentDate(),
     PostTitle: PostTitle,
   };
+
+  console.log("status", status);
+
+  const { isConnected } = useIsNetworkConnected();
   useEffect(() => {
     checkPostIsLike(arg);
     getAllComments(comment_arg);
@@ -109,25 +126,87 @@ const DetailedPostFeed = () => {
       });
   }, []);
 
+  useEffect(() => {
+    if (likeErr?.status === NETWORK_ERROR.FETCH_ERROR && !isConnected) {
+      DisplayAlert(
+        "Error message",
+        "Network Error. Please check your internet connection and try again this action"
+      );
+    }
+    if (likeErr?.status === NETWORK_ERROR.FETCH_ERROR && isConnected) {
+      DisplayAlert(
+        "Error message",
+        "There is a problem within the server side possible maintenance or it crash unexpectedly. We apologize for your inconveniency"
+      );
+    }
+    if (
+      likeStat === "rejected" &&
+      likeErr?.status !== NETWORK_ERROR?.FETCH_ERROR
+    ) {
+      DisplayAlert("Error message", likeErr?.data?.error?.sqlMessage);
+    }
+    if (likeStat === "fulfilled") {
+      notificationLike(notify_arg);
+      console.log("LIKE POST !", likeErr);
+      console.log("LIKE POST !", likeData);
+      DisplayAlert("Success message", "Like post successfully!");
+      const delayRedirect = async () => {
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        navigation.goBack();
+      };
+      delayRedirect();
+    }
+  }, [likeStat]);
+
+  useEffect(() => {
+    if (unlikeErr?.status === NETWORK_ERROR.FETCH_ERROR && !isConnected) {
+      DisplayAlert(
+        "Error message",
+        "Network Error. Please check your internet connection and try again this action"
+      );
+    }
+    if (unlikeErr?.status === NETWORK_ERROR.FETCH_ERROR && isConnected) {
+      DisplayAlert(
+        "Error message",
+        "There is a problem within the server side possible maintenance or it crash unexpectedly. We apologize for your inconveniency"
+      );
+    }
+    if (
+      unlikeStat === "rejected" &&
+      unlikeErr?.status !== NETWORK_ERROR?.FETCH_ERROR
+    ) {
+      DisplayAlert("Error message", unlikeErr?.data?.error?.sqlMessage);
+    }
+    if (unlikeStat === "fulfilled") {
+      removeNotificationLike({ Username: user.Username, PostID: PostID });
+      DisplayAlert("Success message", "Unlike post successfully");
+      const delayRedirect = async () => {
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        navigation.goBack();
+      };
+      delayRedirect();
+    }
+  }, [unlikeStat]);
+
   const handleUnlike = () => {
     unLikePost(arg);
-    removeNotificationLike({ Username: user.Username, PostID: PostID });
-    DisplayAlert("Success message", "Unlike post successfully");
-    navigation.goBack();
   };
 
   const handleLike = async () => {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
     likePost(arg);
-    notificationLike(notify_arg);
-    console.log("LIKE POST !", error);
-    console.log("LIKE POST !", likeData);
-    DisplayAlert("Success message", "Like post successfully!");
-    navigation.goBack();
   };
   const handleComment = () => {
     navigation.navigate("DetailedScreens", {
       screen: "Comment on Post",
+    });
+  };
+
+  const handlePress = () => {
+    navigation.navigate("DetailedScreens", {
+      screen: "View Image",
+      params: {
+        imageUrl: PostImage,
+      },
     });
   };
 
@@ -141,15 +220,6 @@ const DetailedPostFeed = () => {
   if (status === "pending") {
     return <LoadingIndicator />;
   }
-
-  const handlePress = () => {
-    navigation.navigate("DetailedScreens", {
-      screen: "View Image",
-      params: {
-        imageUrl: PostImage,
-      },
-    });
-  };
 
   return (
     <View style={styles.container}>

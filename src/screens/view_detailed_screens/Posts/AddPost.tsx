@@ -22,6 +22,9 @@ import LoadingIndicator from "components/LoadingIndicator";
 import { IMAGE_VALUES } from "utils/enums/DefaultValues";
 import RichTextEdidor from "components/RichTextEdidor";
 import RichToolBar from "components/RichToolBar";
+import { useKeyboardVisible } from "hooks/useKeyboardVisible";
+import useIsNetworkConnected from "hooks/useIsNetworkConnected";
+import { NETWORK_ERROR } from "utils/enums/Errors";
 
 const AddPost = () => {
   const { data: user } = useGetAccessTokenQuery();
@@ -30,9 +33,12 @@ const AddPost = () => {
   });
   const [modalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [postUser, { data: postResult, status, isError, error }] =
-    useAddPostMutation();
+  const [
+    postUser,
+    { data: postResult, status: postStat, isError, error: postErr },
+  ] = useAddPostMutation();
 
+  const { isKeyboardVisible } = useKeyboardVisible();
   const _editor = createRef();
   const defaultValue = {
     PostTitle: "",
@@ -45,11 +51,44 @@ const AddPost = () => {
     control,
     reset,
     setValue,
-    formState: { isLoading, errors, isSubmitted },
+    formState: { isLoading, errors, isSubmitted, isSubmitting },
   } = useForm<IPost>({
     defaultValues: defaultValue,
     resolver: joiResolver(postSchema),
   });
+
+  const { isConnected } = useIsNetworkConnected();
+
+  useEffect(() => {
+    if (postErr?.status === NETWORK_ERROR.FETCH_ERROR && !isConnected) {
+      DisplayAlert(
+        "Error message",
+        "Network Error. Please check your internet connection and try again this action"
+      );
+    }
+    if (postErr?.status === NETWORK_ERROR.FETCH_ERROR && isConnected) {
+      DisplayAlert(
+        "Error message",
+        "There is a problem within the server side possible maintenance or it crash unexpectedly. We apologize for your inconveniency"
+      );
+    }
+    if (
+      postStat === "rejected" &&
+      postErr?.status !== NETWORK_ERROR?.FETCH_ERROR
+    ) {
+      DisplayAlert("Error message", postErr?.data?.error?.sqlMessage);
+    }
+    if (postStat === "fulfilled") {
+      DisplayAlert("Success message", "Post added successfully!");
+      const delayRedirect = async () => {
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+        navigation.goBack();
+      };
+      delayRedirect();
+      reset();
+      removePhoto();
+    }
+  }, [postStat]);
 
   const onSubmit = async (data: IPost) => {
     const { UserID, FirstName, LastName, Username } = user?.user!;
@@ -87,17 +126,11 @@ const AddPost = () => {
 
     // console.log("post message", result?.[0].NewsfeedID!);
 
-    DisplayAlert("Success message", "Post added successfully!");
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    navigation.goBack();
-    reset();
-    removePhoto();
     console.log("hey", image);
   };
 
   console.log("post res", postResult?.message);
   console.log("post status", postResult?.status);
-  console.log("post err", error);
 
   if (loading) {
     return <LoadingIndicator />;
@@ -178,19 +211,21 @@ const AddPost = () => {
             )}
             name="PostDescription"
           />
+          <DisplayFormError errors={errors.PostDescription} />
         </View>
-
-        <DisplayFormError errors={errors.PostDescription} />
       </ScrollView>
       <View style={{ width: "90%", alignSelf: "center", marginBottom: 10 }}>
+        {!isKeyboardVisible && (
+          <Button
+            disabled={isKeyboardVisible || isSubmitting}
+            title="Confirm"
+            color={"#ff2e00"}
+            onPress={handleSubmit(onSubmit, (error: FieldErrors<IPost>) =>
+              console.log(error)
+            )}
+          />
+        )}
         <RichToolBar _editor={_editor} />
-        <Button
-          title="Confirm"
-          color={"#ff2e00"}
-          onPress={handleSubmit(onSubmit, (error: FieldErrors<IPost>) =>
-            console.log(error)
-          )}
-        />
       </View>
     </View>
   );

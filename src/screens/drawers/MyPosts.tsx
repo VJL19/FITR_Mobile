@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Pressable } from "react-native";
+import { StyleSheet, Text, View, Pressable, Keyboard } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
@@ -94,6 +94,8 @@ const MyPosts = () => {
         />
       </View>
       <FlatList
+        onScrollEndDrag={() => Keyboard.dismiss()}
+        onScrollBeginDrag={() => Keyboard.dismiss()}
         alwaysBounceVertical={true}
         data={queryPost}
         renderItem={({ item }) => <Posts {...item} />}

@@ -1,4 +1,4 @@
-import { FlatList, StyleSheet, Text, View } from "react-native";
+import { FlatList, Keyboard, StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
 import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
@@ -34,6 +34,8 @@ const GymEquipments = () => {
   return (
     <View>
       <FlatList
+        onScrollEndDrag={() => Keyboard.dismiss()}
+        onScrollBeginDrag={() => Keyboard.dismiss()}
         key="_gym_equipments"
         alwaysBounceVertical={true}
         numColumns={2}

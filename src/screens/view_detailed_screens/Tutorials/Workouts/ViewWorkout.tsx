@@ -24,16 +24,22 @@ import LoadingIndicator from "components/LoadingIndicator";
 import DisplayAlert from "components/CustomAlert";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import useIsNetworkConnected from "hooks/useIsNetworkConnected";
+import { NETWORK_ERROR } from "utils/enums/Errors";
 const { width, height } = Dimensions.get("window");
 
 const ViewWorkout = () => {
   const { workout_data } = useSelector((state: RootState) => state.tutorial);
 
   const { data } = useGetAccessTokenQuery();
-  const [addWorkoutFavorite] = useAddWorkoutFavoritesMutation();
-  const [removeWorkoutFavorite] = useRemoveWorkoutFavoriteMutation();
+  const [addWorkoutFavorite, { error: addErr, status: addStat }] =
+    useAddWorkoutFavoritesMutation();
+  const [removeWorkoutFavorite, { error: removeErr, status: removeStat }] =
+    useRemoveWorkoutFavoriteMutation();
   const [checkWorkoutFavorite, { data: workoutFavorite, status }] =
     useCheckWorkoutFavoriteMutation();
+
+  const { isConnected } = useIsNetworkConnected();
 
   const {
     WorkOutID,
@@ -73,13 +79,62 @@ const ViewWorkout = () => {
     return () => navigation.removeListener("blur", stopSpeech);
   }, [navigation]);
 
+  useEffect(() => {
+    if (removeErr?.status === NETWORK_ERROR.FETCH_ERROR && !isConnected) {
+      DisplayAlert(
+        "Error message",
+        "Network Error. Please check your internet connection and try again this action"
+      );
+    }
+    if (removeErr?.status === NETWORK_ERROR.FETCH_ERROR && isConnected) {
+      DisplayAlert(
+        "Error message",
+        "There is a problem within the server side possible maintenance or it crash unexpectedly. We apologize for your inconveniency"
+      );
+    }
+    if (
+      removeStat === "rejected" &&
+      removeErr?.status !== NETWORK_ERROR?.FETCH_ERROR
+    ) {
+      DisplayAlert("Error message", removeErr?.data?.error?.sqlMessage);
+    }
+    if (removeStat === "fulfilled") {
+      checkWorkoutFavorite(arg);
+      DisplayAlert(
+        "Success message",
+        "This workout is successfully added to your favorites!"
+      );
+    }
+  }, [removeStat]);
+  useEffect(() => {
+    if (addErr?.status === NETWORK_ERROR.FETCH_ERROR && !isConnected) {
+      DisplayAlert(
+        "Error message",
+        "Network Error. Please check your internet connection and try again this action"
+      );
+    }
+    if (addErr?.status === NETWORK_ERROR.FETCH_ERROR && isConnected) {
+      DisplayAlert(
+        "Error message",
+        "There is a problem within the server side possible maintenance or it crash unexpectedly. We apologize for your inconveniency"
+      );
+    }
+    if (
+      addStat === "rejected" &&
+      addErr?.status !== NETWORK_ERROR?.FETCH_ERROR
+    ) {
+      DisplayAlert("Error message", addErr?.data?.error?.sqlMessage);
+    }
+    if (addStat === "fulfilled") {
+      checkWorkoutFavorite(arg);
+      DisplayAlert(
+        "Success message",
+        "This workout is successfully added to your favorites!"
+      );
+    }
+  }, [addStat]);
   const handleFavorites = async () => {
     addWorkoutFavorite(arg);
-    checkWorkoutFavorite(arg);
-    DisplayAlert(
-      "Success message",
-      "This workout is successfully added to your favorites!"
-    );
   };
 
   const handleDirectTutorial = () => {
@@ -93,11 +148,6 @@ const ViewWorkout = () => {
 
   const removeFavorites = async () => {
     removeWorkoutFavorite(arg);
-    checkWorkoutFavorite(arg);
-    DisplayAlert(
-      "Success message",
-      "This workout is successfully added to your favorites!"
-    );
   };
 
   useEffect(() => {

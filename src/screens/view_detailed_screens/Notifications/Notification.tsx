@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import { INotifications } from "utils/types/notifications.types";
 import {
   useMarkAsReadNotificationsMutation,
@@ -19,6 +19,8 @@ import avatar from "assets/avatar_default.jpeg";
 import { useNavigation } from "@react-navigation/native";
 import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
 import { useGetAccessTokenQuery } from "reducers/authReducer";
+import useIsNetworkConnected from "hooks/useIsNetworkConnected";
+import { NETWORK_ERROR } from "utils/enums/Errors";
 
 const Notification = ({
   UserID,
@@ -27,13 +29,68 @@ const Notification = ({
   ProfilePic,
   NotificationID,
 }: INotifications) => {
-  const [markReadNotif, { status: readStat, error, data, status, isError }] =
+  const [markReadNotif, { status: readStat, error: readErr, data, isError }] =
     useMarkAsReadNotificationsMutation();
-  const [markUnreadNotif, { status: unreadStat }] =
+  const [markUnreadNotif, { status: unreadStat, error: unreadErr }] =
     useMarkAsUnreadNotificationsMutation();
 
   const { data: user } = useGetAccessTokenQuery();
 
+  const { isConnected } = useIsNetworkConnected();
+
+  console.log("read stat", readStat);
+  useEffect(() => {
+    if (readErr?.status === NETWORK_ERROR.FETCH_ERROR && !isConnected) {
+      DisplayAlert(
+        "Error message",
+        "Network Error. Please check your internet connection and try again this action"
+      );
+    }
+    if (readErr?.status === NETWORK_ERROR.FETCH_ERROR && isConnected) {
+      DisplayAlert(
+        "Error message",
+        "There is a problem within the server side possible maintenance or it crash unexpectedly. We apologize for your inconveniency"
+      );
+    }
+    if (
+      readStat === "rejected" &&
+      readErr?.status !== NETWORK_ERROR?.FETCH_ERROR
+    ) {
+      DisplayAlert("Error message", readErr?.data?.error?.sqlMessage);
+    }
+    if (readStat === "fulfilled") {
+      DisplayAlert(
+        "Success message",
+        "This notification is successfully read!"
+      );
+    }
+  }, [readStat]);
+  useEffect(() => {
+    if (unreadErr?.status === NETWORK_ERROR.FETCH_ERROR && !isConnected) {
+      DisplayAlert(
+        "Error message",
+        "Network Error. Please check your internet connection and try again this action"
+      );
+    }
+    if (unreadErr?.status === NETWORK_ERROR.FETCH_ERROR && isConnected) {
+      DisplayAlert(
+        "Error message",
+        "There is a problem within the server side possible maintenance or it crash unexpectedly. We apologize for your inconveniency"
+      );
+    }
+    if (
+      unreadStat === "rejected" &&
+      unreadErr?.status !== NETWORK_ERROR?.FETCH_ERROR
+    ) {
+      DisplayAlert("Error message", unreadErr?.data?.error?.sqlMessage);
+    }
+    if (unreadStat === "fulfilled") {
+      DisplayAlert(
+        "Success message",
+        "This notification is successfully unread!"
+      );
+    }
+  }, [unreadStat]);
   const navigation = useNavigation<RootStackNavigationProp>();
   const arg = {
     UserID: user?.user?.UserID,
@@ -41,14 +98,9 @@ const Notification = ({
   };
   const handleRead = async () => {
     markReadNotif(arg);
-    DisplayAlert("Success message", "This notification is successfully read!");
   };
   const handleUnread = async () => {
     markUnreadNotif(arg);
-    DisplayAlert(
-      "Success message",
-      "This notification is successfully unread!"
-    );
   };
 
   console.log("markReadNotif data", data);

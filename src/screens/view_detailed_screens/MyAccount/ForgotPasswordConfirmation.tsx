@@ -25,6 +25,8 @@ import { IOTP } from "utils/types/form.types";
 import { otpSchema } from "utils/validations";
 import DisplayAlert from "components/CustomAlert";
 import { OtpInput } from "react-native-otp-entry";
+import useIsNetworkConnected from "hooks/useIsNetworkConnected";
+import { NETWORK_ERROR } from "utils/enums/Errors";
 
 const ForgotPasswordConfirmation = () => {
   const [timer, setTimer] = useState(60 * 2);
@@ -41,6 +43,8 @@ const ForgotPasswordConfirmation = () => {
   const seconds = String(timer % 60).padStart(2, 0);
   const minutes = String(Math.floor(timer / 60)).padStart(2, 0);
 
+  const { isConnected } = useIsNetworkConnected();
+
   const {
     control,
     handleSubmit,
@@ -53,8 +57,26 @@ const ForgotPasswordConfirmation = () => {
   });
 
   useEffect(() => {
+    if (error?.status === NETWORK_ERROR.FETCH_ERROR && !isConnected) {
+      DisplayAlert(
+        "Error message",
+        "Network Error. Please check your internet connection and try again this action"
+      );
+    }
+    if (error?.status === NETWORK_ERROR.FETCH_ERROR && isConnected) {
+      DisplayAlert(
+        "Error message",
+        "There is a problem within the server side possible maintenance or it crash unexpectedly. We apologize for your inconveniency"
+      );
+    }
+
+    if (status === "rejected" && error?.status !== NETWORK_ERROR.FETCH_ERROR) {
+      DisplayAlert("Error message", error?.data?.error?.sqlMessage);
+    }
     if (status === "fulfilled") {
       dispatch(setOTPToken(data?.code));
+      setTimer(60 * 2);
+      isValid(true);
     }
   }, [status]);
 
@@ -100,8 +122,6 @@ const ForgotPasswordConfirmation = () => {
 
   const handleResend = () => {
     forgotPassword({ Email: Email });
-    setTimer(60 * 2);
-    isValid(true);
   };
   return (
     <View style={styles.container}>

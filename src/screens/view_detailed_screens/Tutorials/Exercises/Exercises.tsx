@@ -1,5 +1,6 @@
 import {
   FlatList,
+  Keyboard,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -118,6 +119,8 @@ const Exercises = () => {
       </View>
 
       <FlatList
+        onScrollEndDrag={() => Keyboard.dismiss()}
+        onScrollBeginDrag={() => Keyboard.dismiss()}
         key="exercises_"
         numColumns={2}
         alwaysBounceVertical={true}

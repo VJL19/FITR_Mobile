@@ -29,6 +29,9 @@ import { otpSchema } from "utils/validations";
 import DisplayAlert from "components/CustomAlert";
 import * as SecureStore from "expo-secure-store";
 import { OtpInput } from "react-native-otp-entry";
+import LoadingIndicator from "components/LoadingIndicator";
+import useIsNetworkConnected from "hooks/useIsNetworkConnected";
+import { NETWORK_ERROR } from "utils/enums/Errors";
 
 const RegistrationConfirmation = () => {
   const [timer, setTimer] = useState(60 * 2);
@@ -40,11 +43,13 @@ const RegistrationConfirmation = () => {
     { data: emailCode, status: emailStat, error: emailErr },
   ] = useSendEmailMutation();
 
-  const [activateAccount, { status: activateStatus }] =
+  const [activateAccount, { status: activateStatus, error: activateErr }] =
     useActivateUserAccountMutation();
 
-  const [loginUser, { res: loginRes, data: loginData, status }] =
-    useLoginUserMutation();
+  const [
+    loginUser,
+    { res: loginRes, data: loginData, status, error: loginErr },
+  ] = useLoginUserMutation();
 
   const { OTPToken } = useSelector((state: RootState) => state.authReducer);
   const { Email } = useSelector(
@@ -54,6 +59,8 @@ const RegistrationConfirmation = () => {
   const accessToken = useSelector(
     (state: RootState) => state.authReducer.accessToken
   );
+
+  const { isConnected } = useIsNetworkConnected();
 
   const email2 = useSelector((state: RootState) => state.authReducer.email);
   const navigation = useNavigation<RootStackNavigationProp>();
@@ -87,18 +94,74 @@ const RegistrationConfirmation = () => {
   }, []);
 
   useEffect(() => {
+    if (emailErr?.status === NETWORK_ERROR.FETCH_ERROR && !isConnected) {
+      DisplayAlert(
+        "Error message",
+        "Network Error. Please check your internet connection and try again this action"
+      );
+    }
+    if (emailErr?.status === NETWORK_ERROR.FETCH_ERROR && isConnected) {
+      DisplayAlert(
+        "Error message",
+        "There is a problem within the server side possible maintenance or it crash unexpectedly. We apologize for your inconveniency"
+      );
+    }
+    if (
+      emailStat === "rejected" &&
+      emailErr?.status !== NETWORK_ERROR?.FETCH_ERROR
+    ) {
+      DisplayAlert("Error message", emailErr?.data?.details);
+    }
     if (emailStat === "fulfilled") {
       dispatch(setOTPToken(emailCode?.code));
+      setTimer(60 * 2);
+      isValid(true);
     }
   }, [emailStat]);
 
   useEffect(() => {
+    if (activateErr?.status === NETWORK_ERROR.FETCH_ERROR && !isConnected) {
+      DisplayAlert(
+        "Error message",
+        "Network Error. Please check your internet connection and try again this action"
+      );
+    }
+    if (activateErr?.status === NETWORK_ERROR.FETCH_ERROR && isConnected) {
+      DisplayAlert(
+        "Error message",
+        "There is a problem within the server side possible maintenance or it crash unexpectedly. We apologize for your inconveniency"
+      );
+    }
+    if (
+      activateStatus === "rejected" &&
+      activateErr?.status !== NETWORK_ERROR?.FETCH_ERROR
+    ) {
+      DisplayAlert("Error message", activateErr?.data?.details);
+    }
     if (activateStatus === "fulfilled") {
       loginUser({ Username: username, Password: password });
     }
   }, [activateStatus]);
 
   useEffect(() => {
+    if (loginErr?.status === NETWORK_ERROR.FETCH_ERROR && !isConnected) {
+      DisplayAlert(
+        "Error message",
+        "Network Error. Please check your internet connection and try again this action"
+      );
+    }
+    if (loginErr?.status === NETWORK_ERROR.FETCH_ERROR && isConnected) {
+      DisplayAlert(
+        "Error message",
+        "There is a problem within the server side possible maintenance or it crash unexpectedly. We apologize for your inconveniency"
+      );
+    }
+    if (
+      status === "rejected" &&
+      loginErr?.status !== NETWORK_ERROR?.FETCH_ERROR
+    ) {
+      DisplayAlert("Error message", loginErr?.data?.details);
+    }
     if (status === "fulfilled") {
       const setTokenAsync = async () => {
         await SecureStore.setItemAsync("accessToken", loginData?.accessToken!);
@@ -159,9 +222,13 @@ const RegistrationConfirmation = () => {
 
   const handleResend = () => {
     sendOTPEmail({ Email: Email || email2 });
-    setTimer(60 * 2);
-    isValid(true);
   };
+
+  console.log("user current emails", Email);
+
+  if (emailStat === "pending") {
+    return <LoadingIndicator />;
+  }
   return (
     <View style={styles.container}>
       <Text style={styles.title}>

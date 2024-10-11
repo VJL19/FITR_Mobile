@@ -27,6 +27,9 @@ import LoadingIndicator from "components/LoadingIndicator";
 import { useCreateUserProgramMutation } from "reducers/programReducer";
 import RichTextEdidor from "components/RichTextEdidor";
 import RichToolBar from "components/RichToolBar";
+import { useKeyboardVisible } from "hooks/useKeyboardVisible";
+import useIsNetworkConnected from "hooks/useIsNetworkConnected";
+import { NETWORK_ERROR } from "utils/enums/Errors";
 
 const AddProgram = () => {
   const {
@@ -36,8 +39,11 @@ const AddProgram = () => {
     isUninitialized,
   } = useGetAccessTokenQuery();
 
-  const [addProgram, { data: programRes, isError: errPro, error }] =
-    useCreateUserProgramMutation();
+  const { isKeyboardVisible } = useKeyboardVisible();
+  const [
+    addProgram,
+    { data: programRes, error: programErr, status: programStat },
+  ] = useCreateUserProgramMutation();
 
   const defaultValue = {
     UserID: 0,
@@ -54,12 +60,45 @@ const AddProgram = () => {
     reset,
     getValues,
     setValue,
-    formState: { isLoading, errors, isSubmitted },
+    formState: { isLoading, errors, isSubmitted, isSubmitting },
   } = useForm<IProgram>({
     defaultValues: defaultValue,
     resolver: joiResolver(programSchema),
   });
   const { UserID, FirstName, LastName, Username } = user?.user!;
+
+  const { isConnected } = useIsNetworkConnected();
+
+  useEffect(() => {
+    if (programErr?.status === NETWORK_ERROR.FETCH_ERROR && !isConnected) {
+      DisplayAlert(
+        "Error message",
+        "Network Error. Please check your internet connection and try again this action"
+      );
+    }
+    if (programErr?.status === NETWORK_ERROR.FETCH_ERROR && isConnected) {
+      DisplayAlert(
+        "Error message",
+        "There is a problem within the server side possible maintenance or it crash unexpectedly. We apologize for your inconveniency"
+      );
+    }
+    if (
+      programStat === "rejected" &&
+      programErr?.status !== NETWORK_ERROR?.FETCH_ERROR
+    ) {
+      DisplayAlert("Error message", programErr?.data?.error?.sqlMessage);
+    }
+    if (programStat === "fulfilled") {
+      DisplayAlert("Success message", "Program added successfully!");
+      const delayRedirect = async () => {
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+        navigation.goBack();
+      };
+      delayRedirect();
+      reset();
+    }
+  }, [programStat]);
+
   useEffect(() => {
     setValue("UserID", UserID);
     console.log("UserID", UserID);
@@ -81,13 +120,8 @@ const AddProgram = () => {
     // console.log("post message", result?.[0].NewsfeedID!);
 
     console.log(data.ProgramDescription);
-    DisplayAlert("Success message", "Program added successfully!");
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    navigation.goBack();
-    reset();
   };
   console.log("add pressed", programRes);
-  console.log("error", error);
   // if (isError) {
   //   return (
   //     <View>
@@ -159,13 +193,16 @@ const AddProgram = () => {
       </ScrollView>
       <View style={{ width: "90%", alignSelf: "center", bottom: 10 }}>
         <RichToolBar _editor={_editor} />
-        <Button
-          title="Confirm"
-          color={"#ff2e00"}
-          onPress={handleSubmit(onSubmit, (error: FieldErrors<IProgram>) =>
-            console.log("err", error)
-          )}
-        />
+        {!isKeyboardVisible && (
+          <Button
+            disabled={isKeyboardVisible || isSubmitting}
+            title="Confirm"
+            color={"#ff2e00"}
+            onPress={handleSubmit(onSubmit, (error: FieldErrors<IProgram>) =>
+              console.log("err", error)
+            )}
+          />
+        )}
       </View>
     </View>
   );

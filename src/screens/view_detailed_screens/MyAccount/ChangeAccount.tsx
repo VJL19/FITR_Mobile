@@ -5,13 +5,11 @@ import {
   View,
   Image,
   Button,
-  Alert,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import CustomTextInput from "components/CustomTextInput";
 import DisplayFormError from "components/DisplayFormError";
-import Ionicon from "react-native-vector-icons/Ionicons";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { IChangeAccount } from "utils/types/user.types";
 import { myAccountSchema } from "utils/validations";
@@ -20,11 +18,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "store/store";
 import * as ImagePicker from "expo-image-picker";
 import avatar from "assets/avatar_default.jpeg";
-import uploadImageAction from "actions/uploadImageAction";
 import {
   ref,
-  uploadBytesResumable,
-  getDownloadURL,
   deleteObject,
 } from "firebase/storage";
 import { storage } from "global/firebaseConfig";
@@ -35,7 +30,7 @@ import {
   useLoginUserMutation,
 } from "reducers/authReducer";
 import DisplayAlert from "components/CustomAlert";
-import { useNavigation } from "@react-navigation/native";
+import { CommonActions, useNavigation } from "@react-navigation/native";
 import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
 import * as SecureStore from "expo-secure-store";
 import LoadingIndicator from "components/LoadingIndicator";
@@ -44,6 +39,11 @@ import { useCameraFns } from "utils/helpers/useCameraFns";
 import CustomError from "components/CustomError";
 import { uploadImage } from "utils/helpers/uploadImage";
 import { IMAGE_VALUES } from "utils/enums/DefaultValues";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import { TextInput } from "react-native-paper";
+import useIsNetworkConnected from "hooks/useIsNetworkConnected";
+import { NETWORK_ERROR } from "utils/enums/Errors";
 
 const initialState: IChangeAccount = {
   Username: "",
@@ -64,11 +64,12 @@ const ChangeAccount = () => {
   const [loading, setLoading] = useState(false);
 
   const { data: user, isError, refetch } = useGetAccessTokenQuery();
-  const [
-    changeAccount,
-    { error, data: dataChangeAcc, status, isError: isChangeErr },
-  ] = useChangeAccountMutation();
+  const [changeAccount, { error, data: dataChangeAcc, status }] =
+    useChangeAccountMutation();
   const navigation = useNavigation<RootStackNavigationProp>();
+  const [isPasswordSecure, setIsPasswordSecure] = useState(true);
+  const [isConfirmPasswordSecure, setIsConfirmPasswordSecure] = useState(true);
+
   const {
     handleSubmit,
     reset,
@@ -78,6 +79,8 @@ const ChangeAccount = () => {
     defaultValues: initialState,
     resolver: joiResolver(myAccountSchema),
   });
+
+  const { isConnected } = useIsNetworkConnected();
 
   // const {
   //   message,
@@ -94,7 +97,34 @@ const ChangeAccount = () => {
     // if (status === "rejected" && isSubmitted) {
     //   DisplayAlert("Error, message", error?.data?.error?.sqlMessage);
     // }
+
+    if (error?.status === NETWORK_ERROR.FETCH_ERROR && !isConnected) {
+      DisplayAlert(
+        "Error message",
+        "Network Error. Please check your internet connection and try again this action"
+      );
+    }
+    if (error?.status === NETWORK_ERROR.FETCH_ERROR && isConnected) {
+      DisplayAlert(
+        "Error message",
+        "There is a problem within the server side possible maintenance or it crash unexpectedly. We apologize for your inconveniency"
+      );
+    }
+    if (status === "rejected" && error?.status !== NETWORK_ERROR?.FETCH_ERROR) {
+      DisplayAlert("Error, message", error?.data?.error?.sqlMessage);
+    }
     if (status === "fulfilled" && isSubmitted) {
+      let imageRef = ref(storage, user?.user?.ProfilePic);
+
+      try {
+        const deleteImage = async () => {
+          await deleteObject(imageRef);
+        };
+        deleteImage();
+        console.log("success");
+      } catch (err) {
+        console.log("there was an error in deleting an image");
+      }
       dispatch(setToken(dataChangeAcc?.accessToken));
       const setTokenAsync = async () => {
         await SecureStore.setItemAsync(
@@ -104,18 +134,22 @@ const ChangeAccount = () => {
       };
       setTokenAsync();
       DisplayAlert("Success message", dataChangeAcc?.message);
+
+      const delayRedirect = async () => {
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+        const resetAction = CommonActions.reset({
+          index: 0,
+          routes: [{ name: "DashboardScreen" }],
+        });
+        navigation.dispatch(resetAction);
+      };
+      delayRedirect();
+      refetch();
+      reset();
     }
   }, [status, dataChangeAcc?.message]);
 
   const onSubmit = async (data: IChangeAccount) => {
-    let imageRef = ref(storage, user?.user?.ProfilePic);
-
-    try {
-      await deleteObject(imageRef);
-      console.log("success");
-    } catch (err) {
-      console.log("there was an error in deleting an image");
-    }
     const url = await uploadImage(
       image,
       "ProfilePics",
@@ -138,24 +172,7 @@ const ChangeAccount = () => {
       SubscriptionType: user?.user?.SubscriptionType,
     };
     changeAccount(arg);
-    if (status === "fulfilled" && isSubmitted) {
-      dispatch(setToken(dataChangeAcc?.accessToken));
-      const setTokenAsync = async () => {
-        await SecureStore.setItemAsync(
-          "accessToken",
-          dataChangeAcc?.accessToken!
-        );
-      };
-      setTokenAsync();
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      DisplayAlert("Success message", dataChangeAcc?.message);
-      navigation.navigate("DashboardScreen");
-    }
 
-    if (status === "rejected" && isSubmitted) {
-      DisplayAlert("Error, message", error?.data?.error?.sqlMessage);
-    }
-    refetch();
     // navigation.popToTop();
   };
   console.log("form", isSubmitted);
@@ -216,6 +233,7 @@ const ChangeAccount = () => {
   if (isError) {
     return <CustomError />;
   }
+
   return (
     <View style={{ flex: 1 }}>
       <ScrollView>
@@ -287,13 +305,43 @@ const ChangeAccount = () => {
             <Controller
               control={control}
               render={({ field: { onChange, onBlur, value } }) => (
-                <CustomTextInput
-                  secureTextEntry={true}
-                  error={errors.Password}
+                <TextInput
+                  secureTextEntry={isPasswordSecure}
+                  left={
+                    <TextInput.Icon
+                      icon={() => (
+                        <Ionicons name={"lock-closed-outline"} size={28} />
+                      )}
+                    />
+                  }
+                  right={
+                    <TextInput.Icon
+                      icon={() => (
+                        <MaterialCommunityIcons
+                          name={isPasswordSecure ? "eye-off" : "eye"}
+                          size={28}
+                        />
+                      )}
+                      onPress={() => {
+                        isPasswordSecure
+                          ? setIsPasswordSecure(false)
+                          : setIsPasswordSecure(true);
+                      }}
+                    />
+                  }
+                  style={{
+                    marginTop: 20,
+                    backgroundColor: "#f5f5f5",
+                    height: 55,
+                  }}
+                  onChangeText={onChange}
                   onBlur={onBlur}
-                  onChange={onChange}
                   value={value}
-                  placeholder="Enter your Password"
+                  label={"Password"}
+                  placeholderTextColor={"#ccc"}
+                  mode="outlined"
+                  underlineColorAndroid="transparent"
+                  error={errors.Password && true}
                 />
               )}
               name="Password"
@@ -303,13 +351,43 @@ const ChangeAccount = () => {
             <Controller
               control={control}
               render={({ field: { onChange, onBlur, value } }) => (
-                <CustomTextInput
-                  secureTextEntry={true}
-                  error={errors.ConfirmPassword}
+                <TextInput
+                  secureTextEntry={isConfirmPasswordSecure}
+                  left={
+                    <TextInput.Icon
+                      icon={() => (
+                        <Ionicons name={"lock-closed-outline"} size={28} />
+                      )}
+                    />
+                  }
+                  right={
+                    <TextInput.Icon
+                      icon={() => (
+                        <MaterialCommunityIcons
+                          name={isConfirmPasswordSecure ? "eye-off" : "eye"}
+                          size={28}
+                        />
+                      )}
+                      onPress={() => {
+                        isConfirmPasswordSecure
+                          ? setIsConfirmPasswordSecure(false)
+                          : setIsConfirmPasswordSecure(true);
+                      }}
+                    />
+                  }
+                  style={{
+                    marginTop: 20,
+                    backgroundColor: "#f5f5f5",
+                    height: 55,
+                  }}
+                  onChangeText={onChange}
                   onBlur={onBlur}
-                  onChange={onChange}
                   value={value}
-                  placeholder="Enter your ConfirmPassword"
+                  label={"Confirm Password"}
+                  placeholderTextColor={"#ccc"}
+                  mode="outlined"
+                  underlineColorAndroid="transparent"
+                  error={errors.Password && true}
                 />
               )}
               name="ConfirmPassword"
@@ -321,6 +399,7 @@ const ChangeAccount = () => {
       <View style={{ width: "95%", alignSelf: "center", marginBottom: 15 }}>
         <Button
           title="Save info"
+          color="#ff2e00"
           onPress={handleSubmit(onSubmit, (error) =>
             console.log("error", error)
           )}

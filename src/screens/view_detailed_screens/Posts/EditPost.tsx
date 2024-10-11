@@ -34,12 +34,16 @@ import { deleteObject, getMetadata, ref } from "firebase/storage";
 import { storage } from "global/firebaseConfig";
 import { Video, ResizeMode } from "expo-av";
 import { FIREBASE_VIDEO_FORMATS } from "utils/constants/FILE_EXTENSIONS";
+import { useKeyboardVisible } from "hooks/useKeyboardVisible";
+import useIsNetworkConnected from "hooks/useIsNetworkConnected";
+import { NETWORK_ERROR } from "utils/enums/Errors";
 
 const EditPost = () => {
   const { PostTitle, PostImage, PostDescription, PostID } = useSelector(
     (state: RootState) => state.post.postData
   );
 
+  const { isKeyboardVisible } = useKeyboardVisible();
   const metadata = useSelector((state: RootState) => state.post.metadata);
   const { image, pickImage, pickCameraImage, removePhoto, setImage } =
     useCameraFns({ allowsEditing: true });
@@ -53,14 +57,15 @@ const EditPost = () => {
     PostTitle: "",
     PostDescription: "",
   };
-  const [editPost, { data: editResult }] = useEditPostMutation();
+  const [editPost, { data: editResult, error: postErr, status }] =
+    useEditPostMutation();
 
   const {
     handleSubmit,
     control,
     reset,
     setValue,
-    formState: { isLoading, errors, isSubmitted },
+    formState: { isLoading, errors, isSubmitted, isSubmitting },
   } = useForm<IPost>({
     defaultValues: defaultValue,
     resolver: joiResolver(postSchema),
@@ -75,6 +80,45 @@ const EditPost = () => {
   }, []);
 
   const mediaRef = ref(storage, PostImage);
+
+  const { isConnected } = useIsNetworkConnected();
+
+  useEffect(() => {
+    if (postErr?.status === NETWORK_ERROR.FETCH_ERROR && !isConnected) {
+      DisplayAlert(
+        "Error message",
+        "Network Error. Please check your internet connection and try again this action"
+      );
+    }
+    if (postErr?.status === NETWORK_ERROR.FETCH_ERROR && isConnected) {
+      DisplayAlert(
+        "Error message",
+        "There is a problem within the server side possible maintenance or it crash unexpectedly. We apologize for your inconveniency"
+      );
+    }
+    if (
+      status === "rejected" &&
+      postErr?.status !== NETWORK_ERROR?.FETCH_ERROR
+    ) {
+      DisplayAlert("Error message", postErr?.data?.error?.sqlMessage);
+    }
+    if (status === "fulfilled") {
+      try {
+        let imageRef = ref(storage, PostImage);
+
+        const deleteImage = async () => {
+          await deleteObject(imageRef);
+          console.log("success deleting an image");
+        };
+        deleteImage();
+        DisplayAlert("Success message", "Post edited successfully!");
+        navigation.navigate("DashboardScreen");
+        reset();
+      } catch (err) {
+        console.log("there was an error in deleting an image", err);
+      }
+    }
+  }, [status]);
 
   useEffect(() => {
     if (PostImage === IMAGE_VALUES.DEFAULT) {
@@ -91,14 +135,6 @@ const EditPost = () => {
   const onSubmit = async (data: IPost) => {
     const { UserID, FirstName, LastName, Username } = user?.user!;
 
-    let imageRef = ref(storage, PostImage);
-
-    try {
-      await deleteObject(imageRef);
-      console.log("success");
-    } catch (err) {
-      console.log("there was an error in deleting an image");
-    }
     const url = await uploadImage(
       image,
       "Posts/",
@@ -133,15 +169,12 @@ const EditPost = () => {
 
     console.log("edit pressed", editResult?.message);
     // console.log("post message", result?.[0].NewsfeedID!);
-
-    DisplayAlert("Success message", "Post edited successfully!");
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    navigation.navigate("DashboardScreen");
-    reset();
   };
   if (isError) {
     return <CustomError />;
   }
+
+  console.log("edit status", status);
 
   return (
     <View style={{ flex: 1 }}>
@@ -228,20 +261,22 @@ const EditPost = () => {
             )}
             name="PostDescription"
           />
+          <DisplayFormError errors={errors.PostDescription} />
         </View>
-
-        <DisplayFormError errors={errors.PostDescription} />
       </ScrollView>
       <View style={{ width: "95%", alignSelf: "center", marginBottom: 15 }}>
         <RichToolBar _editor={_editor} />
 
-        <Button
-          title="Proceed"
-          color={"#ff2e00"}
-          onPress={handleSubmit(onSubmit, (error: FieldErrors<IPost>) =>
-            console.log(error)
-          )}
-        />
+        {!isKeyboardVisible && (
+          <Button
+            disabled={isKeyboardVisible || isSubmitting}
+            title="Proceed"
+            color={"#ff2e00"}
+            onPress={handleSubmit(onSubmit, (error: FieldErrors<IPost>) =>
+              console.log(error)
+            )}
+          />
+        )}
       </View>
     </View>
   );

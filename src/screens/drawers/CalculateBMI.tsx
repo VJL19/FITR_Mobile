@@ -53,6 +53,8 @@ const CalculateBMI = () => {
     { id: "2", label: "Female", value: "2" },
   ];
 
+  console.log("calculate bmi", data);
+
   useEffect(() => {
     dispatch(setRoute("Calculate BMI"));
     setValue("Height", data?.user?.Height?.toString()!);

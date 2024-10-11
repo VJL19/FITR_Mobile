@@ -19,9 +19,10 @@ import Ionicon from "react-native-vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
 import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
 import LoadingIndicator from "components/LoadingIndicator";
-import { useGetAccessTokenQuery } from "reducers/authReducer";
+import { authslice, useGetAccessTokenQuery } from "reducers/authReducer";
 import CustomError from "components/CustomError";
 import { IMAGE_VALUES } from "utils/enums/DefaultValues";
+import { useRefetchOnMessage } from "hooks/useRefetchOnMessage";
 const { width, height } = Dimensions.get("window");
 const MyAccount = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -31,13 +32,16 @@ const MyAccount = () => {
 
   const navigation = useNavigation<RootStackNavigationProp>();
   const [image, setImage] = useState<string | undefined>();
+
+  useRefetchOnMessage("refresh_user", () => {
+    dispatch(authslice.util.invalidateTags(["auth"]));
+  });
   useEffect(() => {
     dispatch(setRoute("My Account"));
   }, []);
 
   if (isFetching || isUninitialized) {
     return <LoadingIndicator />;
-    976;
   }
   if (isError) {
     return <CustomError />;
@@ -88,6 +92,7 @@ const MyAccount = () => {
       </ScrollView>
       <View style={{ width: "90%" }}>
         <Button
+          color="#ff2e00"
           title="Change account"
           onPress={() =>
             navigation.navigate("DetailedScreens", { screen: "Change Account" })

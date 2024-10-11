@@ -38,12 +38,15 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { TextInput } from "react-native-paper";
 import LoadingIndicator from "components/LoadingIndicator";
 import { deleteItemStorage } from "utils/helpers/AsyncStorage";
-import { NETWORK_ERR } from "utils/enums/Errors";
+import { NETWORK_ERROR } from "utils/enums/Errors";
+import useIsNetworkConnected from "hooks/useIsNetworkConnected";
 
 const { width, height } = Dimensions.get("window");
 const SignInScreen = () => {
   const navigation = useNavigation<RootStackNavigationProp>();
   const [isPasswordSecure, setIsPasswordSecure] = useState(true);
+
+  const { isConnected } = useIsNetworkConnected();
 
   const defaultValue = {
     Username: "",
@@ -67,7 +70,7 @@ const SignInScreen = () => {
     resolver: joiResolver(loginSchema),
   });
 
-  // console.log("status", status);
+  console.log("net status", isConnected);
   // console.log("message", message);
   const onSubmit = async (data: ILoginForm) => {
     // console.log("in sign in screen", data);
@@ -106,13 +109,20 @@ const SignInScreen = () => {
     if (error?.data?.status === 401) {
       sendOTPEmail({ Email: error?.data?.email });
     }
-    if (error?.status === NETWORK_ERR.FETCH_ERROR && isSubmitted) {
+
+    if (error?.status === NETWORK_ERROR.FETCH_ERROR && !isConnected) {
       DisplayAlert(
         "Error message",
         "Network Error. Please check your internet connection and try again this action"
       );
     }
-    if (status === "rejected" && error?.status !== NETWORK_ERR.FETCH_ERROR) {
+    if (error?.status === NETWORK_ERROR.FETCH_ERROR && isConnected) {
+      DisplayAlert(
+        "Error message",
+        "There is a problem within the server side possible maintenance or it crash unexpectedly. We apologize for your inconveniency"
+      );
+    }
+    if (status === "rejected" && error?.status !== NETWORK_ERROR.FETCH_ERROR) {
       DisplayAlert("Error message", error?.data?.details);
     }
     if (status === "fulfilled" && isSubmitted) {

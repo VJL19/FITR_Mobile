@@ -24,14 +24,18 @@ import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import DisplayAlert from "components/CustomAlert";
 import LoadingIndicator from "components/LoadingIndicator";
+import useIsNetworkConnected from "hooks/useIsNetworkConnected";
+import { NETWORK_ERROR } from "utils/enums/Errors";
 
 const { width, height } = Dimensions.get("window");
 const ViewExercise = () => {
   const { exercise_data } = useSelector((state: RootState) => state.tutorial);
 
   const { data } = useGetAccessTokenQuery();
-  const [addExerciseFavorite] = useAddExerciseFavoritesMutation();
-  const [removeExerciseFavorite] = useRemoveExerciseFavoriteMutation();
+  const [addExerciseFavorite, { status: addStat, error: addErr }] =
+    useAddExerciseFavoritesMutation();
+  const [removeExerciseFavorite, { status: removeStat, error: removeErr }] =
+    useRemoveExerciseFavoriteMutation();
   const [checkExerciseFavorite, { data: exerciseFavorite, status }] =
     useCheckExerciseFavoriteMutation();
   const {
@@ -45,7 +49,7 @@ const ViewExercise = () => {
   } = exercise_data;
 
   const navigation = useNavigation<RootStackNavigationProp>();
-
+  const { isConnected } = useIsNetworkConnected();
   const handlePress = () => {
     navigation.navigate("DetailedScreens", {
       screen: "View Image",
@@ -72,17 +76,68 @@ const ViewExercise = () => {
     return () => navigation.removeListener("blur", stopSpeech);
   }, [navigation]);
 
+  useEffect(() => {
+    if (removeErr?.status === NETWORK_ERROR.FETCH_ERROR && !isConnected) {
+      DisplayAlert(
+        "Error message",
+        "Network Error. Please check your internet connection and try again this action"
+      );
+    }
+    if (removeErr?.status === NETWORK_ERROR.FETCH_ERROR && isConnected) {
+      DisplayAlert(
+        "Error message",
+        "There is a problem within the server side possible maintenance or it crash unexpectedly. We apologize for your inconveniency"
+      );
+    }
+    if (
+      removeStat === "rejected" &&
+      removeErr?.status !== NETWORK_ERROR?.FETCH_ERROR
+    ) {
+      DisplayAlert("Error message", removeErr?.data?.error?.sqlMessage);
+    }
+    if (removeStat === "fulfilled") {
+      checkExerciseFavorite(arg);
+      DisplayAlert(
+        "Success message",
+        "This exercise is successfully removed to your favorites!"
+      );
+    }
+  }, [removeStat]);
+
+  useEffect(() => {
+    if (addErr?.status === NETWORK_ERROR.FETCH_ERROR && !isConnected) {
+      DisplayAlert(
+        "Error message",
+        "Network Error. Please check your internet connection and try again this action"
+      );
+    }
+    if (addErr?.status === NETWORK_ERROR.FETCH_ERROR && isConnected) {
+      DisplayAlert(
+        "Error message",
+        "There is a problem within the server side possible maintenance or it crash unexpectedly. We apologize for your inconveniency"
+      );
+    }
+    if (
+      addStat === "rejected" &&
+      addErr?.status !== NETWORK_ERROR?.FETCH_ERROR
+    ) {
+      DisplayAlert("Error message", addErr?.data?.error?.sqlMessage);
+    }
+    if (addStat === "fulfilled") {
+      checkExerciseFavorite(arg);
+      DisplayAlert(
+        "Success message",
+        "This exercise is successfully added to your favorites!"
+      );
+    }
+  }, [addStat]);
+
   const handleSpeak = () => {
     Speech.speak(ExerciseExplanation, { language: "en-US" });
   };
 
   const handleFavorites = async () => {
     addExerciseFavorite(arg);
-    checkExerciseFavorite(arg);
-    DisplayAlert(
-      "Success message",
-      "This exercise is successfully added to your favorites!"
-    );
   };
 
   const handleDirectTutorial = () => {
@@ -96,11 +151,6 @@ const ViewExercise = () => {
 
   const removeFavorites = async () => {
     removeExerciseFavorite(arg);
-    checkExerciseFavorite(arg);
-    DisplayAlert(
-      "Success message",
-      "This exercise is successfully removed to your favorites!"
-    );
   };
 
   if (status === "pending") {

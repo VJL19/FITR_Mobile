@@ -33,6 +33,8 @@ import { storage } from "global/firebaseConfig";
 import { deleteObject, getMetadata, ref } from "firebase/storage";
 import { ResizeMode, Video } from "expo-av";
 import { FIREBASE_VIDEO_FORMATS } from "utils/constants/FILE_EXTENSIONS";
+import useIsNetworkConnected from "hooks/useIsNetworkConnected";
+import { NETWORK_ERROR } from "utils/enums/Errors";
 const { width, height } = Dimensions.get("window");
 const ViewPost = () => {
   const {
@@ -49,7 +51,8 @@ const ViewPost = () => {
   const { postData } = useSelector((state: RootState) => state.post);
   const [metadata, setMetadata] = useState<string | null>("");
 
-  const [deletePost, { data }] = useDeletePostsMutation();
+  const [deletePost, { data, status: deleteStat, error: deleteErr }] =
+    useDeletePostsMutation();
   const [deletePostFeed, { data: feedData, status }] =
     useDeletePostInFeedMutation();
 
@@ -66,6 +69,7 @@ const ViewPost = () => {
     PostTitle,
   } = postData;
 
+  const { isConnected } = useIsNetworkConnected();
   const navigation = useNavigation<RootStackNavigationProp>();
   const { width } = useWindowDimensions();
   const html = `${PostDescription}`;
@@ -91,16 +95,45 @@ const ViewPost = () => {
       },
     });
   };
+  useEffect(() => {
+    if (deleteErr?.status === NETWORK_ERROR.FETCH_ERROR && !isConnected) {
+      DisplayAlert(
+        "Error message",
+        "Network Error. Please check your internet connection and try again this action"
+      );
+    }
+    if (deleteErr?.status === NETWORK_ERROR.FETCH_ERROR && isConnected) {
+      DisplayAlert(
+        "Error message",
+        "There is a problem within the server side possible maintenance or it crash unexpectedly. We apologize for your inconveniency"
+      );
+    }
+    if (
+      deleteStat === "rejected" &&
+      deleteErr?.status !== NETWORK_ERROR?.FETCH_ERROR
+    ) {
+      DisplayAlert("Error message", deleteErr?.data?.error?.sqlMessage);
+    }
+    if (deleteStat === "fulfilled") {
+      try {
+        let imageRef = ref(storage, PostImage);
+        const deleteImage = async () => {
+          await deleteObject(imageRef);
+          await new Promise((resolve) => setTimeout(resolve, 1500));
+          console.log("success deleting an image");
+          console.log("delete in feed", status);
+          console.log("delete in feed", feedData);
+        };
+        deleteImage();
+        DisplayAlert("Success message", "Post deleted successfully!");
+        navigation.goBack();
+      } catch (err) {
+        console.log("there was an error in deleting an image", err);
+      }
+    }
+  }, [deleteStat]);
 
   const handleDelete = async () => {
-    let imageRef = ref(storage, PostImage);
-
-    try {
-      await deleteObject(imageRef);
-      console.log("success");
-    } catch (err) {
-      console.log("there was an error in deleting an image");
-    }
     DialogBox({
       dialogTitle: "Delete post?",
       dialogDescription:
@@ -112,11 +145,6 @@ const ViewPost = () => {
         deleteComments(args);
         deleteLikes(args);
         deleteNotifications(args);
-        DisplayAlert("Success message", "Post deleted successfully!");
-        await new Promise((resolve) => setTimeout(resolve, 1500));
-        console.log("delete in feed", status);
-        console.log("delete in feed", feedData);
-        navigation.goBack();
       },
     });
   };
@@ -156,7 +184,9 @@ const ViewPost = () => {
         <RenderHTML contentWidth={width} source={{ html }} />
         <Text>{PostDate}</Text>
       </ScrollView>
-      <Button title="Delete Post" onPress={handleDelete} />
+      <View style={{ padding: 10 }}>
+        <Button title="Delete Post" onPress={handleDelete} color="#ff2e00" />
+      </View>
     </View>
   );
 };
