@@ -3,12 +3,19 @@ import React, { useEffect } from "react";
 import { AppDispatch } from "store/store";
 import { useDispatch } from "react-redux";
 import { setRoute } from "reducers/routeReducer";
+import { useGetAccessTokenQuery } from "reducers/authReducer";
+import CustomError from "components/CustomError";
 
 const Gym_TermsAndConditions = () => {
   const dispatch: AppDispatch = useDispatch();
+  const { isError } = useGetAccessTokenQuery();
   useEffect(() => {
     dispatch(setRoute("Terms and Conditions"));
   }, []);
+
+  if (isError) {
+    return <CustomError />;
+  }
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Data Privacy:</Text>

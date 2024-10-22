@@ -24,12 +24,11 @@ interface IFavoriteWorkOutState {
 
 export const favoriteExerciseApi = createApi({
   reducerPath: "/user/favorites/exercise",
-  tagTypes: ["favorites_exercise"],
   baseQuery: fetchBaseQuery({
     baseUrl: config.BASE_URL,
     prepareHeaders: async (headers: Headers, { getState }) => {
-      const token = (getState() as RootState).authReducer.accessToken;
-      // const token = await SecureStore.getItemAsync("accessToken");
+      // const token = (getState() as RootState).authReducer.accessToken;
+      const token = await SecureStore.getItemAsync("accessToken");
       // console.log("state", getState());
       if (token) {
         headers.set("authorization", `Bearer ${token}`);
@@ -37,6 +36,7 @@ export const favoriteExerciseApi = createApi({
       return headers;
     },
   }),
+  tagTypes: ["favorites_exercise"],
   endpoints: (builder) => ({
     addExerciseFavorites: builder.mutation<
       IFavoriteState,

@@ -27,6 +27,7 @@ import {
 import announcementReducer, {
   announcementApi,
 } from "reducers/announcementReducer";
+import paymongoReducer, { paymongoApi } from "reducers/paymongoReducer";
 
 export const store = configureStore({
   reducer: {
@@ -37,6 +38,7 @@ export const store = configureStore({
     [registerslice.reducerPath]: registerslice.reducer,
     [programApi.reducerPath]: programApi.reducer,
     [subscriptionApi.reducerPath]: subscriptionApi.reducer,
+    [paymongoApi.reducerPath]: paymongoApi.reducer,
     [tutorialApi.reducerPath]: tutorialApi.reducer,
     [favoriteExerciseApi.reducerPath]: favoriteExerciseApi.reducer,
     [favoriteWorkoutApi.reducerPath]: favoriteWorkoutApi.reducer,
@@ -50,6 +52,7 @@ export const store = configureStore({
     authReducer: authReducer,
     attendance: attendanceReducer,
     subscription: subscriptionReducer,
+    paymongo: paymongoReducer,
     post: postReducer,
     route: routeReducer,
     newsfeed: newsfeedReducer,
@@ -66,6 +69,7 @@ export const store = configureStore({
       registerslice.middleware,
       programApi.middleware,
       subscriptionApi.middleware,
+      paymongoApi.middleware,
       tutorialApi.middleware,
       favoriteExerciseApi.middleware,
       favoriteWorkoutApi.middleware,

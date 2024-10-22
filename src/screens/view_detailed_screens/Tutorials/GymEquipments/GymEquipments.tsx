@@ -8,14 +8,13 @@ import { IGymEquipment } from "utils/types/gym_equipment.types";
 import { useGetAccessTokenQuery } from "reducers/authReducer";
 import LoadingIndicator from "components/LoadingIndicator";
 import CustomError from "components/CustomError";
+import HTTP_ERROR from "utils/enums/ERROR_CODES";
 
 const GymEquipments = () => {
   const navigation = useNavigation<RootStackNavigationProp>();
 
-  const { data, isFetching, isUninitialized } = useGetAllGymEquipmentsQuery(
-    undefined,
-    { refetchOnMountOrArgChange: true }
-  );
+  const { data, isFetching, isUninitialized, error } =
+    useGetAllGymEquipmentsQuery(undefined, { refetchOnMountOrArgChange: true });
   const { isError } = useGetAccessTokenQuery();
 
   const handlePress = () => {
@@ -29,6 +28,10 @@ const GymEquipments = () => {
   }
 
   if (isError) {
+    return <CustomError />;
+  }
+
+  if (error?.status === HTTP_ERROR.BAD_REQUEST) {
     return <CustomError />;
   }
   return (

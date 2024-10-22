@@ -26,21 +26,25 @@ import CustomError from "components/CustomError";
 import ExerciseFavoriteLists from "screens/view_detailed_screens/Favorites/ExerciseFavoriteLists";
 import WorkoutFavoriteLists from "screens/view_detailed_screens/Favorites/WorkoutFavoriteLists";
 import { BottomTabsNavigationProp } from "utils/types/navigators/BottomTabNavigators";
+import HTTP_ERROR from "utils/enums/ERROR_CODES";
 
 const Favorites = () => {
   const route = useRoute();
 
   const { isError, data: user } = useGetAccessTokenQuery();
-  const { data, isUninitialized, isFetching } = useGetExercisesFavoritesQuery(
-    user?.user?.UserID,
-    {
-      refetchOnMountOrArgChange: true,
-    }
-  );
+  const {
+    data,
+    isUninitialized,
+    isFetching,
+    error: exerciseErr,
+  } = useGetExercisesFavoritesQuery(user?.user?.UserID, {
+    refetchOnMountOrArgChange: true,
+  });
   const {
     data: workoutFavoritesData,
     isUninitialized: isUninitializedW,
     isFetching: isFetchingW,
+    error: workoutErr,
   } = useGetWorkoutsFavoritesQuery(user?.user?.UserID, {
     refetchOnMountOrArgChange: true,
   });
@@ -59,6 +63,13 @@ const Favorites = () => {
   }
   if (isFetching || isUninitialized || isFetchingW || isUninitializedW) {
     return <LoadingIndicator />;
+  }
+
+  if (
+    exerciseErr?.status === HTTP_ERROR.BAD_REQUEST ||
+    workoutErr?.status === HTTP_ERROR.BAD_REQUEST
+  ) {
+    return <CustomError />;
   }
 
   if (data?.result.length === 0 && workoutFavoritesData?.result.length === 0) {

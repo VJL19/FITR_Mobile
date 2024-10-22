@@ -30,6 +30,7 @@ import AnnouncementLists from "screens/view_detailed_screens/Announcements/Annou
 import { IAnnouncements } from "utils/types/announcement.types";
 import { DrawerStackNavigationProp } from "utils/types/navigators/DrawerStackNavigators";
 import { useRefetchOnMessage } from "hooks/useRefetchOnMessage";
+import HTTP_ERROR from "utils/enums/ERROR_CODES";
 
 const Home = () => {
   const { value, name } = useSelector((state: RootState) => state.counter);
@@ -37,9 +38,12 @@ const Home = () => {
   const { data, isError, isUninitialized, isFetching } =
     useGetAccessTokenQuery();
 
-  const { data: programs } = useGetTodayProgramsQuery(data?.user?.UserID, {
-    refetchOnMountOrArgChange: true,
-  });
+  const { data: programs, error: programErr } = useGetTodayProgramsQuery(
+    data?.user?.UserID,
+    {
+      refetchOnMountOrArgChange: true,
+    }
+  );
 
   const { data: count } = useGetAllNotificationsCountQuery(data?.user?.UserID, {
     refetchOnMountOrArgChange: true,
@@ -49,6 +53,7 @@ const Home = () => {
     data: workoutFavoritesData,
     isUninitialized: isUninitializedW,
     isFetching: isFetchingW,
+    error: workoutErr,
   } = useGetWorkoutsFavoritesQuery(data?.user?.UserID, {
     refetchOnMountOrArgChange: true,
   });
@@ -123,11 +128,18 @@ const Home = () => {
     return <CustomError />;
   }
 
+  if (
+    programErr?.status === HTTP_ERROR.BAD_REQUEST ||
+    workoutErr?.status === HTTP_ERROR.BAD_REQUEST
+  ) {
+    return <CustomError />;
+  }
+
   if (isFetching || isUninitialized) {
     return <LoadingIndicator />;
   }
 
-  // console.log("hey get access token", data?.accessToken);
+  console.log("hey get access token", workoutErr);
 
   return (
     <View style={{ flex: 1, backgroundColor: "#f5f5f5", padding: 12 }}>

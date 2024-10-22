@@ -21,6 +21,7 @@ import LoadingIndicator from "components/LoadingIndicator";
 import { useGetAccessTokenQuery } from "reducers/authReducer";
 import CustomError from "components/CustomError";
 import SearchBar from "components/SearchBar";
+import HTTP_ERROR from "utils/enums/ERROR_CODES";
 
 const Workouts = () => {
   const navigation = useNavigation<RootStackNavigationProp>();
@@ -32,6 +33,7 @@ const Workouts = () => {
     data: filteredWorkouts,
     isFetching,
     isUninitialized,
+    error: workoutErr,
   } = useGetWorkOutByTargetMuscleQuery(selectedTargetMuscle, {
     refetchOnMountOrArgChange: true,
   });
@@ -120,6 +122,9 @@ const Workouts = () => {
   }
 
   if (isError) {
+    return <CustomError />;
+  }
+  if (workoutErr?.status === HTTP_ERROR.BAD_REQUEST) {
     return <CustomError />;
   }
   return (

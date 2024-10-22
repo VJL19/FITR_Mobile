@@ -19,6 +19,7 @@ import { useForm } from "react-hook-form";
 import { DateTimePickerEvent } from "@react-native-community/datetimepicker";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { subscriptionHistorySchema } from "utils/validations";
+import HTTP_ERROR from "utils/enums/ERROR_CODES";
 
 const SubscriptionHistory = () => {
   const { isError, data } = useGetAccessTokenQuery();
@@ -84,6 +85,9 @@ const SubscriptionHistory = () => {
     return <LoadingIndicator />;
   }
   if (isError) {
+    return <CustomError />;
+  }
+  if (error?.status === HTTP_ERROR.BAD_REQUEST) {
     return <CustomError />;
   }
   if (subscriptionHistory?.result?.length === 0) {

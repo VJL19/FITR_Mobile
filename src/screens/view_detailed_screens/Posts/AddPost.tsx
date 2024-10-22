@@ -25,6 +25,7 @@ import RichToolBar from "components/RichToolBar";
 import { useKeyboardVisible } from "hooks/useKeyboardVisible";
 import useIsNetworkConnected from "hooks/useIsNetworkConnected";
 import { NETWORK_ERROR } from "utils/enums/Errors";
+import HTTP_ERROR from "utils/enums/ERROR_CODES";
 
 const AddPost = () => {
   const { data: user } = useGetAccessTokenQuery();
@@ -87,6 +88,9 @@ const AddPost = () => {
       delayRedirect();
       reset();
       removePhoto();
+    }
+    if (postErr?.status === HTTP_ERROR.BAD_REQUEST) {
+      DisplayAlert("Error message", postErr?.data?.message);
     }
   }, [postStat]);
 

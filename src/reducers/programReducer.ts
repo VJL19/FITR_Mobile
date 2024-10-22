@@ -99,7 +99,7 @@ export const programApi = createApi({
       invalidatesTags: ["program"],
     }),
     getAdminSuggestedProgram: builder.query<IProgramApiState, void>({
-      query: () => "/admin/program/program_suggested",
+      query: () => "/user/program/program_suggested",
       providesTags: ["program"],
     }),
     deleteUserProgram: builder.mutation<IProgramState, number | undefined>({

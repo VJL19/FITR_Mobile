@@ -26,6 +26,7 @@ import DisplayAlert from "components/CustomAlert";
 import LoadingIndicator from "components/LoadingIndicator";
 import useIsNetworkConnected from "hooks/useIsNetworkConnected";
 import { NETWORK_ERROR } from "utils/enums/Errors";
+import HTTP_ERROR from "utils/enums/ERROR_CODES";
 
 const { width, height } = Dimensions.get("window");
 const ViewExercise = () => {
@@ -102,6 +103,9 @@ const ViewExercise = () => {
         "This exercise is successfully removed to your favorites!"
       );
     }
+    if (removeErr?.status === HTTP_ERROR.BAD_REQUEST) {
+      DisplayAlert("Error message", removeErr?.data?.message);
+    }
   }, [removeStat]);
 
   useEffect(() => {
@@ -129,6 +133,9 @@ const ViewExercise = () => {
         "Success message",
         "This exercise is successfully added to your favorites!"
       );
+    }
+    if (addErr?.status === HTTP_ERROR.BAD_REQUEST) {
+      DisplayAlert("Error message", addErr?.data?.message);
     }
   }, [addStat]);
 

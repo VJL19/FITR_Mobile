@@ -35,6 +35,7 @@ import { ResizeMode, Video } from "expo-av";
 import { FIREBASE_VIDEO_FORMATS } from "utils/constants/FILE_EXTENSIONS";
 import useIsNetworkConnected from "hooks/useIsNetworkConnected";
 import { NETWORK_ERROR } from "utils/enums/Errors";
+import HTTP_ERROR from "utils/enums/ERROR_CODES";
 const { width, height } = Dimensions.get("window");
 const ViewPost = () => {
   const {
@@ -113,6 +114,9 @@ const ViewPost = () => {
       deleteErr?.status !== NETWORK_ERROR?.FETCH_ERROR
     ) {
       DisplayAlert("Error message", deleteErr?.data?.error?.sqlMessage);
+    }
+    if (deleteErr?.status === HTTP_ERROR.BAD_REQUEST) {
+      DisplayAlert("Error message", deleteErr?.data?.message);
     }
     if (deleteStat === "fulfilled") {
       try {

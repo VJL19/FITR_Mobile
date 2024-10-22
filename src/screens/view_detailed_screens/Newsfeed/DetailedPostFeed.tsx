@@ -42,6 +42,8 @@ import useIsNetworkConnected from "hooks/useIsNetworkConnected";
 import { NETWORK_ERROR } from "utils/enums/Errors";
 import { useRefetchOnMessage } from "hooks/useRefetchOnMessage";
 import { postslice } from "reducers/postReducer";
+import HTTP_ERROR from "utils/enums/ERROR_CODES";
+import CustomError from "components/CustomError";
 const { width, height } = Dimensions.get("window");
 const DetailedPostFeed = () => {
   const [likePost, { data: likeData, error: likeErr, status: likeStat }] =
@@ -55,7 +57,7 @@ const DetailedPostFeed = () => {
   const { data, isError, isFetching, isUninitialized } =
     useGetAccessTokenQuery();
 
-  const [getAllComments, { data: comments, status }] =
+  const [getAllComments, { data: comments, status, error: commentErr }] =
     useGetAllCommentsMutation();
 
   const { user } = data!;
@@ -145,6 +147,9 @@ const DetailedPostFeed = () => {
     ) {
       DisplayAlert("Error message", likeErr?.data?.error?.sqlMessage);
     }
+    if (likeErr?.status === HTTP_ERROR.BAD_REQUEST) {
+      DisplayAlert("Error message", likeErr?.data?.message);
+    }
     if (likeStat === "fulfilled") {
       notificationLike(notify_arg);
       console.log("LIKE POST !", likeErr);
@@ -176,6 +181,9 @@ const DetailedPostFeed = () => {
       unlikeErr?.status !== NETWORK_ERROR?.FETCH_ERROR
     ) {
       DisplayAlert("Error message", unlikeErr?.data?.error?.sqlMessage);
+    }
+    if (unlikeErr?.status === HTTP_ERROR.BAD_REQUEST) {
+      DisplayAlert("Error message", unlikeErr?.data?.message);
     }
     if (unlikeStat === "fulfilled") {
       removeNotificationLike({ Username: user.Username, PostID: PostID });
@@ -211,11 +219,11 @@ const DetailedPostFeed = () => {
   };
 
   if (isError) {
-    return (
-      <View>
-        <Text>You are not authenticated!</Text>
-      </View>
-    );
+    return <CustomError />;
+  }
+
+  if (commentErr?.status === HTTP_ERROR.BAD_REQUEST) {
+    return <CustomError />;
   }
   if (status === "pending") {
     return <LoadingIndicator />;

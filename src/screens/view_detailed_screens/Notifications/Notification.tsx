@@ -21,6 +21,7 @@ import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigat
 import { useGetAccessTokenQuery } from "reducers/authReducer";
 import useIsNetworkConnected from "hooks/useIsNetworkConnected";
 import { NETWORK_ERROR } from "utils/enums/Errors";
+import HTTP_ERROR from "utils/enums/ERROR_CODES";
 
 const Notification = ({
   UserID,
@@ -58,6 +59,9 @@ const Notification = ({
     ) {
       DisplayAlert("Error message", readErr?.data?.error?.sqlMessage);
     }
+    if (readErr?.status === HTTP_ERROR.BAD_REQUEST) {
+      DisplayAlert("Error message", readErr?.data?.message);
+    }
     if (readStat === "fulfilled") {
       DisplayAlert(
         "Success message",
@@ -83,6 +87,9 @@ const Notification = ({
       unreadErr?.status !== NETWORK_ERROR?.FETCH_ERROR
     ) {
       DisplayAlert("Error message", unreadErr?.data?.error?.sqlMessage);
+    }
+    if (unreadErr?.status === HTTP_ERROR.BAD_REQUEST) {
+      DisplayAlert("Error message", unreadErr?.data?.message);
     }
     if (unreadStat === "fulfilled") {
       DisplayAlert(

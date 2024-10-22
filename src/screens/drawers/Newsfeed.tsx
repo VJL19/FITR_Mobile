@@ -16,6 +16,7 @@ import {
 import { useGetUserRecordsQuery } from "reducers/attendanceReducer";
 import CustomError from "components/CustomError";
 import { useRefetchOnMessage } from "hooks/useRefetchOnMessage";
+import HTTP_ERROR from "utils/enums/ERROR_CODES";
 
 export const Newsfeed = () => {
   const { isError, data: user } = useGetAccessTokenQuery();
@@ -25,6 +26,7 @@ export const Newsfeed = () => {
     isFetching,
     isUninitialized,
     data: posts,
+    error: postErr,
   } = useGetAllPostInFeedQuery(user?.user?.SubscriptionType, {
     refetchOnMountOrArgChange: true,
   });
@@ -56,6 +58,10 @@ export const Newsfeed = () => {
     );
   }
   if (isError) {
+    return <CustomError />;
+  }
+
+  if (postErr?.status === HTTP_ERROR.BAD_REQUEST) {
     return <CustomError />;
   }
 

@@ -11,6 +11,7 @@ import LoadingIndicator from "components/LoadingIndicator";
 import { useGetAccessTokenQuery } from "reducers/authReducer";
 import { useGetAllNotificationsQuery } from "reducers/notificationReducer";
 import CustomError from "components/CustomError";
+import HTTP_ERROR from "utils/enums/ERROR_CODES";
 
 const Notifications = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -44,6 +45,9 @@ const Notifications = () => {
         </Text>
       </View>
     );
+  }
+  if (error?.status === HTTP_ERROR.BAD_REQUEST) {
+    return <CustomError />;
   }
   return (
     <View>

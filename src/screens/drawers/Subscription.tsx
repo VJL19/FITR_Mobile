@@ -1,13 +1,4 @@
-import {
-  Button,
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  FlatList,
-  TouchableOpacity,
-  Platform,
-} from "react-native";
+import { Button, StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
@@ -17,42 +8,37 @@ import SubscriptionTypeEnum, {
   SubscriptionAmount,
   SubscriptionMethod,
 } from "utils/enums/Subscription";
-import processPayment, {
-  CheckoutPayload,
-  ILineItems,
-} from "actions/subscriptionAction";
+import { CheckoutPayload, ILineItems } from "actions/subscriptionAction";
 import { useNavigation } from "@react-navigation/native";
 import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
 import { setRoute } from "reducers/routeReducer";
 import { authslice, useGetAccessTokenQuery } from "reducers/authReducer";
 import CustomError from "components/CustomError";
-import { isLoading } from "expo-font";
-import { RadioGroup } from "react-native-radio-buttons-group";
-import CustomModal from "components/CustomModal";
 import { useCameraFns } from "utils/helpers/useCameraFns";
-import { IMAGE_VALUES } from "utils/enums/DefaultValues";
 import DialogBox from "components/DialogBox";
-import { uploadImage } from "utils/helpers/uploadImage";
 import DisplayAlert from "components/CustomAlert";
 import {
+  createSubscription,
+  setCheckOutId,
+  setCheckOutUrl,
+  setClientKey,
   subscriptionApi,
   useAddSubscriptionMutation,
   useGetSpecificSubscriptionQuery,
 } from "reducers/subscriptionReducer";
 import getCurrentDate from "utils/helpers/formatDate";
 import Subscriptions from "components/Subscriptions";
-import { ISubscriptions } from "utils/types/subscriptions.types";
 import { useRefetchOnMessage } from "hooks/useRefetchOnMessage";
 import DropdownComponent from "components/DropdownComponent";
 import { ScrollView } from "react-native";
 import * as Linking from "expo-linking";
 import useIsNetworkConnected from "hooks/useIsNetworkConnected";
 import { NETWORK_ERROR } from "utils/enums/Errors";
+import { useProcessOnlinePaymentMutation } from "reducers/paymongoReducer";
+import HTTP_ERROR from "utils/enums/ERROR_CODES";
 
 const Subscription = () => {
   const [paymentMethod, setPaymentMethod] = useState("");
-  const [bankName, setBankName] = useState("");
-  const [amount, setAmount] = useState(0);
   const [selectedSubscription, setSelectedSubscription] = useState("");
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation<RootStackNavigationProp>();
@@ -60,12 +46,19 @@ const Subscription = () => {
     allowsEditing: false,
     isProfilePhoto: true,
   });
-  const [modalVisible, setModalVisible] = useState(false);
 
+  const { isLoading, checkout_url } = useSelector(
+    (state: RootState) => state.subscription
+  );
   const dispatch: AppDispatch = useDispatch();
 
-  const { data, isFetching, isUninitialized, isError } =
-    useGetAccessTokenQuery();
+  const {
+    data,
+    isFetching,
+    isUninitialized,
+    isError,
+    error: tokenErr,
+  } = useGetAccessTokenQuery();
   // const { data: subscription } = useCheckUserScanQrQuery(data?.user?.UserID);
 
   const [sendPayment, { data: subscriptionData, status, error }] =
@@ -77,6 +70,15 @@ const Subscription = () => {
       refetchOnMountOrArgChange: true,
     }
   );
+
+  const [
+    processOnlinePayment,
+    {
+      data: processOnlineData,
+      error: processOnlineErr,
+      status: processOnlineStat,
+    },
+  ] = useProcessOnlinePaymentMutation();
 
   const { isConnected } = useIsNetworkConnected();
 
@@ -95,10 +97,8 @@ const Subscription = () => {
   // console.log("subs error", error);
 
   const payment_methods = [
-    { id: "1", label: "G-Cash", value: "1" },
-    { id: "2", label: "PayMaya", value: "2" },
-    { id: "3", label: "Credit-Card", value: "3" },
-    { id: "4", label: "Cash", value: "4" },
+    { id: "1", label: "Online Payment (GCash, Paymaya)", value: "1" },
+    { id: "2", label: "Cash", value: "2" },
   ];
 
   // const bank_transfer = [{ label: "BDO", value: "1" }];
@@ -108,7 +108,6 @@ const Subscription = () => {
   //   { label: "GrabPay", value: "3" },
   // ];
 
-  console.log(paymentMethod);
   useEffect(() => {
     dispatch(setRoute("Subscription"));
   }, []);
@@ -129,6 +128,9 @@ const Subscription = () => {
     if (status === "rejected" && error?.status !== NETWORK_ERROR?.FETCH_ERROR) {
       DisplayAlert("Error message", error?.data?.error?.sqlMessage);
     }
+    if (error?.status === HTTP_ERROR.BAD_REQUEST) {
+      DisplayAlert("Error message", error?.data?.message);
+    }
     if (status === "fulfilled") {
       DisplayAlert("Success message", "Payment Uploaded successfully!");
       removePhoto();
@@ -136,61 +138,47 @@ const Subscription = () => {
     }
   }, [status]);
 
-  // const handlePayment = () => {
-  //   const checkOutDetails: ILineItems[] = [
-  //     {
-  //       currency: "PHP",
-  //       amount:
-  //         subscription?.user.SubscriptionType === SubscriptionTypeEnum.Session
-  //           ? SubscriptionAmount.SESSION
-  //           : SubscriptionAmount.MONTHLY,
-  //       name: subscription?.user.SubscriptionType!,
-  //       quantity: 1,
-  //     },
-  //   ];
+  useEffect(() => {
+    if (processOnlineStat === "fulfilled") {
+      console.log(
+        "process online payment data",
+        processOnlineData?.data?.attributes?.checkout_url!
+      );
+      navigation.navigate("DetailedScreens", {
+        screen: "Process Checkout",
+      });
+      dispatch(setCheckOutId(processOnlineData?.data?.id));
+      dispatch(
+        setCheckOutUrl(processOnlineData?.data?.attributes?.checkout_url)
+      );
+      dispatch(setClientKey(processOnlineData?.data?.attributes?.client_key));
+    }
+  }, [processOnlineStat]);
 
-  //   const paymentDetails: CheckoutPayload = {
-  //     name: user.LastName + " " + user.FirstName,
-  //     email: user.Email,
-  //     phone: user.ContactNumber,
-  //     line_items: checkOutDetails,
-  //     payment_method_types: ["gcash", "paymaya", "grab_pay", "card"],
-  //   };
+  const handlePayment = () => {
+    const checkOutDetails: ILineItems[] = [
+      {
+        currency: "PHP",
+        amount:
+          data?.user.SubscriptionType === SubscriptionTypeEnum.Session
+            ? SubscriptionAmount.SESSION
+            : SubscriptionAmount.MONTHLY,
+        name: data?.user.SubscriptionType!,
+        quantity: 1,
+      },
+    ];
 
-  //   dispatch(processPayment(paymentDetails));
-  //   if (!isLoading) {
-  //     navigation.navigate("DetailedScreens", {
-  //       screen: "Process Checkout",
-  //       params: { checkout_url: checkout_url },
-  //     });
-  //   }
-  // };
-
-  const handleUpload = () => {
     DialogBox({
-      dialogTitle: "Upload payment?",
-      dialogDescription: "The gym owner will review your uploaded payment.",
+      dialogTitle: "Process Payment",
+      dialogDescription:
+        "Please note: in the process of online payment you may avoid closing or going back to the screen to not interrupt or exit the processing of payment. Thank you!",
       async handlePress(args) {
-        const pathToFolder =
-          data?.user?.SubscriptionType === SubscriptionTypeEnum.Session
-            ? "Payments/Session/"
-            : "Payments/Monthly/";
-
-        const url = await uploadImage(
-          image,
-          pathToFolder,
-          "image",
-          loading,
-          setLoading
-        );
-
-        console.log("proof of payment ", url);
         const arg = {
-          UserID: data?.user?.UserID,
+          UserID: data?.user?.UserID!,
           SubscriptionAmount:
             data?.user?.SubscriptionType === SubscriptionTypeEnum.Session
-              ? SubscriptionAmount.SESSION
-              : SubscriptionAmount.MONTHLY,
+              ? 90
+              : 900,
           SubscriptionBy: `${data?.user?.FirstName} ${data?.user?.MiddleName}. ${data?.user?.LastName}`,
           SubscriptionType:
             data?.user?.SubscriptionType === SubscriptionTypeEnum.Session
@@ -204,13 +192,104 @@ const Subscription = () => {
               : paymentMethod === "3"
               ? SubscriptionMethod.CREDITCARD
               : SubscriptionMethod.CASH,
-          SubscriptionUploadedImage: url,
           SubscriptionEntryDate: getCurrentDate(),
         };
-        sendPayment(arg);
+        dispatch(createSubscription(arg));
+        const paymentDetails: CheckoutPayload = {
+          name: data?.user.LastName + " " + data?.user.FirstName,
+          email: data?.user?.Email!,
+          phone: data?.user?.ContactNumber!,
+          line_items: checkOutDetails,
+          payment_method_types: ["gcash", "paymaya", "grab_pay", "card"],
+        };
+
+        if (tokenErr?.status === HTTP_ERROR.BAD_REQUEST) {
+          DisplayAlert("Error message", tokenErr?.data?.message);
+          return;
+        }
+        processOnlinePayment(paymentDetails);
+
+        console.log("in subscription screen url", checkout_url);
       },
     });
   };
+
+  const handleUpload = () => {
+    DialogBox({
+      dialogTitle: "Proceed payment?",
+      dialogDescription:
+        "Please proceed to counter or approach gym owner before clicking the confirm action.",
+      async handlePress(args) {
+        const arg = {
+          UserID: data?.user?.UserID,
+          SubscriptionAmount:
+            data?.user?.SubscriptionType === SubscriptionTypeEnum.Session
+              ? 90
+              : 900,
+          SubscriptionBy: `${data?.user?.FirstName} ${data?.user?.MiddleName}. ${data?.user?.LastName}`,
+          SubscriptionType:
+            data?.user?.SubscriptionType === SubscriptionTypeEnum.Session
+              ? SubscriptionTypeEnum.Session
+              : SubscriptionTypeEnum.Monthly,
+          SubscriptionStatus: "Fulfill",
+          SubscriptionMethod: "Cash",
+          SubscriptionEntryDate: getCurrentDate(),
+        };
+        const runSendPayment = async () => {
+          await sendPayment(arg);
+        };
+        runSendPayment();
+      },
+    });
+    setPaymentMethod("");
+  };
+
+  console.log(tokenErr?.status);
+  // const handleUpload = () => {
+  //   DialogBox({
+  //     dialogTitle: "Upload payment?",
+  //     dialogDescription: "The gym owner will review your uploaded payment.",
+  //     async handlePress(args) {
+  //       const pathToFolder =
+  //         data?.user?.SubscriptionType === SubscriptionTypeEnum.Session
+  //           ? "Payments/Session/"
+  //           : "Payments/Monthly/";
+
+  //       const url = await uploadImage(
+  //         image,
+  //         pathToFolder,
+  //         "image",
+  //         loading,
+  //         setLoading
+  //       );
+
+  //       console.log("proof of payment ", url);
+  //       const arg = {
+  //         UserID: data?.user?.UserID,
+  //         SubscriptionAmount:
+  //           data?.user?.SubscriptionType === SubscriptionTypeEnum.Session
+  //             ? SubscriptionAmount.SESSION
+  //             : SubscriptionAmount.MONTHLY,
+  //         SubscriptionBy: `${data?.user?.FirstName} ${data?.user?.MiddleName}. ${data?.user?.LastName}`,
+  //         SubscriptionType:
+  //           data?.user?.SubscriptionType === SubscriptionTypeEnum.Session
+  //             ? SubscriptionTypeEnum.Session
+  //             : SubscriptionTypeEnum.Monthly,
+  //         SubscriptionMethod:
+  //           paymentMethod === "1"
+  //             ? SubscriptionMethod.GCASH
+  //             : paymentMethod === "2"
+  //             ? SubscriptionMethod.PAYMAYA
+  //             : paymentMethod === "3"
+  //             ? SubscriptionMethod.CREDITCARD
+  //             : SubscriptionMethod.CASH,
+  //         SubscriptionUploadedImage: url,
+  //         SubscriptionEntryDate: getCurrentDate(),
+  //       };
+  //       sendPayment(arg);
+  //     },
+  //   });
+  // };
 
   const openAppSpecific = async (storeURL: string) => {
     try {
@@ -283,20 +362,11 @@ const Subscription = () => {
             Step 1. Select your payment method.
           </Text>
           <Text style={styles.instructionText}>
-            Step 2. for (gcash), (paymaya), and (credit-card) payments there
-            will be a account name, and number presented to further send your
-            payment.
-          </Text>
-          <Text style={styles.instructionText}>
-            Step 4. for those users who are paying on (gcash), (paymaya) you may
-            click the image to redirect this app to gcash/paymaya application.
-          </Text>
-          <Text style={styles.instructionText}>
-            Step 5. Last step is to screenshot the proof of payment or receipt
-            indicating that you sent the money to the account name, and number
-            indicated from the image. Note: if you choose a CASH payment please
-            disregard this step and you may proceed to upload directly your
-            payment.
+            Step 2. for (online payment). You will be redirected to an online
+            payment gateway to process your payment. Online payment supports
+            gcash, and paymaya. for (cash). You will need to contact the gym
+            owner or proceed to their counter before proceeding to upload or
+            send the payment for this app.
           </Text>
         </View>
         <DropdownComponent
@@ -305,7 +375,7 @@ const Subscription = () => {
           handleChange={setPaymentMethod}
           value={paymentMethod}
         />
-        <View style={styles.redirectBtns}>
+        {/* <View style={styles.redirectBtns}>
           {paymentMethod === "1" && (
             <Button
               title="Open gcash app"
@@ -352,7 +422,7 @@ const Subscription = () => {
                 color={"violet"}
                 title="Open METRO BANK app"
                 onPress={() => {
-                  const platform =
+                  const pla tform =
                     Platform.OS === "android"
                       ? "market://launch?id=ph.com.metrobank.mcc.mbonline&hl=en"
                       : "https://itunes.apple.com/us/app/metrobank-app/id1536081176";
@@ -362,14 +432,14 @@ const Subscription = () => {
               />
             </View>
           )}
-        </View>
-        {image && (
+        </View> */}
+        {/* {image && (
           <Image
             source={{ uri: image }}
             style={{ height: 200, width: "100%" }}
             resizeMode="center"
           />
-        )}
+        )} */}
         {data?.user?.SubscriptionType === SubscriptionTypeEnum.Session && (
           <Text style={styles.textStyle}>
             You have a due amount of 90.00 PHP
@@ -390,7 +460,7 @@ const Subscription = () => {
         />
       )} */}
 
-        {paymentMethod !== "" && paymentMethod !== "4" ? (
+        {/* {paymentMethod !== "" && paymentMethod !== "4" ? (
           <View style={{ flex: 0.3, width: "100%" }}>
             <CustomModal
               isButton={true}
@@ -404,15 +474,16 @@ const Subscription = () => {
           </View>
         ) : (
           <View></View>
-        )}
-        {image !== IMAGE_VALUES.DEFAULT || paymentMethod === "4" ? (
+        )} */}
+        {paymentMethod === "1" && (
           <View style={{ width: "85%", alignSelf: "center", marginTop: 10 }}>
-            <Button title="Upload payment" onPress={handleUpload} />
+            <Button title="Process online payment" onPress={handlePayment} />
           </View>
-        ) : selectedSubscription === "" ? (
-          <View></View>
-        ) : (
-          <View></View>
+        )}
+        {paymentMethod === "2" && (
+          <View style={{ width: "85%", alignSelf: "center", marginTop: 10 }}>
+            <Button title="Proceed" onPress={handleUpload} />
+          </View>
         )}
       </View>
     </ScrollView>

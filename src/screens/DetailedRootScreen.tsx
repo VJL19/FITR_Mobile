@@ -62,6 +62,7 @@ const DetailedRootScreen = () => {
       screen: "Edit Post",
     });
   };
+
   return (
     <DetailedScreenStacks.Navigator
       screenOptions={{
@@ -72,6 +73,8 @@ const DetailedRootScreen = () => {
         },
         headerTitleStyle: {
           color: "#f5f5f5",
+          fontFamily: "Inter-Bold",
+          fontSize: 22,
         },
         cardStyle: {
           backgroundColor: "#f5f5f5",
@@ -233,6 +236,7 @@ const DetailedRootScreen = () => {
         component={ProcessCheckout}
         options={{
           presentation: "card",
+          headerLeft: () => null,
           gestureEnabled: true,
           gestureDirection: "horizontal",
           cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,

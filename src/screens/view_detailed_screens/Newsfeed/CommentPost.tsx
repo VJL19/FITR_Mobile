@@ -29,6 +29,7 @@ import LoadingIndicator from "components/LoadingIndicator";
 import useIsNetworkConnected from "hooks/useIsNetworkConnected";
 import { NETWORK_ERROR } from "utils/enums/Errors";
 import { useRefetchOnMessage } from "hooks/useRefetchOnMessage";
+import HTTP_ERROR from "utils/enums/ERROR_CODES";
 
 const CommentPost = () => {
   const { data } = useGetAccessTokenQuery();
@@ -93,6 +94,9 @@ const CommentPost = () => {
       commentErr?.status !== NETWORK_ERROR?.FETCH_ERROR
     ) {
       DisplayAlert("Error message", commentErr?.data?.error?.sqlMessage);
+    }
+    if (commentErr?.status === HTTP_ERROR.BAD_REQUEST) {
+      DisplayAlert("Error message", commentErr?.data?.message);
     }
     if (commentStatus === "fulfilled") {
       notifyComment(notify_arg);

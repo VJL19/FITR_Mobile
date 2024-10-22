@@ -16,6 +16,7 @@ import WebView from "react-native-webview";
 import RenderHTML from "react-native-render-html";
 import useIsNetworkConnected from "hooks/useIsNetworkConnected";
 import { NETWORK_ERROR } from "utils/enums/Errors";
+import HTTP_ERROR from "utils/enums/ERROR_CODES";
 
 const ViewProgram = () => {
   const { ProgramID, ProgramTitle, ProgramDescription } = useSelector(
@@ -57,6 +58,9 @@ const ViewProgram = () => {
         navigation.goBack();
       };
       delayRedirect();
+    }
+    if (programErr?.status === HTTP_ERROR.BAD_REQUEST) {
+      DisplayAlert("Error message", programErr?.data?.message);
     }
   }, [programStat]);
 

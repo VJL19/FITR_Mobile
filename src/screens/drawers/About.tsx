@@ -18,9 +18,13 @@ import Icon2 from "react-native-vector-icons/Foundation";
 import DialogBox from "components/DialogBox";
 import { useNavigation } from "@react-navigation/native";
 import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
+import { useGetAccessTokenQuery } from "reducers/authReducer";
+import CustomError from "components/CustomError";
 
 const { width, height } = Dimensions.get("window");
 const About = () => {
+  const { isError } = useGetAccessTokenQuery();
+
   const dispatch: AppDispatch = useDispatch();
   useEffect(() => {
     dispatch(setRoute("About MJeshter"));
@@ -37,6 +41,9 @@ const About = () => {
       },
     });
   };
+  if (isError) {
+    return <CustomError />;
+  }
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={handlePress} style={styles.image}>

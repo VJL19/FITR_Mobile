@@ -26,6 +26,7 @@ import AntDesign from "react-native-vector-icons/AntDesign";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import useIsNetworkConnected from "hooks/useIsNetworkConnected";
 import { NETWORK_ERROR } from "utils/enums/Errors";
+import HTTP_ERROR from "utils/enums/ERROR_CODES";
 const { width, height } = Dimensions.get("window");
 
 const ViewWorkout = () => {
@@ -105,6 +106,9 @@ const ViewWorkout = () => {
         "This workout is successfully added to your favorites!"
       );
     }
+    if (removeErr?.status === HTTP_ERROR.BAD_REQUEST) {
+      DisplayAlert("Error message", removeErr?.data?.message);
+    }
   }, [removeStat]);
   useEffect(() => {
     if (addErr?.status === NETWORK_ERROR.FETCH_ERROR && !isConnected) {
@@ -125,12 +129,16 @@ const ViewWorkout = () => {
     ) {
       DisplayAlert("Error message", addErr?.data?.error?.sqlMessage);
     }
+
     if (addStat === "fulfilled") {
       checkWorkoutFavorite(arg);
       DisplayAlert(
         "Success message",
         "This workout is successfully added to your favorites!"
       );
+    }
+    if (addErr?.status === HTTP_ERROR.BAD_REQUEST) {
+      DisplayAlert("Error message", addErr?.data?.message);
     }
   }, [addStat]);
   const handleFavorites = async () => {

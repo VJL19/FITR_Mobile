@@ -33,6 +33,7 @@ import RichTextEdidor from "components/RichTextEdidor";
 import { useKeyboardVisible } from "hooks/useKeyboardVisible";
 import useIsNetworkConnected from "hooks/useIsNetworkConnected";
 import { NETWORK_ERROR } from "utils/enums/Errors";
+import HTTP_ERROR from "utils/enums/ERROR_CODES";
 
 const EditProgram = () => {
   const {
@@ -110,6 +111,9 @@ const EditProgram = () => {
       };
       delayRedirect();
       reset();
+    }
+    if (programErr?.status === HTTP_ERROR.BAD_REQUEST) {
+      DisplayAlert("Error message", programErr?.data?.message);
     }
   }, [programStat]);
 

@@ -18,10 +18,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "store/store";
 import * as ImagePicker from "expo-image-picker";
 import avatar from "assets/avatar_default.jpeg";
-import {
-  ref,
-  deleteObject,
-} from "firebase/storage";
+import { ref, deleteObject } from "firebase/storage";
 import { storage } from "global/firebaseConfig";
 import {
   setToken,
@@ -44,6 +41,7 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import { TextInput } from "react-native-paper";
 import useIsNetworkConnected from "hooks/useIsNetworkConnected";
 import { NETWORK_ERROR } from "utils/enums/Errors";
+import HTTP_ERROR from "utils/enums/ERROR_CODES";
 
 const initialState: IChangeAccount = {
   Username: "",
@@ -112,6 +110,9 @@ const ChangeAccount = () => {
     }
     if (status === "rejected" && error?.status !== NETWORK_ERROR?.FETCH_ERROR) {
       DisplayAlert("Error, message", error?.data?.error?.sqlMessage);
+    }
+    if (error?.status === HTTP_ERROR.BAD_REQUEST) {
+      DisplayAlert("Error, message", error?.data?.message);
     }
     if (status === "fulfilled" && isSubmitted) {
       let imageRef = ref(storage, user?.user?.ProfilePic);

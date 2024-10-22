@@ -37,6 +37,7 @@ import { FIREBASE_VIDEO_FORMATS } from "utils/constants/FILE_EXTENSIONS";
 import { useKeyboardVisible } from "hooks/useKeyboardVisible";
 import useIsNetworkConnected from "hooks/useIsNetworkConnected";
 import { NETWORK_ERROR } from "utils/enums/Errors";
+import HTTP_ERROR from "utils/enums/ERROR_CODES";
 
 const EditPost = () => {
   const { PostTitle, PostImage, PostDescription, PostID } = useSelector(
@@ -117,6 +118,9 @@ const EditPost = () => {
       } catch (err) {
         console.log("there was an error in deleting an image", err);
       }
+    }
+    if (postErr?.status === HTTP_ERROR.BAD_REQUEST) {
+      DisplayAlert("Error message", postErr?.data?.message);
     }
   }, [status]);
 

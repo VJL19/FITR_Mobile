@@ -1,11 +1,13 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios, { AxiosError } from "axios";
 import { KnownError } from "./registerAction";
+import loadConfig from "global/config";
 
 export interface ILineItems {
   currency: string;
   amount: number;
   name: string;
+
   quantity: number;
 }
 
@@ -16,7 +18,7 @@ export interface CheckoutPayload {
   line_items: ILineItems[];
   payment_method_types: string[];
 }
-
+const config = loadConfig();
 const processPayment = createAsyncThunk(
   "processPayment/user",
   async (arg: CheckoutPayload, { rejectWithValue }) => {
@@ -42,6 +44,7 @@ const processPayment = createAsyncThunk(
               send_email_receipt: true,
               show_description: true,
               show_line_items: true,
+              success_url: `${config.BASE_URL}user/subscription/success_payment`,
               line_items: line_items,
               payment_method_types: payment_method_types,
               description: `a test checkout for ${line_items[0].name} subscription.`,

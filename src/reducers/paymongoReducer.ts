@@ -50,8 +50,8 @@ const initialState: ISubscriptionState = {
 
 const config = loadConfig();
 
-export const subscriptionApi = createApi({
-  reducerPath: "/user/subscriptions",
+export const paymongoApi = createApi({
+  reducerPath: "/user/paymongo_subscriptions",
   tagTypes: ["subscriptions"],
   baseQuery: fetchBaseQuery({
     baseUrl: config.BASE_URL,
@@ -61,7 +61,10 @@ export const subscriptionApi = createApi({
       const token = await SecureStore.getItemAsync("accessToken");
       // console.log("state", getState());
       if (token) {
-        headers.set("authorization", `Bearer ${token}`);
+        headers.set(
+          "authorization",
+          `Basic c2tfdGVzdF9WQ3pMUk1ldmtkMkEzRnIyelZyNng5TnM6c2tfdGVzdF9WQ3pMUk1ldmtkMkEzRnIyelZyNng5TnM=`
+        );
       }
       return headers;
     },
@@ -143,7 +146,7 @@ export const subscriptionApi = createApi({
   }),
 });
 
-const subscriptionSlice = createSlice({
+const paymongoSlice = createSlice({
   name: "subscription",
   initialState: initialState,
   reducers: {
@@ -186,31 +189,9 @@ const subscriptionSlice = createSlice({
       state.clientKey = action.payload;
     },
   },
-  extraReducers: (builder) => {
-    builder.addCase(processPayment.fulfilled, (state, action) => {
-      state.isLoading = false;
-      state.details = action.payload?.data?.attributes;
-      state.checkOutId = action?.payload?.data?.id;
-      state.payment_intent = action.payload?.data?.attributes?.payment_intent;
-      state.status = 200;
-      state.checkout_url = action.payload?.data?.attributes?.checkout_url;
-      state.confirmationUrl = action.payload?.data?.attributes?.checkout_url;
-      state.checkOutStatus = action.payload?.data?.attributes?.status;
-    });
-    builder.addCase(processPayment.pending, (state, action) => {
-      state.isLoading = true;
-      state.details = { details: "Loading...." };
-      state.status = 202;
-    });
-    builder.addCase(processPayment.rejected, (state, action) => {
-      state.error = action.payload;
-      state.isLoading = false;
-      state.status = 400;
-    });
-  },
 });
 
-export default subscriptionSlice.reducer;
+export default paymongoSlice.reducer;
 
 export const {
   createSubscription,
@@ -220,7 +201,7 @@ export const {
   setClientKey,
   deleteCheckOutId,
   deleteSubscription,
-} = subscriptionSlice.actions;
+} = paymongoSlice.actions;
 export const {
   useGetSpecificSubscriptionQuery,
   useAddSubscriptionMutation,
@@ -229,4 +210,4 @@ export const {
   useExpireCheckoutSessionMutation,
   useGetSubscriptionHistoryQuery,
   useGetSubscriptionHistoryByDateMutation,
-} = subscriptionApi;
+} = paymongoApi;

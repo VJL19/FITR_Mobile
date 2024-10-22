@@ -89,6 +89,8 @@ const RootApp = () => {
     }
   };
 
+  console.log("accessToken", accessToken);
+
   if (showOnBoarded == null) {
     return null;
   }
