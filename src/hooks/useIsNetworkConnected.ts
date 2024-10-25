@@ -5,8 +5,8 @@ const useIsNetworkConnected = () => {
   const [isConnected, setIsConnected] = useState<boolean | null>(false);
   useEffect(() => {
     function connectDevice(state: NetInfoState) {
-      console.log("Connection type", state.type);
-      console.log("Is connected?", state.isConnected);
+      // console.log("Connection type", state.type);
+      // console.log("Is connected?", state.isConnected);
       setIsConnected(state.isConnected);
     }
 

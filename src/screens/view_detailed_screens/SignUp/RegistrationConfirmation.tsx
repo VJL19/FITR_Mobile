@@ -43,8 +43,10 @@ const RegistrationConfirmation = () => {
     { data: emailCode, status: emailStat, error: emailErr },
   ] = useSendEmailMutation();
 
-  const [activateAccount, { status: activateStatus, error: activateErr }] =
-    useActivateUserAccountMutation();
+  const [
+    activateAccount,
+    { status: activateStatus, error: activateErr, data: activateData },
+  ] = useActivateUserAccountMutation();
 
   const [
     loginUser,

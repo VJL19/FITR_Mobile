@@ -24,6 +24,7 @@ import {
   setAuthenticated,
   setOTPToken,
   setToken,
+  useAddExpoNotifTokenMutation,
   useSendEmailMutation,
 } from "reducers/authReducer";
 import { IMAGE_VALUES } from "utils/enums/DefaultValues";
@@ -32,6 +33,7 @@ import LoadingIndicator from "components/LoadingIndicator";
 import DisplayAlert from "components/CustomAlert";
 import useIsNetworkConnected from "hooks/useIsNetworkConnected";
 import { NETWORK_ERROR } from "utils/enums/Errors";
+import { registerForPushNotificationsAsync } from "utils/helpers/ExpoNotifications";
 
 const TermsAndConditions = () => {
   const [IsChecked, setIsChecked] = useState<boolean>();
@@ -67,9 +69,16 @@ const TermsAndConditions = () => {
     sendOTPEmail,
     { data: emailCode, status: emailStat, error: emailErr },
   ] = useSendEmailMutation();
+  const email2 = useSelector((state: RootState) => state.authReducer.email);
+
+  const [addExpoToken, { data: expoData, status: expoStat }] =
+    useAddExpoNotifTokenMutation();
+  const [expoToken, setExpoToken] = useState<string | undefined>("");
 
   const dispatch: AppDispatch = useDispatch();
 
+  console.log("expo data token", expoData);
+  console.log("expo data token stat", expoStat);
   useEffect(() => {
     //if the status code of request is 400, then alert something!
     if (error?.status === NETWORK_ERROR.FETCH_ERROR && !isConnected) {
@@ -92,6 +101,7 @@ const TermsAndConditions = () => {
 
       // dispatch(clearFormFields());
       sendOTPEmail({ Email: Email });
+      addExpoToken({ Email: Email || email2, ExpoNotifToken: expoToken });
 
       dispatch(setToken(res?.accessToken));
 
@@ -143,6 +153,12 @@ const TermsAndConditions = () => {
     setValue("Address", Address);
     setValue("Birthday", Birthday);
     setValue("SubscriptionType", SubscriptionType);
+    const getExpoToken = async () => {
+      const token = await registerForPushNotificationsAsync();
+      console.log("in app heres your token", token);
+      setExpoToken(token);
+    };
+    getExpoToken();
   }, []);
 
   const onSubmit = async (data: IForm) => {

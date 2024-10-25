@@ -53,10 +53,18 @@ interface IForgotPasswordField {
   Username: string;
 }
 
+interface IExpoNotifState {
+  error: string;
+  message: string;
+  status: number;
+  result: string;
+}
+
 interface IActivateUserAccount {
   error: string;
   message: string;
   status: number;
+  email: string;
 }
 const initialState: IAuthState = {
   status: 0,
@@ -142,6 +150,18 @@ export const authslice = createApi({
         method: "POST",
         body: arg,
       }),
+      invalidatesTags: ["auth"],
+    }),
+    addExpoNotifToken: builder.mutation<
+      IExpoNotifState,
+      { Email: string | undefined; ExpoNotifToken: string | undefined }
+    >({
+      query: (arg) => ({
+        url: "/user/add_token",
+        method: "POST",
+        body: arg,
+      }),
+
       invalidatesTags: ["auth"],
     }),
     forgotPassword: builder.mutation<IForgotPasswordState, { Email: string }>({
@@ -354,6 +374,7 @@ export const {
 export const {
   useLoginUserMutation,
   useGetAccessTokenQuery,
+  useAddExpoNotifTokenMutation,
   useChangeAccountMutation,
   useChangePasswordMutation,
   useSendEmailMutation,

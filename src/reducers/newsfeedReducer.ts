@@ -168,16 +168,9 @@ export const newsfeedslice = createApi({
       }),
       invalidatesTags: ["newsfeed"],
     }),
-    getAllComments: builder.mutation<
-      ICommentState,
-      { NewsfeedID: number | undefined }
-    >({
-      query: (arg) => ({
-        url: "/user/newsfeed/all_comments",
-        method: "POST",
-        body: arg,
-      }),
-      invalidatesTags: ["newsfeed"],
+    getAllComments: builder.query<ICommentState, number | undefined>({
+      query: (NewsfeedID) => `/user/newsfeed/all_comments/:${NewsfeedID}`,
+      providesTags: ["newsfeed"],
     }),
     notifyCommentPostInFeed: builder.mutation<
       INewsfeedState,
@@ -223,7 +216,6 @@ export const newsfeedslice = createApi({
     }),
   }),
 });
-// /user/unlike_post
 
 const newsfeedSlice = createSlice({
   name: "newsfeed",
@@ -358,7 +350,7 @@ export const {
   useCommentPostInFeedMutation,
   useGetTotalCommentsQuery,
   useGetTotalLikesQuery,
-  useGetAllCommentsMutation,
+  useGetAllCommentsQuery,
   useNotifyCommentPostInFeedMutation,
   useDeleteLikesMutation,
   useDeleteCommentsMutation,

@@ -22,7 +22,7 @@ import getCurrentDate from "utils/helpers/formatDate";
 import {
   newsfeedslice,
   useCheckLikePostMutation,
-  useGetAllCommentsMutation,
+  useGetAllCommentsQuery,
   useLikePostInFeedMutation,
   useNotifyLikePostInFeedMutation,
   useRemoveNotificationLikeMutation,
@@ -57,9 +57,6 @@ const DetailedPostFeed = () => {
   const { data, isError, isFetching, isUninitialized } =
     useGetAccessTokenQuery();
 
-  const [getAllComments, { data: comments, status, error: commentErr }] =
-    useGetAllCommentsMutation();
-
   const { user } = data!;
   useRefetchOnMessage("refresh_post", () => {
     dispatch(newsfeedslice.util.invalidateTags(["newsfeed"]));
@@ -90,9 +87,11 @@ const DetailedPostFeed = () => {
     NewsfeedID: NewsfeedID,
   };
 
-  const comment_arg = {
-    NewsfeedID: NewsfeedID,
-  };
+  const {
+    data: comments,
+    status,
+    error: commentErr,
+  } = useGetAllCommentsQuery(NewsfeedID, { refetchOnMountOrArgChange: true });
 
   const fullName = `${user.FirstName} ${user.LastName}`;
 
@@ -110,7 +109,6 @@ const DetailedPostFeed = () => {
   const { isConnected } = useIsNetworkConnected();
   useEffect(() => {
     checkPostIsLike(arg);
-    getAllComments(comment_arg);
   }, []);
 
   const mediaRef = ref(storage, PostImage);

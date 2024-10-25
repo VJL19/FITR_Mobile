@@ -8,7 +8,6 @@ import {
   View,
 } from "react-native";
 import React, { useEffect } from "react";
-import { DetailedRootStackNavigatorsParamList } from "utils/types/detailed_screens/DetailedRootStackNavigators";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { Controller, useForm } from "react-hook-form";
 import DisplayFormError from "components/DisplayFormError";
@@ -39,7 +38,8 @@ const CommentPost = () => {
     commentPost,
     { status: commentStatus, data: commentData, error: commentErr },
   ] = useCommentPostInFeedMutation();
-  const [notifyComment, {}] = useNotifyCommentPostInFeedMutation();
+  const [notifyComment, { data: notifData, status: notifStatus, error }] =
+    useNotifyCommentPostInFeedMutation();
   const {
     handleSubmit,
     control,
@@ -49,15 +49,8 @@ const CommentPost = () => {
     resolver: joiResolver(commentSchema),
   });
 
-  const {
-    UserID,
-    PostTitle,
-    NewsfeedID,
-    NotificationAuthor,
-    Username,
-    CommentDate,
-    PostID,
-  } = useSelector((state: RootState) => state.comment.commentData);
+  const { UserID, PostTitle, NewsfeedID, Username, CommentDate, PostID } =
+    useSelector((state: RootState) => state.comment.commentData);
 
   // const { message, status } = useSelector((state: RootState) => state.comment);
   const { message, status } = useSelector(
@@ -99,6 +92,16 @@ const CommentPost = () => {
       DisplayAlert("Error message", commentErr?.data?.message);
     }
     if (commentStatus === "fulfilled") {
+      const fullName = `${user.FirstName} ${user.LastName}`;
+
+      const notify_arg = {
+        UserID: UserID,
+        PostID: PostID,
+        NotificationAuthor: fullName,
+        Username: Username,
+        NotificationDate: getCurrentDate(),
+        PostTitle: PostTitle,
+      };
       notifyComment(notify_arg);
       DisplayAlert("Success message", "Successfully commented on this post.");
       reset();
@@ -110,16 +113,6 @@ const CommentPost = () => {
     }
   }, [commentStatus]);
 
-  const fullName = `${user.FirstName} ${user.LastName}`;
-
-  const notify_arg = {
-    UserID: UserID,
-    PostID: PostID,
-    NotificationAuthor: fullName,
-    Username: Username,
-    NotificationDate: getCurrentDate(),
-    PostTitle: PostTitle,
-  };
   const onComment = async (data: IComments) => {
     const arg = {
       CommentText: data.CommentText,

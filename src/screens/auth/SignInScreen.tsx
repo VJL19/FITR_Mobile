@@ -70,7 +70,7 @@ const SignInScreen = () => {
     resolver: joiResolver(loginSchema),
   });
 
-  console.log("net status", isConnected);
+  // console.log("net status", isConnected);
   // console.log("message", message);
   const onSubmit = async (data: ILoginForm) => {
     // console.log("in sign in screen", data);

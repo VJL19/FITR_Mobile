@@ -1,5 +1,5 @@
 import { InteractionManager, StyleSheet, Text, View } from "react-native";
-import React, { useContext, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import RootStack from "navigators/RootStack";
 import AuthRootScreen from "screens/AuthRootScreen";
 import BottomRootScreen from "screens/BottomRootScreen";
@@ -23,14 +23,15 @@ import { tokens } from "react-native-paper/lib/typescript/styles/themes/v3/token
 import * as SecureStore from "expo-secure-store";
 import OnBoardingScreen from "screens/onboarding/OnBoardingScreen";
 import { getItemStorage } from "utils/helpers/AsyncStorage";
-
+import * as Notifications from "expo-notifications";
 const RootApp = () => {
   const { isAuthenticated, accessToken } = useSelector(
     (state: RootState) => state.authReducer
   );
 
   const navigation = useNavigation<RootStackNavigationProp>();
-
+  const notificationListener = useRef<Notifications.Subscription>();
+  const responseListener = useRef<Notifications.Subscription>();
   const [showOnBoarded, setShowOnBoarded] = useState<boolean | null>(null);
   const dispatch: AppDispatch = useDispatch();
   const { isReady } = useIsReady();
@@ -39,14 +40,33 @@ const RootApp = () => {
   // console.log("auth tokens", token);
 
   // console.log("double e", accessToken);
+  useEffect(() => {
+    notificationListener.current =
+      Notifications.addNotificationReceivedListener((notification) => {
+        console.log("notification", notification);
+      });
 
+    responseListener.current =
+      Notifications.addNotificationResponseReceivedListener((response) => {
+        console.log(response);
+      });
+
+    return () => {
+      notificationListener.current &&
+        Notifications.removeNotificationSubscription(
+          notificationListener.current
+        );
+      responseListener.current &&
+        Notifications.removeNotificationSubscription(responseListener.current);
+    };
+  }, []);
   useEffect(() => {
     const loadToken = async () => {
       const token = await SecureStore.getItemAsync("accessToken");
       if (token) {
         dispatch(setToken(token));
         dispatch(setAuthenticated());
-        console.log("in root app", token);
+        // console.log("in root app", token);
       }
     };
     loadToken();
@@ -89,7 +109,7 @@ const RootApp = () => {
     }
   };
 
-  console.log("accessToken", accessToken);
+  // console.log("accessToken", accessToken);
 
   if (showOnBoarded == null) {
     return null;
