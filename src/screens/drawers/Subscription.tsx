@@ -135,6 +135,7 @@ const Subscription = () => {
       DisplayAlert("Success message", "Payment Uploaded successfully!");
       removePhoto();
       setSelectedSubscription("");
+      setPaymentMethod("");
     }
   }, [status]);
 
@@ -241,7 +242,6 @@ const Subscription = () => {
         runSendPayment();
       },
     });
-    setPaymentMethod("");
   };
 
   console.log(tokenErr?.status);
