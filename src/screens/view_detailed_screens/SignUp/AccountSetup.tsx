@@ -81,6 +81,7 @@ const AccountSetup = () => {
       }}
     >
       <ScrollView
+        keyboardShouldPersistTaps={"handled"}
         contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
       >
         <Text style={styles.labelStyle}>Username</Text>

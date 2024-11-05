@@ -237,7 +237,7 @@ const ChangeAccount = () => {
 
   return (
     <View style={{ flex: 1 }}>
-      <ScrollView>
+      <ScrollView keyboardShouldPersistTaps={"handled"}>
         <View>
           <Image
             source={image === IMAGE_VALUES.DEFAULT ? avatar : { uri: image }}
@@ -255,7 +255,10 @@ const ChangeAccount = () => {
           </View>
         </View>
         <View style={{ alignItems: "center", padding: 15 }}>
-          <ScrollView style={{ width: "100%" }}>
+          <ScrollView
+            style={{ width: "100%" }}
+            keyboardShouldPersistTaps={"handled"}
+          >
             <Text style={styles.labelStyle}>Username</Text>
             <Controller
               control={control}

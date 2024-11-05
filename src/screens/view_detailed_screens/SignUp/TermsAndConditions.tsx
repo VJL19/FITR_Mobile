@@ -241,7 +241,7 @@ const TermsAndConditions = () => {
         <Button
           title="Register"
           color={"#ff2e00"}
-          onPress={handleSubmit(onSubmit)}
+          onPress={handleSubmit(onSubmit, (err) => console.log(err))}
           disabled={!IsChecked}
         />
       </View>

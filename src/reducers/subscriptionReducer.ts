@@ -122,6 +122,26 @@ export const subscriptionApi = createApi({
       query: (UserID) => `/user/subscription/specific_subscription:${UserID}`,
       providesTags: ["subscriptions"],
     }),
+    getSessionAlreadyPaid: builder.mutation<
+      ISubscriptionState,
+      number | undefined
+    >({
+      query: (UserID) => ({
+        url: `/user/subscription/check_session_paid:${UserID}`,
+        method: "GET",
+      }),
+      invalidatesTags: ["subscriptions"],
+    }),
+    getMonthlyAlreadyPaid: builder.mutation<
+      ISubscriptionState,
+      number | undefined
+    >({
+      query: (UserID) => ({
+        url: `/user/subscription/check_monthly_paid:${UserID}`,
+        method: "GET",
+      }),
+      invalidatesTags: ["subscriptions"],
+    }),
     getSubscriptionHistory: builder.query<
       ISubscriptionState,
       number | undefined
@@ -223,6 +243,8 @@ export const {
 } = subscriptionSlice.actions;
 export const {
   useGetSpecificSubscriptionQuery,
+  useGetSessionAlreadyPaidMutation,
+  useGetMonthlyAlreadyPaidMutation,
   useAddSubscriptionMutation,
   useProcessOnlinePaymentMutation,
   useRetrieveCheckoutSessionMutation,

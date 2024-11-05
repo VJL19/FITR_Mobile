@@ -159,6 +159,7 @@ const SignInScreen = () => {
     <ImageBackground style={styles.container}>
       <ScrollView
         style={{ width: "90%" }}
+        keyboardShouldPersistTaps={"handled"}
         contentContainerStyle={{
           justifyContent: "center",
           flexGrow: 1,

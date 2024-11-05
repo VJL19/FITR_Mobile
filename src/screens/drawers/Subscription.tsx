@@ -24,6 +24,8 @@ import {
   setClientKey,
   subscriptionApi,
   useAddSubscriptionMutation,
+  useGetMonthlyAlreadyPaidMutation,
+  useGetSessionAlreadyPaidMutation,
   useGetSpecificSubscriptionQuery,
 } from "reducers/subscriptionReducer";
 import getCurrentDate from "utils/helpers/formatDate";
@@ -64,6 +66,11 @@ const Subscription = () => {
   const [sendPayment, { data: subscriptionData, status, error }] =
     useAddSubscriptionMutation();
 
+  const [sessionPaid, { data: sessionPaidData, error: sessionPaidErr }] =
+    useGetSessionAlreadyPaidMutation();
+  const [monthlyPaid, { data: monthlyPaidData, error: monthlyPaidErr }] =
+    useGetMonthlyAlreadyPaidMutation();
+
   const { data: userSubscriptions } = useGetSpecificSubscriptionQuery(
     data?.user?.UserID,
     {
@@ -81,6 +88,17 @@ const Subscription = () => {
   ] = useProcessOnlinePaymentMutation();
 
   const { isConnected } = useIsNetworkConnected();
+
+  useEffect(() => {
+    if (data?.user?.SubscriptionType === SubscriptionTypeEnum.Session) {
+      sessionPaid(data?.user?.UserID);
+    } else {
+      monthlyPaid(data?.user?.UserID);
+    }
+  }, []);
+
+  console.log("is session already piad s", sessionPaidData);
+  console.log("is monthly already paid", monthlyPaidData);
 
   useRefetchOnMessage("refresh_subscriptionPage", () => {
     dispatch(subscriptionApi.util.invalidateTags(["subscriptions"]));
@@ -232,7 +250,7 @@ const Subscription = () => {
             data?.user?.SubscriptionType === SubscriptionTypeEnum.Session
               ? SubscriptionTypeEnum.Session
               : SubscriptionTypeEnum.Monthly,
-          SubscriptionStatus: "Fulfill",
+          SubscriptionStatus: "pending",
           SubscriptionMethod: "Cash",
           SubscriptionEntryDate: getCurrentDate(),
         };
@@ -369,12 +387,24 @@ const Subscription = () => {
             send the payment for this app.
           </Text>
         </View>
-        <DropdownComponent
-          searchPlaceholder="Select payment method..."
-          data={payment_methods}
-          handleChange={setPaymentMethod}
-          value={paymentMethod}
-        />
+
+        {sessionPaidData?.status === 200 && (
+          <DropdownComponent
+            searchPlaceholder="Select payment method..."
+            data={payment_methods}
+            handleChange={setPaymentMethod}
+            value={paymentMethod}
+          />
+        )}
+
+        {monthlyPaidData?.status === 200 && (
+          <DropdownComponent
+            searchPlaceholder="Select payment method..."
+            data={payment_methods}
+            handleChange={setPaymentMethod}
+            value={paymentMethod}
+          />
+        )}
         {/* <View style={styles.redirectBtns}>
           {paymentMethod === "1" && (
             <Button
@@ -440,14 +470,27 @@ const Subscription = () => {
             resizeMode="center"
           />
         )} */}
-        {data?.user?.SubscriptionType === SubscriptionTypeEnum.Session && (
-          <Text style={styles.textStyle}>
-            You have a due amount of 90.00 PHP
+        {data?.user?.SubscriptionType === SubscriptionTypeEnum.Session &&
+          sessionPaidData?.status === 200 && (
+            <Text style={styles.textStyle}>
+              You have a due amount of 90.00 PHP
+            </Text>
+          )}
+        {sessionPaidErr?.status === 401 && (
+          <Text style={styles.successText}>
+            You already paid today for your {data?.user?.SubscriptionType}.
           </Text>
         )}
-        {data?.user?.SubscriptionType === SubscriptionTypeEnum.Monthly && (
-          <Text style={styles.textStyle}>
-            You have a due amount of 900.00 PHP
+        {data?.user?.SubscriptionType === SubscriptionTypeEnum.Monthly &&
+          monthlyPaidData?.status === 200 && (
+            <Text style={styles.textStyle}>
+              You have a due amount of 900.00 PHP
+            </Text>
+          )}
+
+        {monthlyPaidErr?.status === 401 && (
+          <Text style={styles.successText}>
+            You already paid today for your {data?.user?.SubscriptionType}.
           </Text>
         )}
 
@@ -505,6 +548,11 @@ const styles = StyleSheet.create({
   },
   textStyle: {
     color: "#d9534f",
+    fontSize: 23,
+    fontStyle: "italic",
+  },
+  successText: {
+    color: "green",
     fontSize: 23,
     fontStyle: "italic",
   },
