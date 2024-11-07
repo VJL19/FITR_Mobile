@@ -1,4 +1,4 @@
-import { View, Text, Alert } from "react-native";
+import { View, Text, Alert, Platform } from "react-native";
 import React from "react";
 import AuthStack from "navigators/AuthStack";
 import { SignUpScreen, SignInScreen } from "screens/auth/index";
@@ -22,9 +22,15 @@ const AuthRootScreen = () => {
   return (
     <AuthStack.Navigator
       screenOptions={{
+        headerBackTitleVisible: Platform.OS === "ios" && false,
         headerStyle: { backgroundColor: "#ff2e00" },
         headerTintColor: "#f5f5f5",
         headerTitle: "Personal Information",
+        headerTitleStyle: {
+          color: "#f5f5f5",
+          fontFamily: "Inter-Bold",
+          fontSize: 22,
+        },
       }}
     >
       <AuthStack.Screen

@@ -101,7 +101,7 @@ const Attendance = () => {
     <View style={styles.container}>
       <View
         style={{
-          flex: 0.4,
+          flex: 0.33,
           justifyContent: "space-around",
           flexDirection: "row",
         }}

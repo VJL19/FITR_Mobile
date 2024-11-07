@@ -26,8 +26,10 @@ interface ISubscriptionState {
   message: string;
   result: ISubscriptions[];
   checkOutId: string;
+  SubscriptionExpectedEnd: string;
   checkOutStatus: string;
   createPayment: ICreatePaymentState;
+  viewSubscriptionPayload: ISubscriptions;
 }
 
 const initialState: ISubscriptionState = {
@@ -45,6 +47,28 @@ const initialState: ISubscriptionState = {
     SubscriptionType: "",
     SubscriptionMethod: "",
     SubscriptionEntryDate: "",
+  },
+  clientKey: "",
+  message: "",
+  result: [],
+  checkOutId: "",
+  SubscriptionExpectedEnd: "",
+  checkOutStatus: "",
+  viewSubscriptionPayload: {
+    UserID: 0,
+    SubscriptionID: 0,
+    SubscriptionAmount: 0,
+    SubscriptionUploadedImage: undefined,
+    SubscriptionMethod: "",
+    SubscriptionBy: "",
+    SubscriptionStatus: "",
+    SubscriptionType: "",
+    SubscriptionEntryDate: "",
+    ContactNumber: "",
+    Email: "",
+    AttendanceID: 0,
+    SubscriptionExpectedEnd: "",
+    IsPaid: false,
   },
 };
 
@@ -205,6 +229,12 @@ const subscriptionSlice = createSlice({
     setClientKey: (state, action: PayloadAction<string>) => {
       state.clientKey = action.payload;
     },
+    setViewSubscriptionPayload: (
+      state,
+      action: PayloadAction<ISubscriptions>
+    ) => {
+      state.viewSubscriptionPayload = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(processPayment.fulfilled, (state, action) => {
@@ -236,7 +266,7 @@ export const {
   createSubscription,
   setCheckOutId,
   setCheckOutUrl,
-
+  setViewSubscriptionPayload,
   setClientKey,
   deleteCheckOutId,
   deleteSubscription,

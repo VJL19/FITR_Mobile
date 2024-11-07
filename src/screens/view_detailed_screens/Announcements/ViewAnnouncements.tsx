@@ -128,10 +128,14 @@ const ViewAnnouncements = () => {
             />
           </TouchableOpacity>
         )}
-        <Text>{AnnouncementTitle}</Text>
-        <RenderHTML contentWidth={width} source={{ html }} />
-
-        <Text>{AnnouncementDate}</Text>
+        <View style={{ padding: 15 }}>
+          <Text style={styles.date}>
+            Posted Date:{" "}
+            {new Date(AnnouncementDate.split(" ")[0]).toDateString()}
+          </Text>
+          <Text style={styles.title}>{AnnouncementTitle}</Text>
+          <RenderHTML contentWidth={width} source={{ html }} />
+        </View>
       </ScrollView>
     </View>
   );
@@ -142,4 +146,12 @@ export default ViewAnnouncements;
 const styles = StyleSheet.create({
   imageStyle: { height: width * 1.1, width: width },
   videoStyle: { height: width * 1.1, width: width },
+  title: {
+    fontSize: 26,
+    fontFamily: "Inter-Bold",
+  },
+  date: {
+    fontSize: 18,
+    fontFamily: "Inter-Medium",
+  },
 });

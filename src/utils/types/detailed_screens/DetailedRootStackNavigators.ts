@@ -33,6 +33,9 @@ export type DetailedRootStackNavigatorsParamList = {
   "Forgot Password": undefined;
   "Change Password": undefined;
   "Forgot Password Confirmation": undefined;
+  "View Detailed Subscription History": undefined;
+  "View Detailed Attendance History": undefined;
+  "View Detailed Notifications": undefined;
 };
 
 export type DetailedRootStackScreenProp = StackScreenProps<
@@ -68,6 +71,9 @@ export type DetailedRootStackScreenProp = StackScreenProps<
   | "Forgot Password"
   | "Change Password"
   | "Forgot Password Confirmation"
+  | "View Detailed Subscription History"
+  | "View Detailed Attendance History"
+  | "View Detailed Notifications"
 >;
 export type DetailedRootStackNavigationProp = StackNavigationProp<
   DetailedRootStackNavigatorsParamList,
@@ -102,4 +108,7 @@ export type DetailedRootStackNavigationProp = StackNavigationProp<
   | "Forgot Password"
   | "Change Password"
   | "Forgot Password Confirmation"
+  | "View Detailed Subscription History"
+  | "View Detailed Attendance History"
+  | "View Detailed Notifications"
 >;

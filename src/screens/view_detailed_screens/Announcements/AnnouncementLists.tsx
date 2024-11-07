@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   title: {
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: "800",
     fontFamily: "Inter-Bold",
     color: "#f5f5f5",

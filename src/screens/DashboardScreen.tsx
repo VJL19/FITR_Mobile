@@ -24,15 +24,21 @@ import { useRefetchOnMessage } from "hooks/useRefetchOnMessage";
 import {
   authslice,
   setToken,
+  useAddExpoNotifTokenMutation,
   useGetAccessTokenQuery,
 } from "reducers/authReducer";
 import {
   useGetAllNotificationsCountQuery,
   notificationApi,
   setNotificationCount,
+  setExpoNotifToken,
 } from "reducers/notificationReducer";
 import { io } from "socket.io-client";
 import loadConfig from "global/config";
+import {
+  IsPushNotificationReceived,
+  registerForPushNotificationsAsync,
+} from "utils/helpers/ExpoNotifications";
 const config = loadConfig();
 const socket = io(`${config.SOCKET_URL}`);
 const DashboardScreen = ({ navigation }: RootStackScreenProp) => {
@@ -41,14 +47,16 @@ const DashboardScreen = ({ navigation }: RootStackScreenProp) => {
     (state: RootState) => state.authReducer
   );
 
-  const { data, isError, refetch } = useGetAccessTokenQuery();
+  const { data, isError, refetch, status } = useGetAccessTokenQuery();
 
   const { data: count } = useGetAllNotificationsCountQuery(data?.user?.UserID, {
     refetchOnMountOrArgChange: true,
   });
 
   const dispatch: AppDispatch = useDispatch();
-
+  const [addExpoToken, { data: expoData, status: expoStat }] =
+    useAddExpoNotifTokenMutation();
+  const [expoToken, setExpoToken] = useState<string | undefined>("");
   let messageType = "refresh_user";
   useEffect(() => {
     const handleMessage = (data: { refresh_token: string }) => {
@@ -69,6 +77,27 @@ const DashboardScreen = ({ navigation }: RootStackScreenProp) => {
       socket?.off(messageType, handleMessage);
     };
   }, [messageType]);
+
+  useEffect(() => {
+    const getExpoToken = async () => {
+      const token = await registerForPushNotificationsAsync();
+      setExpoToken(token);
+    };
+    getExpoToken();
+  }, []);
+
+  useEffect(() => {
+    const isReceived = IsPushNotificationReceived(expoToken);
+    if (isReceived) {
+      addExpoToken({ Email: data?.user?.Email, ExpoNotifToken: expoToken });
+      dispatch(setExpoNotifToken(expoToken));
+      const setExpoTokenAsync = async () => {
+        await SecureStore.setItemAsync("expoNotifToken", expoToken!);
+      };
+      setExpoTokenAsync();
+    }
+    console.log("run isreceived token");
+  }, [expoToken]);
 
   //refresh notif counts when mutation is perform on the server.
   useRefetchOnMessage("refresh_post", () => {
@@ -171,7 +200,12 @@ const DashboardScreen = ({ navigation }: RootStackScreenProp) => {
         ),
         drawerActiveBackgroundColor: "#rgba(255,45,0, .2)",
         drawerActiveTintColor: "#ff2e00",
-        drawerLabelStyle: { marginLeft: -5 },
+
+        drawerLabelStyle: {
+          marginLeft: -7,
+          fontFamily: "Inter-SemiBold",
+          fontSize: 16,
+        },
       })}
     >
       <DrawerStack.Screen

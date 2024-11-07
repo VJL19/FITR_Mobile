@@ -60,7 +60,7 @@ const ForgotPassword = () => {
       );
     }
     if (status === "rejected" && error?.status !== NETWORK_ERROR.FETCH_ERROR) {
-      DisplayAlert("Error message", error?.data?.error?.sqlMessage);
+      DisplayAlert("Error message", error?.data?.message);
     }
     if (status === "fulfilled" && isSubmitted) {
       DisplayAlert("Success message", data?.message);

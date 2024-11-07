@@ -183,10 +183,18 @@ const ViewPost = () => {
             />
           </TouchableOpacity>
         )}
-        <Text>{PostID}</Text>
-        <Text>{PostTitle}</Text>
-        <RenderHTML contentWidth={width} source={{ html }} />
-        <Text>{PostDate}</Text>
+        <View style={{ padding: 20 }}>
+          <Text style={styles.date}>
+            Date Posted: {new Date(PostDate.split(" ")[0]).toDateString()}
+          </Text>
+          <Text style={styles.title}>{PostTitle}</Text>
+
+          <RenderHTML
+            contentWidth={width}
+            source={{ html }}
+            baseStyle={{ fontSize: 21 }}
+          />
+        </View>
       </ScrollView>
       <View style={{ padding: 10 }}>
         <Button title="Delete Post" onPress={handleDelete} color="#ff2e00" />
@@ -203,8 +211,15 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   title: {
-    fontSize: 25,
-    fontWeight: "bold",
+    fontSize: 26,
+    fontFamily: "Inter-Bold",
+  },
+  description: {
+    fontSize: 24,
+    fontFamily: "Inter-Medium",
+  },
+  date: {
+    fontSize: 18,
   },
   video: { height: width * 0.9, width: width },
   image: { height: width * 0.9, width: width },

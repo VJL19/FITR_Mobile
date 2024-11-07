@@ -41,7 +41,6 @@ const CustomMenu = ({
       >
         <Menu.Item onPress={onPress} title={`Edit ${screenName}`} />
         <Divider />
-        <Menu.Item onPress={() => {}} title={`Delete ${screenName}`} />
       </Menu>
     </View>
   );

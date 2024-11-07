@@ -130,6 +130,7 @@ const ViewAttendanceHistory = () => {
         alwaysBounceVertical={true}
         data={attendanceHistory?.result}
         renderItem={({ item }) => <AttendanceHistoryLists {...item} />}
+        ListFooterComponent={<View style={{ height: 200 }} />}
         keyExtractor={(item: IAttendance) => item?.AttendanceID?.toString()}
       />
     </View>

@@ -17,6 +17,8 @@ interface INotificationState {
   isLoading: boolean;
   result: INotifications[];
   notificationCount: string | undefined;
+  viewNotificationPayload: INotifications;
+  expoNotifToken: string | undefined | null;
 }
 
 const initialState: INotificationState = {
@@ -26,6 +28,20 @@ const initialState: INotificationState = {
   isLoading: false,
   result: [],
   notificationCount: 0,
+  viewNotificationPayload: {
+    UserID: 0,
+    PostID: 0,
+    PostAuthor: "",
+    NotificationID: 0,
+    NotificationText: "",
+    isMarkRead: "",
+    NotifBy: "",
+    NotificationType: "",
+    NotificationDate: "",
+    NotificationCount: "",
+    NotificationAuthor: "",
+  },
+  expoNotifToken: "",
 };
 
 const config = loadConfig();
@@ -90,6 +106,16 @@ const notificationSlice = createSlice({
       action: PayloadAction<string | undefined>
     ) => {
       state.notificationCount = action.payload;
+    },
+
+    setViewNotification: (state, action: PayloadAction<INotifications>) => {
+      state.viewNotificationPayload = action.payload;
+    },
+    setExpoNotifToken: (
+      state,
+      action: PayloadAction<string | undefined | null>
+    ) => {
+      state.expoNotifToken = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -177,7 +203,8 @@ const notificationSlice = createSlice({
   },
 });
 
-export const { setNotificationCount } = notificationSlice.actions;
+export const { setNotificationCount, setViewNotification, setExpoNotifToken } =
+  notificationSlice.actions;
 export const {
   useMarkAsReadNotificationsMutation,
   useMarkAsUnreadNotificationsMutation,

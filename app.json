@@ -4,7 +4,7 @@
     "slug": "FitrMobile",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./src/assets/icon.png",
+    "icon": "./src/assets/fitr_logo4.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./src/assets/fitr_logo4.png",
@@ -75,7 +75,6 @@
         }
       ]
     ],
-    
     "extra": {
       "eas": {
         "projectId": "41a1ab0d-3a41-489c-a672-494d37676997"

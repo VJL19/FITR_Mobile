@@ -44,6 +44,8 @@ import { useRefetchOnMessage } from "hooks/useRefetchOnMessage";
 import { postslice } from "reducers/postReducer";
 import HTTP_ERROR from "utils/enums/ERROR_CODES";
 import CustomError from "components/CustomError";
+import firebase from "firebase/app";
+
 const { width, height } = Dimensions.get("window");
 const DetailedPostFeed = () => {
   const [likePost, { data: likeData, error: likeErr, status: likeStat }] =
@@ -116,14 +118,15 @@ const DetailedPostFeed = () => {
   useEffect(() => {
     if (PostImage === IMAGE_VALUES.DEFAULT) {
       return;
+    } else {
+      getMetadata(mediaRef)
+        .then((metaData) => {
+          setMetadata(metaData?.contentType);
+        })
+        .catch((err) => {
+          throw new Error(err);
+        });
     }
-    getMetadata(mediaRef)
-      .then((metaData) => {
-        setMetadata(metaData?.contentType);
-      })
-      .catch((err) => {
-        throw new Error(err);
-      });
   }, []);
 
   useEffect(() => {
@@ -288,22 +291,34 @@ const DetailedPostFeed = () => {
             </View>
           </View>
         )}
+        <View style={{ padding: 10 }}>
+          <Text style={styles.date}>
+            Posted Date: {new Date(PostDate.split(" ")[0]).toDateString()}
+          </Text>
+          <Text style={styles.title}>{PostTitle}</Text>
+          <RenderHTML
+            contentWidth={width}
+            source={{ html }}
+            baseStyle={styles.description}
+          />
+          <Text style={styles.description}>Posted By: {PostAuthor}</Text>
 
-        <Text>{PostTitle}</Text>
-        <RenderHTML contentWidth={width} source={{ html }} />
-        <Text>{PostAuthor}</Text>
-        <Text>{PostDate}</Text>
-
-        {comments?.result.length !== 0 && (
-          <Text style={styles.title}>Comments</Text>
-        )}
-        <FlatList
-          horizontal={true}
-          alwaysBounceVertical={true}
-          data={comments?.result}
-          renderItem={({ item }: { item: IComments }) => <Comments {...item} />}
-          keyExtractor={(item) => item.CommentID?.toString()}
-        />
+          {comments?.result.length !== 0 && (
+            <Text style={styles.title}>Comments</Text>
+          )}
+          {comments?.result.length === 0 && (
+            <Text style={styles.title}>No Comments</Text>
+          )}
+          <FlatList
+            horizontal={true}
+            alwaysBounceVertical={true}
+            data={comments?.result}
+            renderItem={({ item }: { item: IComments }) => (
+              <Comments {...item} />
+            )}
+            keyExtractor={(item) => item.CommentID?.toString()}
+          />
+        </View>
       </ScrollView>
     </View>
   );
@@ -315,7 +330,16 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   title: {
+    fontSize: 28,
+    fontFamily: "Inter-Bold",
+  },
+  description: {
     fontSize: 21,
+    fontFamily: "Inter-Medium",
+  },
+  date: {
+    fontSize: 18,
+    fontFamily: "Inter-Medium",
   },
   image: { height: width * 1.1, width: width },
   video: { height: width * 1.1, width: width },

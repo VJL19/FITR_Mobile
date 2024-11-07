@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 18,
     color: "#f5f5f5",
-    fontWeight: "bold",
+    fontFamily: "Inter-Bold",
   },
   avatarInfoStyle: {
     marginTop: 10,

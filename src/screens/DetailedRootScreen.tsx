@@ -2,7 +2,13 @@ import "react-native-gesture-handler";
 import React from "react";
 import ProcessCheckout from "./view_detailed_screens/Checkout/ProcessCheckout";
 import DetailedScreenStacks from "../navigators/DetailedScreenStack";
-import { Alert, StyleSheet, TouchableNativeFeedback, View } from "react-native";
+import {
+  Alert,
+  Platform,
+  StyleSheet,
+  TouchableNativeFeedback,
+  View,
+} from "react-native";
 import { CardStyleInterpolators } from "@react-navigation/stack";
 import AddPrograms from "./view_detailed_screens/Programs/AddProgram";
 import ViewAnnouncements from "./view_detailed_screens/Announcements/ViewAnnouncements";
@@ -37,6 +43,9 @@ import ForgotPassword from "./view_detailed_screens/MyAccount/ForgotPassword";
 import ChangePassword from "./view_detailed_screens/MyAccount/ChangePassword";
 import ForgotPasswordConfirmation from "./view_detailed_screens/MyAccount/ForgotPasswordConfirmation";
 import ViewSuggestedProgram from "./view_detailed_screens/Programs/ViewSuggestedProgram";
+import ViewDetailedSubscriptionHistory from "./view_detailed_screens/Subscription/ViewDetailedSubscriptionHistory";
+import ViewDetailedAttendanceHistory from "./view_detailed_screens/Attendance/ViewDetailedAttendanceHistory";
+import ViewDetailedNotification from "./view_detailed_screens/Notifications/ViewDetailedNotification";
 
 const DetailedRootScreen = () => {
   const config = {
@@ -79,6 +88,7 @@ const DetailedRootScreen = () => {
         cardStyle: {
           backgroundColor: "#f5f5f5",
         },
+        headerBackTitleVisible: Platform.OS === "ios" && false,
         headerTintColor: "#f5f5f5",
         headerPressColor: "#d3d3d3",
         headerPressOpacity: 0.2,
@@ -155,12 +165,48 @@ const DetailedRootScreen = () => {
         }}
       />
       <DetailedScreenStacks.Screen
+        name="View Detailed Attendance History"
+        component={ViewDetailedAttendanceHistory}
+        options={{
+          cardOverlayEnabled: true,
+          presentation: "card",
+          headerTintColor: "#fff",
+          headerLeftContainerStyle: {
+            padding: 2,
+            backgroundColor: "#ff2e00",
+            borderRadius: 50,
+          },
+          headerTitle: () => null,
+          headerTransparent: true,
+          gestureDirection: "horizontal",
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+      />
+      <DetailedScreenStacks.Screen
         name="View Payments"
         component={SubscriptionHistory}
         options={{
           headerTitle: "Subscription History",
           presentation: "card",
           gestureEnabled: true,
+          gestureDirection: "horizontal",
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+      />
+      <DetailedScreenStacks.Screen
+        name="View Detailed Subscription History"
+        component={ViewDetailedSubscriptionHistory}
+        options={{
+          cardOverlayEnabled: true,
+          presentation: "card",
+          headerTintColor: "#fff",
+          headerLeftContainerStyle: {
+            padding: 2,
+            backgroundColor: "#ff2e00",
+            borderRadius: 50,
+          },
+          headerTitle: () => null,
+          headerTransparent: true,
           gestureDirection: "horizontal",
           cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
@@ -302,6 +348,25 @@ const DetailedRootScreen = () => {
         options={{
           cardOverlayEnabled: true,
           presentation: "card",
+          gestureEnabled: true,
+          gestureDirection: "horizontal",
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+      />
+      <DetailedScreenStacks.Screen
+        name="View Detailed Notifications"
+        component={ViewDetailedNotification}
+        options={{
+          cardOverlayEnabled: true,
+          presentation: "card",
+          headerTintColor: "#fff",
+          headerLeftContainerStyle: {
+            padding: 2,
+            backgroundColor: "#ff2e00",
+            borderRadius: 50,
+          },
+          headerTitle: () => null,
+          headerTransparent: true,
           gestureEnabled: true,
           gestureDirection: "horizontal",
           cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,

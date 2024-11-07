@@ -154,7 +154,7 @@ export const authslice = createApi({
     }),
     addExpoNotifToken: builder.mutation<
       IExpoNotifState,
-      { Email: string | undefined; ExpoNotifToken: string | undefined }
+      { Email: string | undefined; ExpoNotifToken: string | undefined | null }
     >({
       query: (arg) => ({
         url: "/user/add_token",

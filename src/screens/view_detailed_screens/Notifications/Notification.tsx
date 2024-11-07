@@ -9,6 +9,7 @@ import {
 import React, { useEffect } from "react";
 import { INotifications } from "utils/types/notifications.types";
 import {
+  setViewNotification,
   useMarkAsReadNotificationsMutation,
   useMarkAsUnreadNotificationsMutation,
 } from "reducers/notificationReducer";
@@ -22,11 +23,16 @@ import { useGetAccessTokenQuery } from "reducers/authReducer";
 import useIsNetworkConnected from "hooks/useIsNetworkConnected";
 import { NETWORK_ERROR } from "utils/enums/Errors";
 import HTTP_ERROR from "utils/enums/ERROR_CODES";
+import { AppDispatch } from "store/store";
+import { useDispatch } from "react-redux";
 
 const Notification = ({
   UserID,
+  PostID,
   isMarkRead,
   NotificationText,
+  NotificationDate,
+  NotificationAuthor,
   ProfilePic,
   NotificationID,
 }: INotifications) => {
@@ -39,7 +45,8 @@ const Notification = ({
 
   const { isConnected } = useIsNetworkConnected();
 
-  console.log("read stat", readStat);
+  const dispatch: AppDispatch = useDispatch();
+  // console.log("read stat", readStat);
   useEffect(() => {
     if (readErr?.status === NETWORK_ERROR.FETCH_ERROR && !isConnected) {
       DisplayAlert(
@@ -121,27 +128,45 @@ const Notification = ({
       params: { imageUrl: ProfilePic },
     });
   };
+  const handleNavigate = () => {
+    const arg = {
+      UserID,
+      isMarkRead,
+      NotificationText,
+      PostID: PostID,
+      NotificationDate,
+      NotificationAuthor,
+      ProfilePic,
+      NotificationID,
+    };
+    dispatch(setViewNotification(arg));
+    navigation.navigate("DetailedScreens", {
+      screen: "View Detailed Notifications",
+    });
+  };
   return (
-    <View style={styles.container}>
-      <TouchableOpacity onPress={handlePress} style={{ width: "20%" }}>
-        <Image
-          source={
-            ProfilePic === IMAGE_VALUES.DEFAULT ? avatar : { uri: ProfilePic }
-          }
-          style={styles.image}
-        />
-      </TouchableOpacity>
-      <View style={styles.card}>
-        <Text numberOfLines={1} ellipsizeMode="clip">
-          {NotificationText}
-        </Text>
-        {isMarkRead === "true" ? (
-          <Button title="Unread" onPress={handleUnread} />
-        ) : (
-          <Button title="Read" onPress={handleRead} />
-        )}
+    <TouchableOpacity onPress={handleNavigate}>
+      <View style={styles.container}>
+        <TouchableOpacity onPress={handlePress} style={{ width: "20%" }}>
+          <Image
+            source={
+              ProfilePic === IMAGE_VALUES.DEFAULT ? avatar : { uri: ProfilePic }
+            }
+            style={styles.image}
+          />
+        </TouchableOpacity>
+        <View style={styles.card}>
+          <Text numberOfLines={1} ellipsizeMode="clip">
+            {NotificationText}
+          </Text>
+          {isMarkRead === "true" ? (
+            <Button title="Unread" onPress={handleUnread} color="#ff2e00" />
+          ) : (
+            <Button title="Read" onPress={handleRead} color="#ff2e00" />
+          )}
+        </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 

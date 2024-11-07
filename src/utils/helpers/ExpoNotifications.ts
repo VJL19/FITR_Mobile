@@ -26,4 +26,9 @@ async function registerForPushNotificationsAsync() {
   return token;
 }
 
-export { registerForPushNotificationsAsync };
+function IsPushNotificationReceived(token: string | undefined) {
+  const isTokenReceived = token !== undefined || token !== null ? true : false;
+  return isTokenReceived;
+}
+
+export { registerForPushNotificationsAsync, IsPushNotificationReceived };

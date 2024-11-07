@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import {
   attendanceUser,
   checkUserScanQr,
@@ -17,6 +17,7 @@ interface IAttendanceState {
   isLoading: boolean;
   user: IAttendance;
   result: IAttendance[];
+  viewAttendancePayload: IAttendance;
 }
 
 const initialState: IAttendanceState = {
@@ -39,6 +40,19 @@ const initialState: IAttendanceState = {
     TimeOut: "",
   },
   result: [],
+  viewAttendancePayload: {
+    UserID: 0,
+    AttendanceID: 0,
+    ProfilePic: "",
+    LastName: "",
+    FirstName: "",
+    SubscriptionType: "",
+    SubscriptionExpectedEnd: "",
+    TimeIn: "",
+    TimeOut: "",
+    DateTapped: "",
+    IsPaid: false,
+  },
 };
 
 const config = loadConfig();
@@ -120,7 +134,11 @@ export const attendanceslice = createApi({
 const attendanceSlice = createSlice({
   name: "attendance",
   initialState,
-  reducers: {},
+  reducers: {
+    setViewAttendancePayload: (state, action: PayloadAction<IAttendance>) => {
+      state.viewAttendancePayload = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     //Attendance user through scanning the qr code
     builder.addCase(attendanceUser.fulfilled, (state, action) => {
@@ -182,6 +200,8 @@ const attendanceSlice = createSlice({
     });
   },
 });
+
+export const { setViewAttendancePayload } = attendanceSlice.actions;
 
 export const {
   useGetUserRecordsQuery,

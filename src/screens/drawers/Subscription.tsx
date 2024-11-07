@@ -95,7 +95,7 @@ const Subscription = () => {
     } else {
       monthlyPaid(data?.user?.UserID);
     }
-  }, []);
+  }, [processOnlineData, subscriptionData]);
 
   console.log("is session already piad s", sessionPaidData);
   console.log("is monthly already paid", monthlyPaidData);
@@ -341,6 +341,7 @@ const Subscription = () => {
   }
   console.log("subscriptionData error", error);
   console.log("subscriptionData", subscriptionData);
+
   return (
     <ScrollView>
       <View style={styles.container}>
@@ -388,7 +389,7 @@ const Subscription = () => {
           </Text>
         </View>
 
-        {sessionPaidData?.status === 200 && (
+        {sessionPaidErr?.status === 401 && (
           <DropdownComponent
             searchPlaceholder="Select payment method..."
             data={payment_methods}
@@ -397,7 +398,7 @@ const Subscription = () => {
           />
         )}
 
-        {monthlyPaidData?.status === 200 && (
+        {monthlyPaidErr?.status === 401 && (
           <DropdownComponent
             searchPlaceholder="Select payment method..."
             data={payment_methods}
@@ -471,26 +472,31 @@ const Subscription = () => {
           />
         )} */}
         {data?.user?.SubscriptionType === SubscriptionTypeEnum.Session &&
-          sessionPaidData?.status === 200 && (
+          sessionPaidErr?.status === 401 && (
             <Text style={styles.textStyle}>
               You have a due amount of 90.00 PHP
             </Text>
           )}
-        {sessionPaidErr?.status === 401 && (
+        {sessionPaidData?.status === 200 && (
           <Text style={styles.successText}>
-            You already paid today for your {data?.user?.SubscriptionType}.
+            You already paid today for your {data?.user?.SubscriptionType}{" "}
+            Subscription.
           </Text>
         )}
         {data?.user?.SubscriptionType === SubscriptionTypeEnum.Monthly &&
-          monthlyPaidData?.status === 200 && (
+          monthlyPaidErr?.status === 401 && (
             <Text style={styles.textStyle}>
               You have a due amount of 900.00 PHP
             </Text>
           )}
 
-        {monthlyPaidErr?.status === 401 && (
+        {monthlyPaidData?.status === 200 && (
           <Text style={styles.successText}>
-            You already paid today for your {data?.user?.SubscriptionType}.
+            You already paid today for your {data?.user?.SubscriptionType}{" "}
+            Subscription. The expected end for your subscription till{" "}
+            {new Date(
+              monthlyPaidData?.result?.[0]?.SubscriptionExpectedEnd!
+            ).toDateString()}
           </Text>
         )}
 

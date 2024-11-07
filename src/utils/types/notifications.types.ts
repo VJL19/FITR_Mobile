@@ -3,6 +3,7 @@ import IUser from "./user.types";
 export interface INotifications extends IUser {
   UserID: number;
   PostAuthor: string;
+  PostID: number;
   NotificationID: number;
   NotificationText: string;
   isMarkRead: string;
@@ -10,4 +11,5 @@ export interface INotifications extends IUser {
   NotificationType: string;
   NotificationDate: string;
   NotificationCount: string;
+  NotificationAuthor?: string;
 }

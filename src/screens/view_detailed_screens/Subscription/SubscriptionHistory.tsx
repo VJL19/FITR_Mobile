@@ -78,6 +78,7 @@ const SubscriptionHistory = () => {
       toggleDatePicker();
     }
     console.log("subscription history data", subscriptionHistory);
+
     console.log("subscription history error", error);
   };
 
@@ -135,6 +136,7 @@ const SubscriptionHistory = () => {
         alwaysBounceVertical={true}
         data={subscriptionHistory?.result}
         renderItem={({ item }) => <SubscriptionHistoryLists {...item} />}
+        ListFooterComponent={<View style={{ height: 200 }} />}
         keyExtractor={(item: ISubscriptions) =>
           item?.SubscriptionID?.toString()
         }

@@ -8,7 +8,12 @@ import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigat
 const Subscriptions = ({
   SubscriptionAmount,
   SubscriptionUploadedImage,
+  SubscriptionBy,
+  SubscriptionType,
+  SubscriptionMethod,
   SubscriptionStatus,
+  Email,
+  ContactNumber,
 }: ISubscriptions) => {
   const navigation = useNavigation<RootStackNavigationProp>();
   const handlePress = () => {
@@ -31,15 +36,20 @@ const Subscriptions = ({
         </View>
       </TouchableOpacity>
       <View style={styles.box}>
-        <TouchableOpacity onPress={handleNavigate}>
-          <Image
-            source={{ uri: SubscriptionUploadedImage }}
-            style={{ height: 250, width: "100%" }}
-          />
-        </TouchableOpacity>
-        <Text style={styles.label}>PHP {SubscriptionAmount}</Text>
+        <Text style={styles.title}>Billing Details</Text>
+        <Text style={styles.label}>Paid By: {SubscriptionBy}</Text>
+        <Text style={styles.label}>Email: {Email}</Text>
+        <Text style={styles.label}>Contact Number: {ContactNumber}</Text>
+        <Text style={styles.title}>Payment Details:</Text>
+        <Text style={styles.label}>Amount - {SubscriptionAmount} PHP</Text>
         <Text style={styles.label}>
           Status - {SubscriptionStatus?.toUpperCase()}
+        </Text>
+        <Text style={styles.label}>
+          Method - {SubscriptionMethod?.toUpperCase()}
+        </Text>
+        <Text style={styles.label}>
+          Type - {SubscriptionType?.toUpperCase()}
         </Text>
       </View>
     </View>
@@ -59,6 +69,10 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255,45,0, .2)",
     width: "90%",
     marginTop: 15,
+  },
+  title: {
+    fontSize: 22,
+    fontFamily: "Inter-Bold",
   },
   label: {
     fontSize: 18,

@@ -19,17 +19,35 @@ import Ionicon from "react-native-vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
 import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
 import LoadingIndicator from "components/LoadingIndicator";
-import { authslice, useGetAccessTokenQuery } from "reducers/authReducer";
+import {
+  authslice,
+  useAddExpoNotifTokenMutation,
+  useGetAccessTokenQuery,
+} from "reducers/authReducer";
 import CustomError from "components/CustomError";
 import { IMAGE_VALUES } from "utils/enums/DefaultValues";
 import { useRefetchOnMessage } from "hooks/useRefetchOnMessage";
+import { Switch } from "react-native-paper";
+import DisplayAlert from "components/CustomAlert";
+import DialogBox from "components/DialogBox";
+import { setExpoNotifToken } from "reducers/notificationReducer";
+import * as SecureStore from "expo-secure-store";
+
 const { width, height } = Dimensions.get("window");
 const MyAccount = () => {
   const dispatch: AppDispatch = useDispatch();
+  const [addExpoToken, { data: expoData, status: expoStat }] =
+    useAddExpoNotifTokenMutation();
+  const { isError, data, isUninitialized, isFetching } =
+    useGetAccessTokenQuery();
+  const { expoNotifToken } = useSelector(
+    (state: RootState) => state.notification
+  );
 
-  const { isError, data, isUninitialized, isFetching, refetch } =
-    useGetAccessTokenQuery(undefined, {});
-
+  const [expoToken, setExpoToken] = useState<string | null>("");
+  const [shouldReceiveNotif, setShouldReceivedNotif] = React.useState(
+    expoNotifToken && true
+  );
   const navigation = useNavigation<RootStackNavigationProp>();
   const [image, setImage] = useState<string | undefined>();
 
@@ -38,6 +56,13 @@ const MyAccount = () => {
   });
   useEffect(() => {
     dispatch(setRoute("My Account"));
+    const loadExpoToken = async () => {
+      const token = await SecureStore.getItemAsync("expoNotifToken");
+      if (token) {
+        setExpoToken(token);
+      }
+    };
+    loadExpoToken();
   }, []);
 
   if (isFetching || isUninitialized) {
@@ -46,7 +71,36 @@ const MyAccount = () => {
   if (isError) {
     return <CustomError />;
   }
-  console.log("hey", data);
+
+  const onToggleSwitch = () => {
+    if (shouldReceiveNotif) {
+      DialogBox({
+        dialogTitle: "Disable Notification?",
+        dialogDescription:
+          "Note: Pressing confirm you will not receive notifications from attendance (time-in/time-out), and subscriptions status",
+        handlePress: async (args) => {
+          addExpoToken({ Email: data?.user?.Email, ExpoNotifToken: null });
+          dispatch(setExpoNotifToken(null));
+          setShouldReceivedNotif(!shouldReceiveNotif);
+        },
+      });
+    }
+    if (!shouldReceiveNotif) {
+      DialogBox({
+        dialogTitle: "Enable Notification?",
+        dialogDescription:
+          "Note: Pressing confirm you will receive notifications from attendance (time-in/time-out), and subscriptions status",
+        handlePress: async (args) => {
+          dispatch(setExpoNotifToken(expoToken));
+          addExpoToken({
+            Email: data?.user?.Email,
+            ExpoNotifToken: expoToken,
+          });
+          setShouldReceivedNotif(!shouldReceiveNotif);
+        },
+      });
+    }
+  };
 
   const handlePress = () => {
     navigation.navigate("DetailedScreens", {
@@ -79,15 +133,19 @@ const MyAccount = () => {
       >
         <View style={{ flex: 1, flexDirection: "column" }}>
           <Text style={styles.title}>Username</Text>
-          <Text>{data?.user?.Username}</Text>
+          <Text style={styles.description}>{data?.user?.Username}</Text>
         </View>
         <View style={{ flex: 1, flexDirection: "column" }}>
           <Text style={styles.title}>Email</Text>
-          <Text>{data?.user?.Email}</Text>
+          <Text style={styles.description}>{data?.user?.Email}</Text>
         </View>
         <View style={{ flex: 1, flexDirection: "column" }}>
           <Text style={styles.title}>Contact Number</Text>
-          <Text>{data?.user?.ContactNumber}</Text>
+          <Text style={styles.description}>{data?.user?.ContactNumber}</Text>
+        </View>
+        <View style={{ flex: 1, flexDirection: "row" }}>
+          <Text style={styles.title}>Receive Notifications?</Text>
+          <Switch value={shouldReceiveNotif} onValueChange={onToggleSwitch} />
         </View>
       </ScrollView>
       <View style={{ width: "90%" }}>
@@ -119,6 +177,10 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 25,
-    fontWeight: "bold",
+    fontFamily: "Inter-Bold",
+  },
+  description: {
+    fontSize: 18,
+    fontFamily: "Inter-Regular",
   },
 });

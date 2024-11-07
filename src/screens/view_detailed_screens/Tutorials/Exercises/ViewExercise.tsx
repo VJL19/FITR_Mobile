@@ -98,10 +98,6 @@ const ViewExercise = () => {
     }
     if (removeStat === "fulfilled") {
       checkExerciseFavorite(arg);
-      DisplayAlert(
-        "Success message",
-        "This exercise is successfully removed to your favorites!"
-      );
     }
     if (removeErr?.status === HTTP_ERROR.BAD_REQUEST) {
       DisplayAlert("Error message", removeErr?.data?.message);
@@ -129,10 +125,6 @@ const ViewExercise = () => {
     }
     if (addStat === "fulfilled") {
       checkExerciseFavorite(arg);
-      DisplayAlert(
-        "Success message",
-        "This exercise is successfully added to your favorites!"
-      );
     }
     if (addErr?.status === HTTP_ERROR.BAD_REQUEST) {
       DisplayAlert("Error message", addErr?.data?.message);

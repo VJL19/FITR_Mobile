@@ -75,9 +75,13 @@ const ViewWorkout = () => {
     function stopSpeech() {
       Speech.stop();
     }
+    navigation.addListener("beforeRemove", stopSpeech);
     navigation.addListener("blur", stopSpeech);
 
-    return () => navigation.removeListener("blur", stopSpeech);
+    return () => {
+      navigation.removeListener("beforeRemove", stopSpeech);
+      navigation.addListener("blur", stopSpeech);
+    };
   }, [navigation]);
 
   useEffect(() => {
@@ -101,10 +105,6 @@ const ViewWorkout = () => {
     }
     if (removeStat === "fulfilled") {
       checkWorkoutFavorite(arg);
-      DisplayAlert(
-        "Success message",
-        "This workout is successfully added to your favorites!"
-      );
     }
     if (removeErr?.status === HTTP_ERROR.BAD_REQUEST) {
       DisplayAlert("Error message", removeErr?.data?.message);
@@ -132,10 +132,6 @@ const ViewWorkout = () => {
 
     if (addStat === "fulfilled") {
       checkWorkoutFavorite(arg);
-      DisplayAlert(
-        "Success message",
-        "This workout is successfully added to your favorites!"
-      );
     }
     if (addErr?.status === HTTP_ERROR.BAD_REQUEST) {
       DisplayAlert("Error message", addErr?.data?.message);

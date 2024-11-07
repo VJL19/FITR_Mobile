@@ -1,4 +1,4 @@
-import { Text, View, FlatList, TouchableOpacity } from "react-native";
+import { Text, View, FlatList, TouchableOpacity, Button } from "react-native";
 import React, { useEffect, useState } from "react";
 import LoadingIndicator from "components/LoadingIndicator";
 import { useDispatch } from "react-redux";
@@ -35,7 +35,7 @@ import HTTP_ERROR from "utils/enums/ERROR_CODES";
 const Home = () => {
   const { value, name } = useSelector((state: RootState) => state.counter);
 
-  const { data, isError, isUninitialized, isFetching } =
+  const { data, isError, isUninitialized, isFetching, status } =
     useGetAccessTokenQuery();
 
   const { data: programs, error: programErr } = useGetTodayProgramsQuery(
@@ -78,6 +78,7 @@ const Home = () => {
   const navigationDrawer = useNavigation<DrawerStackNavigationProp>();
 
   const dispatch: AppDispatch = useDispatch();
+
   useEffect(() => {
     dispatch(setRoute("Home"));
     dispatch(setNotificationCount(count?.result?.[0].NotificationCount));
