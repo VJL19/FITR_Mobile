@@ -1,4 +1,4 @@
-import { Button, StyleSheet, Text, View } from "react-native";
+import { Button, Keyboard, StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
@@ -15,6 +15,8 @@ import LoadingIndicator from "components/LoadingIndicator";
 import { useGetAccessTokenQuery } from "reducers/authReducer";
 import CustomError from "components/CustomError";
 import { RadioGroup } from "react-native-radio-buttons-group";
+import { Classification } from "utils/enums/Classification";
+
 export interface IBMIField {
   Age: string;
   Gender: string;
@@ -86,6 +88,7 @@ const CalculateBMI = () => {
               <Text
                 style={{
                   color: "#202020",
+
                   fontSize: 18,
                   fontFamily: "Inter-Bold",
                   letterSpacing: 1,
@@ -205,9 +208,44 @@ const CalculateBMI = () => {
       </View>
       <View>
         <Text style={styles.result}>Results: </Text>
-        <Text style={styles.textStyle}>Your BMI is: {BMI}</Text>
         <Text style={styles.textStyle}>
-          Your BMI is: classified as {classification}
+          YOUR BMI IS:{" "}
+          <Text
+            style={[
+              styles.textStyle,
+              {
+                color:
+                  classification === Classification.NORMAL
+                    ? "green"
+                    : classification === Classification.UNDERWEIGHT
+                    ? "orange"
+                    : "red",
+                fontFamily: "Inter-Bold",
+              },
+            ]}
+          >
+            {BMI}
+          </Text>
+        </Text>
+
+        <Text style={styles.textStyle}>
+          Your BMI is: classified as{" "}
+          <Text
+            style={[
+              styles.textStyle,
+              {
+                color:
+                  classification === Classification.NORMAL
+                    ? "green"
+                    : classification === Classification.UNDERWEIGHT
+                    ? "orange"
+                    : "red",
+                fontFamily: "Inter-Bold",
+              },
+            ]}
+          >
+            {classification}
+          </Text>
         </Text>
       </View>
     </View>
@@ -226,10 +264,11 @@ const styles = StyleSheet.create({
   result: {
     color: "#202020",
     fontSize: 21,
-    fontWeight: "bold",
+    fontFamily: "Inter-Bold",
   },
   textStyle: {
     color: "#202020",
     fontSize: 18,
+    fontFamily: "Inter-Regular",
   },
 });

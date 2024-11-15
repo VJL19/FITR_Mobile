@@ -103,14 +103,17 @@ const SubscriptionHistory = () => {
           placeholder="Enter subscription date"
         />
         <DisplayFormError errors={errors.subscriptionDate} />
-        <Text style={styles.labelStyle}>
-          Selected Date: {getValues("subscriptionDate")}
+        <Text style={styles.text}>
+          Selected Date:{" "}
+          <Text style={styles.labelStyle}>{getValues("subscriptionDate")}</Text>
         </Text>
 
         <View
           style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
         >
-          <Text>
+          <Text
+            style={{ fontSize: 24, fontFamily: "Inter-Bold", color: "red" }}
+          >
             Your subscription history for this selected date is empty!
           </Text>
         </View>
@@ -129,9 +132,11 @@ const SubscriptionHistory = () => {
         placeholder="Enter subscription date"
       />
       <DisplayFormError errors={errors.subscriptionDate} />
-      <Text style={styles.labelStyle}>
-        Selected Date: {getValues("subscriptionDate")}
+      <Text style={styles.text}>
+        Selected Date:{" "}
+        <Text style={styles.labelStyle}>{getValues("subscriptionDate")}</Text>
       </Text>
+
       <FlatList
         alwaysBounceVertical={true}
         data={subscriptionHistory?.result}
@@ -149,6 +154,12 @@ export default SubscriptionHistory;
 
 const styles = StyleSheet.create({
   labelStyle: {
+    fontSize: 22,
+    fontFamily: "Inter-Bold",
+  },
+  text: {
     fontSize: 20,
+
+    fontFamily: "Inter-Regular",
   },
 });

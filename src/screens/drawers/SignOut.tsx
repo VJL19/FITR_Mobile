@@ -19,6 +19,7 @@ import { logoutUser } from "actions/authAction";
 import { deleteToken, useLogoutQuery } from "reducers/authReducer";
 import DisplayAlert from "components/CustomAlert";
 import LoadingIndicator from "components/LoadingIndicator";
+import { setIsEmailVerified } from "reducers/subscriptionReducer";
 const SignOut = () => {
   const navigation = useNavigation<DrawerStackNavigationProp>();
   const rootNav = useNavigation<RootStackNavigationProp>();
@@ -39,6 +40,7 @@ const SignOut = () => {
       };
       deleteTokenAsync();
       console.log("deleted successfully!");
+      dispatch(setIsEmailVerified(false));
     }
     if (status === "rejected") {
       DisplayAlert("Error message", error?.data?.details);

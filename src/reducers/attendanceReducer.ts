@@ -106,6 +106,18 @@ export const attendanceslice = createApi({
       query: (UserID) => `/user/attendance/checkUserTapRFID/:${UserID}`,
       providesTags: ["attendance"],
     }),
+
+    checkUserSessionTimeout: builder.mutation<
+      IAttendanceState,
+      number | undefined
+    >({
+      query: (UserID) => ({
+        url: `/user/attendance/attendance_timeout/:${UserID}`,
+        method: "GET",
+      }),
+      invalidatesTags: ["attendance"],
+    }),
+
     tapRFIDCardUser: builder.mutation<
       IAttendanceState,
       {
@@ -209,6 +221,7 @@ export const {
   useTapRFIDCardUserMutation,
   useGetUserRFIDNumberDetailsQuery,
   useGetUserAttendanceHistoryQuery,
+  useCheckUserSessionTimeoutMutation,
   useGetUserAttendanceHistoryByDateMutation,
 } = attendanceslice;
 export default attendanceSlice.reducer;

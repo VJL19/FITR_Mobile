@@ -8,9 +8,9 @@
       "developmentClient": true,
       "distribution": "internal",
       "env": {
-        "EXPO_PUBLIC_BASE_SERVER_URL": "http://13.210.236.45:8082/api/v1/",
-        "EXPO_PUBLIC_BASE_SUCCESS_URL": "http://13.210.236.45:8082/api/v1/",
-        "EXPO_PUBLIC_SOCKET_URL": "ws://13.210.236.45:8082/",
+        "EXPO_PUBLIC_BASE_SERVER_URL": "http://13.55.72.171:8082/api/v1/",
+        "EXPO_PUBLIC_BASE_SUCCESS_URL": "http://13.55.72.171:8082/api/v1/",
+        "EXPO_PUBLIC_SOCKET_URL": "wss://13.55.72.171:8082/",
         "PUBLIC_KEY": "pk_test_EvSASGfsNQp7oBFrAHae5roJ",
         "SECRET_KEY": "sk_test_VCzLRMevkd2A3Fr2zVr6x9Ns"
       }
@@ -21,9 +21,9 @@
         "buildType": "apk"
       },
       "env": {
-        "EXPO_PUBLIC_BASE_SERVER_URL": "http://13.210.236.45:8082/api/v1/",
-        "EXPO_PUBLIC_BASE_SUCCESS_URL": "http://13.210.236.45:8082/api/v1/",
-        "EXPO_PUBLIC_SOCKET_URL": "ws://13.210.236.45:8082/",
+        "EXPO_PUBLIC_BASE_SERVER_URL": "http://13.55.72.171:8082/api/v1/",
+        "EXPO_PUBLIC_BASE_SUCCESS_URL": "http://13.55.72.171:8082/api/v1/",
+        "EXPO_PUBLIC_SOCKET_URL": "wss://13.55.72.171:8082/",
         "PUBLIC_KEY": "pk_test_EvSASGfsNQp7oBFrAHae5roJ",
         "SECRET_KEY": "sk_test_VCzLRMevkd2A3Fr2zVr6x9Ns"
       }
@@ -31,9 +31,9 @@
     "production": {
       "autoIncrement": true,
       "env": {
-        "EXPO_PUBLIC_BASE_SERVER_URL": "http://13.210.236.45:8082/api/v1/",
-        "EXPO_PUBLIC_BASE_SUCCESS_URL": "http://13.210.236.45:8082/api/v1/",
-        "EXPO_PUBLIC_SOCKET_URL": "ws://13.210.236.45:8082/",
+        "EXPO_PUBLIC_BASE_SERVER_URL": "http://13.55.72.171:8082/api/v1/",
+        "EXPO_PUBLIC_BASE_SUCCESS_URL": "http://13.55.72.171:8082/api/v1/",
+        "EXPO_PUBLIC_SOCKET_URL": "wss://13.55.72.171:8082/",
         "PUBLIC_KEY": "pk_test_EvSASGfsNQp7oBFrAHae5roJ",
         "SECRET_KEY": "sk_test_VCzLRMevkd2A3Fr2zVr6x9Ns"
       }

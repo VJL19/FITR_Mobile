@@ -46,6 +46,9 @@ import ViewSuggestedProgram from "./view_detailed_screens/Programs/ViewSuggested
 import ViewDetailedSubscriptionHistory from "./view_detailed_screens/Subscription/ViewDetailedSubscriptionHistory";
 import ViewDetailedAttendanceHistory from "./view_detailed_screens/Attendance/ViewDetailedAttendanceHistory";
 import ViewDetailedNotification from "./view_detailed_screens/Notifications/ViewDetailedNotification";
+import ViewComment from "./view_detailed_screens/Newsfeed/ViewComment";
+import EditComment from "./view_detailed_screens/Newsfeed/EditComment";
+import SubscriptionConfirmation from "./view_detailed_screens/Subscription/SubscriptionConfirmation";
 
 const DetailedRootScreen = () => {
   const config = {
@@ -72,6 +75,9 @@ const DetailedRootScreen = () => {
     });
   };
 
+  const handleEditComment = () => {
+    navigation.navigate("DetailedScreens", { screen: "Edit Comment" });
+  };
   return (
     <DetailedScreenStacks.Navigator
       screenOptions={{
@@ -187,6 +193,17 @@ const DetailedRootScreen = () => {
         component={SubscriptionHistory}
         options={{
           headerTitle: "Subscription History",
+          presentation: "card",
+          gestureEnabled: true,
+          gestureDirection: "horizontal",
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+      />
+      <DetailedScreenStacks.Screen
+        name="Subscription Confirmation"
+        component={SubscriptionConfirmation}
+        options={{
+          headerTitle: "Subscription Verification",
           presentation: "card",
           gestureEnabled: true,
           gestureDirection: "horizontal",
@@ -334,6 +351,31 @@ const DetailedRootScreen = () => {
       <DetailedScreenStacks.Screen
         name="Comment on Post"
         component={CommentPost}
+        options={{
+          cardOverlayEnabled: true,
+          presentation: "card",
+          gestureEnabled: true,
+          gestureDirection: "horizontal",
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+      />
+      <DetailedScreenStacks.Screen
+        name="View Comment"
+        component={ViewComment}
+        options={{
+          cardOverlayEnabled: true,
+          presentation: "card",
+          gestureEnabled: true,
+          gestureDirection: "horizontal",
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+          headerRight: () => (
+            <CustomMenu onPress={handleEditComment} screenName="Comment" />
+          ),
+        }}
+      />
+      <DetailedScreenStacks.Screen
+        name="Edit Comment"
+        component={EditComment}
         options={{
           cardOverlayEnabled: true,
           presentation: "card",

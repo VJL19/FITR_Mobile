@@ -8,7 +8,12 @@ import {
   View,
 } from "react-native";
 import React, { useEffect } from "react";
-import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import {
+  CommonActions,
+  RouteProp,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
 import { Controller, useForm } from "react-hook-form";
 import DisplayFormError from "components/DisplayFormError";
 import { joiResolver } from "@hookform/resolvers/joi";
@@ -20,8 +25,7 @@ import DisplayAlert from "components/CustomAlert";
 import { useGetAccessTokenQuery } from "reducers/authReducer";
 import {
   newsfeedslice,
-  useCommentPostInFeedMutation,
-  useNotifyCommentPostInFeedMutation,
+  useEditCommentPostInFeedMutation,
 } from "reducers/newsfeedReducer";
 import getCurrentDate from "utils/helpers/formatDate";
 import LoadingIndicator from "components/LoadingIndicator";
@@ -29,17 +33,17 @@ import useIsNetworkConnected from "hooks/useIsNetworkConnected";
 import { NETWORK_ERROR } from "utils/enums/Errors";
 import { useRefetchOnMessage } from "hooks/useRefetchOnMessage";
 import HTTP_ERROR from "utils/enums/ERROR_CODES";
+import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
 
-const CommentPost = () => {
+const EditComment = () => {
   const { data } = useGetAccessTokenQuery();
   const { user } = data!;
 
   const [
-    commentPost,
+    editComment,
     { status: commentStatus, data: commentData, error: commentErr },
-  ] = useCommentPostInFeedMutation();
-  const [notifyComment, { data: notifData, status: notifStatus, error }] =
-    useNotifyCommentPostInFeedMutation();
+  ] = useEditCommentPostInFeedMutation();
+
   const {
     handleSubmit,
     control,
@@ -50,14 +54,16 @@ const CommentPost = () => {
   });
 
   const {
-    UserID,
-    PostTitle,
-    NewsfeedID,
-    Username,
-    CommentDate,
-    PostID,
+    CommentID,
+    CommentText,
+    PostImage,
+    PostDescription,
+    PostDate,
     PostAuthor,
-  } = useSelector((state: RootState) => state.comment.commentData);
+  } = useSelector((state: RootState) => state.comment.viewCommentData);
+
+  const { UserID, PostTitle, NewsfeedID, Username, CommentDate, PostID } =
+    useSelector((state: RootState) => state.comment.commentData);
 
   // const { message, status } = useSelector((state: RootState) => state.comment);
   const { message, status } = useSelector(
@@ -72,7 +78,7 @@ const CommentPost = () => {
   const onInvalid = (errors) => {
     console.log(errors);
   };
-  const navigation = useNavigation();
+  const navigation = useNavigation<RootStackNavigationProp>();
 
   const { isConnected } = useIsNetworkConnected();
 
@@ -101,20 +107,14 @@ const CommentPost = () => {
     if (commentStatus === "fulfilled") {
       const fullName = `${user.FirstName} ${user.LastName}`;
 
-      const notify_arg = {
-        UserID: UserID,
-        PostID: PostID,
-        NotificationAuthor: fullName,
-        Username: Username,
-        NotificationDate: getCurrentDate(),
-        PostTitle: PostTitle,
-      };
-      notifyComment(notify_arg);
-      DisplayAlert("Success message", "Successfully commented on this post.");
+      DisplayAlert(
+        "Success message",
+        "Successfully edited your comment for this post."
+      );
       reset();
       const delayRedirect = async () => {
         await new Promise((resolve) => setTimeout(resolve, 1500));
-        navigation.goBack();
+        navigation.navigate("DetailedScreens", { screen: "View Post Feed" });
       };
       delayRedirect();
     }
@@ -122,13 +122,12 @@ const CommentPost = () => {
 
   const onComment = async (data: IComments) => {
     const arg = {
+      CommentID: CommentID,
       CommentText: data.CommentText,
-      UserID: user.UserID,
-      NewsfeedID: NewsfeedID,
       CommentDate: getCurrentDate(),
     };
-    commentPost(arg);
-    // dispatch(commentPostAction(arg));
+    editComment(arg);
+    // dispatch(EditCommentAction(arg));
     // dispatch(getAllCommentsAction(NewsfeedID || 0));
     // dispatch(notifyCommentAction(notify_arg));
     // console.log("notif comment res", message);
@@ -164,6 +163,7 @@ const CommentPost = () => {
                 placeholder="Enter your comment"
                 onBlur={onBlur}
                 onChangeText={onChange}
+                defaultValue={CommentText}
                 value={value}
                 style={{
                   borderWidth: 1,
@@ -186,7 +186,7 @@ const CommentPost = () => {
 
       <View style={{ marginBottom: 10 }}>
         <Button
-          title="Comment"
+          title="Edit comment"
           color={"#ff2e00"}
           onPress={handleSubmit(onComment, onInvalid)}
         />
@@ -195,7 +195,7 @@ const CommentPost = () => {
   );
 };
 
-export default CommentPost;
+export default EditComment;
 
 const styles = StyleSheet.create({
   text: {

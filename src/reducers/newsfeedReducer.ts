@@ -82,6 +82,10 @@ export const newsfeedslice = createApi({
         `/user/newsfeed/all_posts/:${SubscriptionType}`,
       providesTags: ["newsfeed"],
     }),
+    getSpecificPost: builder.query<INewsfeedState, number | undefined>({
+      query: (NewsfeedID) => `/user/newsfeed/specificPost/:${NewsfeedID}`,
+      providesTags: ["newsfeed"],
+    }),
     getTotalLikes: builder.query<ILikeState, number | undefined>({
       query: (NewsfeedID) => `/user/newsfeed/total_likes/:${NewsfeedID}`,
       providesTags: ["newsfeed"],
@@ -168,6 +172,21 @@ export const newsfeedslice = createApi({
       }),
       invalidatesTags: ["newsfeed"],
     }),
+    editCommentPostInFeed: builder.mutation<
+      ICommentState,
+      {
+        CommentID: number | undefined;
+        CommentText: string;
+        CommentDate: string;
+      }
+    >({
+      query: (arg) => ({
+        url: "/user/newsfeed/edit_comment",
+        method: "POST",
+        body: arg,
+      }),
+      invalidatesTags: ["newsfeed"],
+    }),
     getAllComments: builder.query<ICommentState, number | undefined>({
       query: (NewsfeedID) => `/user/newsfeed/all_comments/:${NewsfeedID}`,
       providesTags: ["newsfeed"],
@@ -195,6 +214,14 @@ export const newsfeedslice = createApi({
         url: `/user/newsfeed/remove_user_likes/:${NewsfeedID}`,
         method: "DELETE",
         params: { NewsfeedID },
+      }),
+      invalidatesTags: ["newsfeed"],
+    }),
+    deleteUserComment: builder.mutation<INewsfeedState, number | undefined>({
+      query: (CommentID) => ({
+        url: `/user/newsfeed/remove_specific_comment/:${CommentID}`,
+        method: "DELETE",
+        params: { CommentID },
       }),
       invalidatesTags: ["newsfeed"],
     }),
@@ -340,6 +367,8 @@ const newsfeedSlice = createSlice({
 
 export const {
   useAddPostInFeedMutation,
+  useGetSpecificPostQuery,
+  useEditCommentPostInFeedMutation,
   useDeletePostInFeedMutation,
   useGetAllPostInFeedQuery,
   useLikePostInFeedMutation,
@@ -355,5 +384,6 @@ export const {
   useDeleteLikesMutation,
   useDeleteCommentsMutation,
   useDeleteNotificationsMutation,
+  useDeleteUserCommentMutation,
 } = newsfeedslice;
 export default newsfeedSlice.reducer;

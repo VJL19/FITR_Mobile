@@ -198,14 +198,13 @@ const DashboardScreen = ({ navigation }: RootStackScreenProp) => {
             <CustomNotification {...props} />
           </View>
         ),
-        drawerActiveBackgroundColor: "#rgba(255,45,0, .2)",
-        drawerActiveTintColor: "#ff2e00",
-
         drawerLabelStyle: {
           marginLeft: -7,
           fontFamily: "Inter-SemiBold",
           fontSize: 16,
         },
+        drawerActiveBackgroundColor: "#rgba(255,45,0, .2)",
+        drawerActiveTintColor: "#ff2e00",
       })}
     >
       <DrawerStack.Screen

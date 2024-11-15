@@ -12,6 +12,8 @@ export type DetailedRootStackNavigatorsParamList = {
   "View Post Feed": undefined;
   "View Post": undefined;
   "Comment on Post": undefined;
+  "View Comment": undefined;
+  "Edit Comment": undefined;
   Notifications: undefined;
   "Gym Equipments": undefined;
   "View Gym Equipment": undefined;
@@ -36,6 +38,7 @@ export type DetailedRootStackNavigatorsParamList = {
   "View Detailed Subscription History": undefined;
   "View Detailed Attendance History": undefined;
   "View Detailed Notifications": undefined;
+  "Subscription Confirmation": undefined;
 };
 
 export type DetailedRootStackScreenProp = StackScreenProps<
@@ -74,6 +77,7 @@ export type DetailedRootStackScreenProp = StackScreenProps<
   | "View Detailed Subscription History"
   | "View Detailed Attendance History"
   | "View Detailed Notifications"
+  | "Subscription Confirmation"
 >;
 export type DetailedRootStackNavigationProp = StackNavigationProp<
   DetailedRootStackNavigatorsParamList,
@@ -86,6 +90,8 @@ export type DetailedRootStackNavigationProp = StackNavigationProp<
   | "View Post Feed"
   | "View Post"
   | "Comment on Post"
+  | "View Comment"
+  | "Edit Comment"
   | "Notifications"
   | "Gym Equipments"
   | "View Gym Equipment"
@@ -111,4 +117,5 @@ export type DetailedRootStackNavigationProp = StackNavigationProp<
   | "View Detailed Subscription History"
   | "View Detailed Attendance History"
   | "View Detailed Notifications"
+  | "Subscription Confirmation"
 >;

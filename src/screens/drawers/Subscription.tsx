@@ -12,7 +12,12 @@ import { CheckoutPayload, ILineItems } from "actions/subscriptionAction";
 import { useNavigation } from "@react-navigation/native";
 import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
 import { setRoute } from "reducers/routeReducer";
-import { authslice, useGetAccessTokenQuery } from "reducers/authReducer";
+import {
+  authslice,
+  setOTPToken,
+  useGetAccessTokenQuery,
+  useSendEmailPaymentVerificationMutation,
+} from "reducers/authReducer";
 import CustomError from "components/CustomError";
 import { useCameraFns } from "utils/helpers/useCameraFns";
 import DialogBox from "components/DialogBox";
@@ -22,6 +27,10 @@ import {
   setCheckOutId,
   setCheckOutUrl,
   setClientKey,
+  setIsEmailVerified,
+  setIsUserPayOnline,
+  setUserPaymentEmail,
+  setUserPaymongoArg,
   subscriptionApi,
   useAddSubscriptionMutation,
   useGetMonthlyAlreadyPaidMutation,
@@ -78,6 +87,10 @@ const Subscription = () => {
     }
   );
 
+  const { IsEmailVerified, userPaymongoArg } = useSelector(
+    (state: RootState) => state.subscription
+  );
+
   const [
     processOnlinePayment,
     {
@@ -88,6 +101,10 @@ const Subscription = () => {
   ] = useProcessOnlinePaymentMutation();
 
   const { isConnected } = useIsNetworkConnected();
+  const [
+    sendOTPEmail,
+    { data: emailCode, status: emailStat, error: emailErr },
+  ] = useSendEmailPaymentVerificationMutation();
 
   useEffect(() => {
     if (data?.user?.SubscriptionType === SubscriptionTypeEnum.Session) {
@@ -97,9 +114,6 @@ const Subscription = () => {
     }
   }, [processOnlineData, subscriptionData]);
 
-  console.log("is session already piad s", sessionPaidData);
-  console.log("is monthly already paid", monthlyPaidData);
-
   useRefetchOnMessage("refresh_subscriptionPage", () => {
     dispatch(subscriptionApi.util.invalidateTags(["subscriptions"]));
   });
@@ -108,7 +122,7 @@ const Subscription = () => {
     dispatch(authslice.util.invalidateTags(["auth"]));
   });
 
-  console.log("user access token", data);
+  // console.log("user access token", data);
   // console.log("specific subscriptions", userSubscriptions);
   // console.log("details status", status);
   // console.log("subs data", subscriptionData);
@@ -150,12 +164,31 @@ const Subscription = () => {
       DisplayAlert("Error message", error?.data?.message);
     }
     if (status === "fulfilled") {
-      DisplayAlert("Success message", "Payment Uploaded successfully!");
-      removePhoto();
+      // DisplayAlert("Success message", "Payment Uploaded successfully!");
+      // dispatch(setIsEmailVerified(false));
+
+      const runSendOTP = async () => {
+        await sendOTPEmail({ Email: data?.user?.Email! })
+          .unwrap()
+          .then((payload) => {
+            dispatch(setOTPToken(payload?.code));
+            navigation.navigate("DetailedScreens", {
+              screen: "Subscription Confirmation",
+            });
+          });
+      };
+      runSendOTP();
       setSelectedSubscription("");
+      removePhoto();
       setPaymentMethod("");
     }
   }, [status]);
+
+  useEffect(() => {
+    if (IsEmailVerified) {
+      processOnlinePayment(userPaymongoArg);
+    }
+  }, [IsEmailVerified]);
 
   useEffect(() => {
     if (processOnlineStat === "fulfilled") {
@@ -166,6 +199,7 @@ const Subscription = () => {
       navigation.navigate("DetailedScreens", {
         screen: "Process Checkout",
       });
+      dispatch(setUserPaymentEmail(data?.user?.Email!));
       dispatch(setCheckOutId(processOnlineData?.data?.id));
       dispatch(
         setCheckOutUrl(processOnlineData?.data?.attributes?.checkout_url)
@@ -226,14 +260,27 @@ const Subscription = () => {
           DisplayAlert("Error message", tokenErr?.data?.message);
           return;
         }
-        processOnlinePayment(paymentDetails);
+
+        dispatch(setUserPaymongoArg(paymentDetails));
+        dispatch(setIsUserPayOnline(true));
+        const runSendOTP = async () => {
+          await sendOTPEmail({ Email: data?.user?.Email! })
+            .unwrap()
+            .then((payload) => {
+              dispatch(setOTPToken(payload?.code));
+              navigation.navigate("DetailedScreens", {
+                screen: "Subscription Confirmation",
+              });
+            });
+        };
+        runSendOTP();
 
         console.log("in subscription screen url", checkout_url);
       },
     });
   };
 
-  const handleUpload = () => {
+  const handleUpload = async () => {
     DialogBox({
       dialogTitle: "Proceed payment?",
       dialogDescription:
@@ -254,6 +301,7 @@ const Subscription = () => {
           SubscriptionMethod: "Cash",
           SubscriptionEntryDate: getCurrentDate(),
         };
+
         const runSendPayment = async () => {
           await sendPayment(arg);
         };
@@ -261,8 +309,7 @@ const Subscription = () => {
       },
     });
   };
-
-  console.log(tokenErr?.status);
+  console.log("component mounted", IsEmailVerified);
   // const handleUpload = () => {
   //   DialogBox({
   //     dialogTitle: "Upload payment?",
@@ -332,15 +379,14 @@ const Subscription = () => {
   if (isError) {
     return <CustomError />;
   }
-  if (isUninitialized || isFetching) {
+  if (isUninitialized || isFetching || emailStat === "pending") {
     return <LoadingIndicator />;
   }
 
   if (userSubscriptions?.result[0]?.SubscriptionStatus) {
     return <Subscriptions {...userSubscriptions.result[0]} />;
   }
-  console.log("subscriptionData error", error);
-  console.log("subscriptionData", subscriptionData);
+  // console.log("subscription already paid Data", sessionPaidData);
 
   return (
     <ScrollView>

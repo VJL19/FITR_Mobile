@@ -13,7 +13,15 @@ interface ICreatePaymentState {
   SubscriptionMethod: string;
   SubscriptionEntryDate: string;
 }
-
+interface IUserPayOnlineArg {
+  UserID: number;
+  SubscriptionAmount: number;
+  SubscriptionBy: string;
+  SubscriptionType: string;
+  SubscriptionStatus: string;
+  SubscriptionMethod: string;
+  SubscriptionEntryDate: string;
+}
 interface ISubscriptionState {
   status: number;
   error: string;
@@ -30,6 +38,12 @@ interface ISubscriptionState {
   checkOutStatus: string;
   createPayment: ICreatePaymentState;
   viewSubscriptionPayload: ISubscriptions;
+  onlinePaymentPayload: CheckoutPayload;
+  IsEmailVerified: boolean;
+  IsUserPayOnline: boolean;
+  userPaymentEmail: string;
+  userPayOnlineArg: IUserPayOnlineArg;
+  userPaymongoArg: CheckoutPayload;
 }
 
 const initialState: ISubscriptionState = {
@@ -69,6 +83,32 @@ const initialState: ISubscriptionState = {
     AttendanceID: 0,
     SubscriptionExpectedEnd: "",
     IsPaid: false,
+  },
+  linePaymentPayload: {
+    name: "",
+    email: "",
+    phone: "",
+    line_items: [],
+    payment_method_types: [],
+  },
+  IsEmailVerified: false,
+  userPaymentEmail: "",
+  IsUserPayOnline: false,
+  userPayOnlineArg: {
+    UserID: 0,
+    SubscriptionAmount: "",
+    SubscriptionBy: "",
+    SubscriptionType: "",
+    SubscriptionStatus: "",
+    SubscriptionMethod: "",
+    SubscriptionEntryDate: "",
+  },
+  userPaymongoArg: {
+    name: "",
+    email: "",
+    phone: "",
+    line_items: [],
+    payment_method_types: [],
   },
 };
 
@@ -235,6 +275,59 @@ const subscriptionSlice = createSlice({
     ) => {
       state.viewSubscriptionPayload = action.payload;
     },
+    setOnlinePaymentPayload: (
+      state,
+      action: PayloadAction<CheckoutPayload>
+    ) => {
+      state.onlinePaymentPayload = action.payload;
+    },
+    deleteOnlinePaymentPayload: (state) => {
+      state.onlinePaymentPayload.email = "";
+      state.onlinePaymentPayload.line_items = [];
+      state.onlinePaymentPayload.name = "";
+      state.onlinePaymentPayload.payment_method_types = [];
+      state.onlinePaymentPayload.phone = "";
+    },
+    setIsEmailVerified: (state, action: PayloadAction<boolean>) => {
+      state.IsEmailVerified = action.payload;
+    },
+    deleteIsEmailVerified: (state, action: PayloadAction<boolean>) => {
+      state.IsEmailVerified = false;
+    },
+    setUserPaymentEmail: (state, action: PayloadAction<string>) => {
+      state.userPaymentEmail = action.payload;
+    },
+    deleteUserPaymentEmail: (state) => {
+      state.userPaymentEmail = "";
+    },
+    setIsUserPayOnline: (state, action: PayloadAction<boolean>) => {
+      state.IsUserPayOnline = action.payload;
+    },
+    deleteUserPayOnline: (state) => {
+      state.IsUserPayOnline = false;
+    },
+    setUserPayOnlineArg: (state, action: PayloadAction<IUserPayOnlineArg>) => {
+      state.userPayOnlineArg = action.payload;
+    },
+    deleteUserPayOnlineArg: (state) => {
+      state.userPayOnlineArg.UserID = 0;
+      state.userPayOnlineArg.SubscriptionType = "";
+      state.userPayOnlineArg.SubscriptionMethod = "";
+      state.userPayOnlineArg.SubscriptionStatus = "";
+      state.userPayOnlineArg.SubscriptionAmount = "";
+      state.userPayOnlineArg.SubscriptionBy = "";
+      state.userPayOnlineArg.SubscriptionEntryDate = "";
+    },
+    setUserPaymongoArg: (state, action: PayloadAction<CheckoutPayload>) => {
+      state.userPaymongoArg = action.payload;
+    },
+    deleteUserPaymongoArg: (state) => {
+      state.userPaymongoArg.email = "";
+      state.userPaymongoArg.line_items = [];
+      state.userPaymongoArg.name = "";
+      state.userPaymongoArg.payment_method_types = [];
+      state.userPaymongoArg.phone = "";
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(processPayment.fulfilled, (state, action) => {
@@ -267,7 +360,19 @@ export const {
   setCheckOutId,
   setCheckOutUrl,
   setViewSubscriptionPayload,
+  setIsEmailVerified,
+  setOnlinePaymentPayload,
+  deleteIsEmailVerified,
+  deleteOnlinePaymentPayload,
   setClientKey,
+  setIsUserPayOnline,
+  deleteUserPayOnline,
+  setUserPaymentEmail,
+  deleteUserPaymentEmail,
+  setUserPayOnlineArg,
+  deleteUserPaymongoArg,
+  setUserPaymongoArg,
+  deleteUserPayOnlineArg,
   deleteCheckOutId,
   deleteSubscription,
 } = subscriptionSlice.actions;

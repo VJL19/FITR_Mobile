@@ -14,6 +14,7 @@ interface ICommentState {
 
   comments: IComments[];
   commentData: IComments;
+  viewCommentData: IComments;
 }
 
 const initialState: ICommentState = {
@@ -37,6 +38,19 @@ const initialState: ICommentState = {
     PostID: 0,
     PostImage: "",
   },
+  viewCommentData: {
+    UserID: 0,
+    NewsfeedID: 0,
+    CommentID: 0,
+    CommentText: "",
+    PostImage: "",
+    PostTitle: "",
+    PostDescription: "",
+    PostDate: "",
+    PostAuthor: "",
+    Username: "",
+    PostID: 0,
+  },
 };
 
 const commentSlice = createSlice({
@@ -45,6 +59,9 @@ const commentSlice = createSlice({
   reducers: {
     setCommentData: (state, action: PayloadAction<IComments>) => {
       state.commentData = action.payload;
+    },
+    setViewCommentData: (state, action: PayloadAction<IComments>) => {
+      state.viewCommentData = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -103,5 +120,5 @@ const commentSlice = createSlice({
     });
   },
 });
-export const { setCommentData } = commentSlice.actions;
+export const { setCommentData, setViewCommentData } = commentSlice.actions;
 export default commentSlice.reducer;

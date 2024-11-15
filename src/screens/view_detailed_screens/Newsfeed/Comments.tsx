@@ -1,4 +1,11 @@
-import { Button, StyleSheet, Text, View, Image } from "react-native";
+import {
+  Button,
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  TouchableOpacity,
+} from "react-native";
 import React from "react";
 import { IComments } from "utils/types/newsfeed.types";
 import { AppDispatch, RootState } from "store/store";
@@ -8,6 +15,10 @@ import {
   removeUserCommentAction,
 } from "actions/commentAction";
 import LoadingIndicator from "components/LoadingIndicator";
+import { useNavigation } from "@react-navigation/native";
+import { DetailedRootStackNavigationProp } from "utils/types/detailed_screens/DetailedRootStackNavigators";
+import { setViewCommentData } from "reducers/commentReducer";
+import { useGetSpecificPostQuery } from "reducers/newsfeedReducer";
 
 const Comments = ({
   UserID,
@@ -16,12 +27,19 @@ const Comments = ({
   NewsfeedID,
   ProfilePic,
   Username,
+  PostTitle,
+  PostDescription,
+  PostAuthor,
 }: IComments) => {
   const dispatch: AppDispatch = useDispatch();
 
   const { message, status, isLoading } = useSelector(
     (state: RootState) => state.comment
   );
+
+  const { data } = useGetSpecificPostQuery(NewsfeedID);
+
+  const navigation = useNavigation<DetailedRootStackNavigationProp>();
 
   const handleRemoveComment = () => {
     const arg = {
@@ -37,17 +55,37 @@ const Comments = ({
     }
     console.log("status", message);
   };
+
+  const handleViewComment = () => {
+    navigation.navigate("View Comment");
+    const arg = {
+      UserID: 0,
+      NewsfeedID: 0,
+      CommentID: CommentID,
+      CommentText: CommentText,
+      PostImage: "",
+      PostTitle: data?.result[0]?.PostTitle,
+      PostDescription: data?.result[0]?.PostDescription,
+      PostDate: "",
+      PostAuthor: data?.result[0]?.PostAuthor,
+      Username: data?.result[0]?.Username,
+      PostID: 0,
+    };
+    dispatch(setViewCommentData(arg));
+  };
   if (isLoading) {
     return <LoadingIndicator />;
   }
   return (
-    <View style={styles.container}>
+    <TouchableOpacity onPress={handleViewComment} style={styles.container}>
       <Image source={{ uri: ProfilePic }} style={styles.image} />
       <View>
         <Text style={styles.text}>@{Username}</Text>
-        <Text style={styles.text}>{CommentText}</Text>
+        <Text numberOfLines={1} style={styles.text}>
+          {CommentText}
+        </Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
@@ -77,5 +115,6 @@ const styles = StyleSheet.create({
   },
   text: {
     color: "#202020",
+    width: 150,
   },
 });

@@ -8,7 +8,7 @@ import {
   Button,
   Dimensions,
 } from "react-native";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "store/store";
 import { useNavigation } from "@react-navigation/native";
@@ -27,7 +27,7 @@ import LoadingIndicator from "components/LoadingIndicator";
 import useIsNetworkConnected from "hooks/useIsNetworkConnected";
 import { NETWORK_ERROR } from "utils/enums/Errors";
 import HTTP_ERROR from "utils/enums/ERROR_CODES";
-
+import PagerView from "react-native-pager-view";
 const { width, height } = Dimensions.get("window");
 const ViewExercise = () => {
   const { exercise_data } = useSelector((state: RootState) => state.tutorial);
@@ -39,6 +39,9 @@ const ViewExercise = () => {
     useRemoveExerciseFavoriteMutation();
   const [checkExerciseFavorite, { data: exerciseFavorite, status }] =
     useCheckExerciseFavoriteMutation();
+
+  const [isSpeak, setIsSpeak] = useState<boolean>(false);
+
   const {
     ExerciseID,
     ExerciseImage,
@@ -49,13 +52,14 @@ const ViewExercise = () => {
     ExerciseName,
   } = exercise_data;
 
+  const [viewImage, setViewImage] = useState("");
   const navigation = useNavigation<RootStackNavigationProp>();
   const { isConnected } = useIsNetworkConnected();
-  const handlePress = () => {
+  const handlePress = (key: number) => {
     navigation.navigate("DetailedScreens", {
       screen: "View Image",
       params: {
-        imageUrl: `https://ik.imagekit.io/yuhonas/${ExerciseImage}/0.jpg`,
+        imageUrl: `https://ik.imagekit.io/yuhonas/${ExerciseImage}/${key}.jpg`,
       },
     });
   };
@@ -73,8 +77,12 @@ const ViewExercise = () => {
       Speech.stop();
     }
     navigation.addListener("blur", stopSpeech);
+    navigation.addListener("beforeRemove", stopSpeech);
 
-    return () => navigation.removeListener("blur", stopSpeech);
+    return () => {
+      navigation.removeListener("blur", stopSpeech);
+      navigation.removeListener("beforeRemove", stopSpeech);
+    };
   }, [navigation]);
 
   useEffect(() => {
@@ -132,7 +140,19 @@ const ViewExercise = () => {
   }, [addStat]);
 
   const handleSpeak = () => {
-    Speech.speak(ExerciseExplanation, { language: "en-US" });
+    Speech.speak(ExerciseExplanation, {
+      language: "en-US",
+      onStart: () => {
+        setIsSpeak(true);
+      },
+
+      onDone: () => {
+        setIsSpeak(false);
+      },
+      onStopped: () => {
+        setIsSpeak(false);
+      },
+    });
   };
 
   const handleFavorites = async () => {
@@ -158,14 +178,30 @@ const ViewExercise = () => {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={handlePress}>
-        <Image
-          source={{
-            uri: `https://ik.imagekit.io/yuhonas/${ExerciseImage}/0.jpg`,
-          }}
-          style={styles.image}
-        />
-      </TouchableOpacity>
+      <View style={{ width: width, height: width * 1.1 }}>
+        <PagerView initialPage={0} style={{ flex: 1, alignSelf: "stretch" }}>
+          <View key="1">
+            <TouchableOpacity onPress={() => handlePress(0)}>
+              <Image
+                source={{
+                  uri: `https://ik.imagekit.io/yuhonas/${ExerciseImage}/0.jpg`,
+                }}
+                style={styles.image}
+              />
+            </TouchableOpacity>
+          </View>
+          <View key="2">
+            <TouchableOpacity onPress={() => handlePress(1)}>
+              <Image
+                source={{
+                  uri: `https://ik.imagekit.io/yuhonas/${ExerciseImage}/1.jpg`,
+                }}
+                style={styles.image}
+              />
+            </TouchableOpacity>
+          </View>
+        </PagerView>
+      </View>
 
       <View
         style={{
@@ -174,7 +210,11 @@ const ViewExercise = () => {
           width: "100%",
         }}
       >
-        <TouchableOpacity style={styles.buttonStyle} onPress={handleSpeak}>
+        <TouchableOpacity
+          disabled={isSpeak && true}
+          style={styles.buttonStyle}
+          onPress={handleSpeak}
+        >
           <AntDesign name="sound" size={30} color="#f5f5f5" />
         </TouchableOpacity>
         <TouchableOpacity

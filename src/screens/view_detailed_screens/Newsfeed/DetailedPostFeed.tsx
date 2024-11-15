@@ -85,7 +85,7 @@ const DetailedPostFeed = () => {
   const { width } = useWindowDimensions();
   const html = `${PostDescription}`;
   const arg = {
-    UserID: user.UserID,
+    UserID: user?.UserID,
     NewsfeedID: NewsfeedID,
   };
 
@@ -95,7 +95,7 @@ const DetailedPostFeed = () => {
     error: commentErr,
   } = useGetAllCommentsQuery(NewsfeedID, { refetchOnMountOrArgChange: true });
 
-  const fullName = `${user.FirstName} ${user.LastName}`;
+  const fullName = `${user?.FirstName} ${user?.LastName}`;
 
   const notify_arg = {
     UserID: UserID,
@@ -187,7 +187,7 @@ const DetailedPostFeed = () => {
       DisplayAlert("Error message", unlikeErr?.data?.message);
     }
     if (unlikeStat === "fulfilled") {
-      removeNotificationLike({ Username: user.Username, PostID: PostID });
+      removeNotificationLike({ Username: user?.Username, PostID: PostID });
       DisplayAlert("Success message", "Unlike post successfully");
       const delayRedirect = async () => {
         await new Promise((resolve) => setTimeout(resolve, 1000));

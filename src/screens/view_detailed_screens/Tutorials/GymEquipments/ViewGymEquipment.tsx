@@ -8,7 +8,7 @@ import {
   Button,
   Dimensions,
 } from "react-native";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "store/store";
 import { useNavigation } from "@react-navigation/native";
@@ -23,6 +23,7 @@ import LoadingIndicator from "components/LoadingIndicator";
 const { width, height } = Dimensions.get("window");
 const ViewGymEquipment = () => {
   const { gym_data } = useSelector((state: RootState) => state.tutorial);
+  const [isSpeak, setIsSpeak] = useState<boolean>(false);
 
   const { data } = useGetAccessTokenQuery();
 
@@ -45,8 +46,12 @@ const ViewGymEquipment = () => {
       Speech.stop();
     }
     navigation.addListener("blur", stopSpeech);
+    navigation.addListener("beforeRemove", stopSpeech);
 
-    return () => navigation.removeListener("blur", stopSpeech);
+    return () => {
+      navigation.removeListener("blur", stopSpeech);
+      navigation.removeListener("beforeRemove", stopSpeech);
+    };
   }, [navigation]);
   const handlePress = () => {
     navigation.navigate("DetailedScreens", {
@@ -58,7 +63,19 @@ const ViewGymEquipment = () => {
   };
 
   const handleSpeak = () => {
-    Speech.speak(GymEquipmentInstructions, { language: "en-US" });
+    Speech.speak(GymEquipmentInstructions, {
+      language: "en-US",
+      onStart: () => {
+        setIsSpeak(true);
+      },
+
+      onDone: () => {
+        setIsSpeak(false);
+      },
+      onStopped: () => {
+        setIsSpeak(false);
+      },
+    });
   };
 
   const handleDirectTutorial = () => {
@@ -88,7 +105,11 @@ const ViewGymEquipment = () => {
           width: "100%",
         }}
       >
-        <TouchableOpacity style={styles.buttonStyle} onPress={handleSpeak}>
+        <TouchableOpacity
+          disabled={isSpeak && true}
+          style={styles.buttonStyle}
+          onPress={handleSpeak}
+        >
           <AntDesign name="sound" size={35} color="#f5f5f5" />
         </TouchableOpacity>
         <TouchableOpacity

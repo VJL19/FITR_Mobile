@@ -22,6 +22,7 @@ import { useGetAccessTokenQuery } from "reducers/authReducer";
 import CustomError from "components/CustomError";
 import SearchBar from "components/SearchBar";
 import HTTP_ERROR from "utils/enums/ERROR_CODES";
+import { FlashList } from "@shopify/flash-list";
 
 const Workouts = () => {
   const navigation = useNavigation<RootStackNavigationProp>();
@@ -137,17 +138,16 @@ const Workouts = () => {
       <View>
         <ScrollView horizontal={true}>{renderTargetMuscles}</ScrollView>
       </View>
-      <FlatList
+      <FlashList
         onScrollEndDrag={() => Keyboard.dismiss()}
         onScrollBeginDrag={() => Keyboard.dismiss()}
-        key="_"
+        key="workouts"
+        data={queryWorkouts}
         numColumns={2}
         alwaysBounceVertical={true}
-        data={queryWorkouts}
-        initialNumToRender={5}
-        maxToRenderPerBatch={5}
-        renderItem={({ item }) => <WorkoutsLists {...item} />}
         keyExtractor={(item: IWorkouts) => item?.WorkOutID?.toString()}
+        renderItem={({ item }) => <WorkoutsLists {...item} />}
+        estimatedItemSize={50}
       />
     </View>
   );

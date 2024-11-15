@@ -88,7 +88,8 @@ const BottomRootScreen = ({
             <Text
               style={{
                 color: focused ? "#FF2E00" : "#202020",
-                fontSize: 11,
+                fontSize: 13,
+                fontFamily: focused ? "Inter-Bold" : "Inter-Regular",
               }}
             >
               {children}
@@ -132,7 +133,6 @@ const BottomRootScreen = ({
         tabBarButton: (props) => <CustomTabBar {...props} />,
         tabBarActiveTintColor: "#FF2E00",
         tabBarInactiveTintColor: "#202020",
-
         tabBarStyle: {
           height: 80,
           flexWrap: "wrap-reverse",

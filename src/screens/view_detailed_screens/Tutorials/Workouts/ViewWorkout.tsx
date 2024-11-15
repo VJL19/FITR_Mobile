@@ -8,7 +8,7 @@ import {
   Pressable,
   Dimensions,
 } from "react-native";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "store/store";
 import { useNavigation } from "@react-navigation/native";
@@ -27,19 +27,21 @@ import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import useIsNetworkConnected from "hooks/useIsNetworkConnected";
 import { NETWORK_ERROR } from "utils/enums/Errors";
 import HTTP_ERROR from "utils/enums/ERROR_CODES";
+import PagerView from "react-native-pager-view";
+
 const { width, height } = Dimensions.get("window");
 
 const ViewWorkout = () => {
   const { workout_data } = useSelector((state: RootState) => state.tutorial);
 
   const { data } = useGetAccessTokenQuery();
+  const [isSpeak, setIsSpeak] = useState<boolean>(false);
   const [addWorkoutFavorite, { error: addErr, status: addStat }] =
     useAddWorkoutFavoritesMutation();
   const [removeWorkoutFavorite, { error: removeErr, status: removeStat }] =
     useRemoveWorkoutFavoriteMutation();
   const [checkWorkoutFavorite, { data: workoutFavorite, status }] =
     useCheckWorkoutFavoriteMutation();
-
   const { isConnected } = useIsNetworkConnected();
 
   const {
@@ -53,11 +55,11 @@ const ViewWorkout = () => {
   } = workout_data;
 
   const navigation = useNavigation<RootStackNavigationProp>();
-  const handlePress = () => {
+  const handlePress = (index: number) => {
     navigation.navigate("DetailedScreens", {
       screen: "View Image",
       params: {
-        imageUrl: `https://ik.imagekit.io/yuhonas/${WorkOutImage}/0.jpg`,
+        imageUrl: `https://ik.imagekit.io/yuhonas/${WorkOutImage}/${index}.jpg`,
       },
     });
   };
@@ -66,14 +68,28 @@ const ViewWorkout = () => {
     WorkOutID: WorkOutID,
     UserID: data?.user?.UserID,
   };
+
   const handleSpeak = () => {
-    Speech.speak(WorkOutExplanation, { language: "en-US" });
+    Speech.speak(WorkOutExplanation, {
+      language: "en-US",
+      onStart: () => {
+        setIsSpeak(true);
+      },
+
+      onDone: () => {
+        setIsSpeak(false);
+      },
+      onStopped: () => {
+        setIsSpeak(false);
+      },
+    });
   };
 
   //handle cancel the text-to-speech when user press back navigation
   useEffect(() => {
     function stopSpeech() {
       Speech.stop();
+      setIsSpeak(false);
     }
     navigation.addListener("beforeRemove", stopSpeech);
     navigation.addListener("blur", stopSpeech);
@@ -163,14 +179,30 @@ const ViewWorkout = () => {
   }
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={handlePress}>
-        <Image
-          source={{
-            uri: `https://ik.imagekit.io/yuhonas/${WorkOutImage}/0.jpg`,
-          }}
-          style={styles.image}
-        />
-      </TouchableOpacity>
+      <View style={{ width: width, height: width * 1.1 }}>
+        <PagerView initialPage={0} style={{ flex: 1, alignSelf: "stretch" }}>
+          <View key="1">
+            <TouchableOpacity onPress={() => handlePress(0)}>
+              <Image
+                source={{
+                  uri: `https://ik.imagekit.io/yuhonas/${WorkOutImage}/0.jpg`,
+                }}
+                style={styles.image}
+              />
+            </TouchableOpacity>
+          </View>
+          <View key="2">
+            <TouchableOpacity onPress={() => handlePress(1)}>
+              <Image
+                source={{
+                  uri: `https://ik.imagekit.io/yuhonas/${WorkOutImage}/1.jpg`,
+                }}
+                style={styles.image}
+              />
+            </TouchableOpacity>
+          </View>
+        </PagerView>
+      </View>
 
       <View
         style={{
@@ -179,7 +211,11 @@ const ViewWorkout = () => {
           width: "100%",
         }}
       >
-        <TouchableOpacity style={styles.buttonStyle} onPress={handleSpeak}>
+        <TouchableOpacity
+          style={styles.buttonStyle}
+          disabled={isSpeak && true}
+          onPress={handleSpeak}
+        >
           <AntDesign name="sound" size={35} color="#f5f5f5" />
         </TouchableOpacity>
         <TouchableOpacity

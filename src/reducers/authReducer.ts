@@ -152,6 +152,17 @@ export const authslice = createApi({
       }),
       invalidatesTags: ["auth"],
     }),
+    sendEmailPaymentVerification: builder.mutation<
+      IEmailState,
+      { Email: string }
+    >({
+      query: (arg) => ({
+        url: "/user/send_payment_verification",
+        method: "POST",
+        body: arg,
+      }),
+      invalidatesTags: ["auth"],
+    }),
     addExpoNotifToken: builder.mutation<
       IExpoNotifState,
       { Email: string | undefined; ExpoNotifToken: string | undefined | null }
@@ -374,6 +385,7 @@ export const {
 export const {
   useLoginUserMutation,
   useGetAccessTokenQuery,
+  useSendEmailPaymentVerificationMutation,
   useAddExpoNotifTokenMutation,
   useChangeAccountMutation,
   useChangePasswordMutation,

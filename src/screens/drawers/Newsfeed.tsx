@@ -50,9 +50,10 @@ export const Newsfeed = () => {
 
   if (posts?.result?.length === 0) {
     return (
-      <View>
-        <Text>
-          There are no posts currently between {user?.user?.SubscriptionType}
+      <View style={styles.container}>
+        <Text style={{ fontSize: 23, fontFamily: "Inter-Bold", color: "red" }}>
+          There are no posts currently between {user?.user?.SubscriptionType}{" "}
+          Subscription
         </Text>
       </View>
     );

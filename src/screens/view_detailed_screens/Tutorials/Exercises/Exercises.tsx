@@ -17,6 +17,8 @@ import { useGetAccessTokenQuery } from "reducers/authReducer";
 import CustomError from "components/CustomError";
 import { ScrollView } from "react-native-gesture-handler";
 import SearchBar from "components/SearchBar";
+import { FlashList } from "@shopify/flash-list";
+
 import HTTP_ERROR from "utils/enums/ERROR_CODES";
 
 const Exercises = () => {
@@ -124,18 +126,16 @@ const Exercises = () => {
       <View>
         <ScrollView horizontal={true}>{renderTargetMuscles}</ScrollView>
       </View>
-
-      <FlatList
+      <FlashList
         onScrollEndDrag={() => Keyboard.dismiss()}
         onScrollBeginDrag={() => Keyboard.dismiss()}
         key="exercises_"
+        data={queryExercises}
         numColumns={2}
         alwaysBounceVertical={true}
-        data={queryExercises}
-        initialNumToRender={5}
-        maxToRenderPerBatch={5}
-        renderItem={({ item }) => <ExercisesLists {...item} />}
         keyExtractor={(item: IExercises) => item?.ExerciseID?.toString()}
+        renderItem={({ item }) => <ExercisesLists {...item} />}
+        estimatedItemSize={50}
       />
     </View>
   );

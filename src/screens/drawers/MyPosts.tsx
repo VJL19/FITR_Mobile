@@ -74,9 +74,7 @@ const MyPosts = () => {
   if (data?.result.length === 0) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text
-          style={{ fontSize: 23, fontWeight: "bold", fontFamily: "Inter-Bold" }}
-        >
+        <Text style={{ fontSize: 24, fontFamily: "Inter-Bold" }}>
           What's on your mind? {user?.user?.FirstName}
         </Text>
         <FloatingActionButton handlePress={handlePress} />

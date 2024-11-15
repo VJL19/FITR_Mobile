@@ -35,5 +35,4 @@ yarn-error.*
 # typescript
 *.tsbuildinfo
 
-
-fitrstorage-firebase-adminsdk-1g4vy-5df06a3744
+*.eas

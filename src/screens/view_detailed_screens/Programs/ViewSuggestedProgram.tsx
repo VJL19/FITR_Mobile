@@ -41,11 +41,12 @@ export default ViewSuggestedProgram;
 const styles = StyleSheet.create({
   container: {
     flex: 0.95,
+    padding: 25,
     justifyContent: "space-between",
   },
   title: {
     fontSize: 25,
-    fontWeight: "bold",
+    fontFamily: "Inter-Bold",
   },
   editor: {
     flexGrow: 1,

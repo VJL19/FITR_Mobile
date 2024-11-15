@@ -170,7 +170,7 @@ const ContactInformation = () => {
           name="Height"
         />
         <DisplayFormError errors={errors.Height} />
-        <Text style={styles.labelStyle}>Weight in cm</Text>
+        <Text style={styles.labelStyle}>Weight in kg</Text>
         <Controller
           control={control}
           render={({ field: { onChange, onBlur, value } }) => (

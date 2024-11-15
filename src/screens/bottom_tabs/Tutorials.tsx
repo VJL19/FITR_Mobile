@@ -4,6 +4,7 @@ import {
   Text,
   TouchableNativeFeedback,
   View,
+  Image,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import LoadingIndicator from "components/LoadingIndicator";
@@ -11,7 +12,6 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { useNavigation } from "@react-navigation/native";
 import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
-import { Image } from "react-native";
 import gym_equipLogo from "assets/equipment.jpg";
 import workout_logo from "assets/workout.jpg";
 import exercise_logo from "assets/exercises.jpg";
@@ -31,6 +31,8 @@ const Tutorials = () => {
     refetch();
   }, []);
 
+  const blurhash =
+    "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
   if (isFetching || isUninitialized) {
     return <LoadingIndicator />;
   }

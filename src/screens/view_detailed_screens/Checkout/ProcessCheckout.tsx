@@ -8,16 +8,24 @@ import {
 } from "@react-navigation/native";
 import { DetailedRootStackNavigatorsParamList } from "utils/types/detailed_screens/DetailedRootStackNavigators";
 import WebView from "react-native-webview";
-import { useSelector } from "react-redux";
-import { RootState } from "store/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "store/store";
 import loadConfig from "global/config";
-import { useAddSubscriptionMutation } from "reducers/subscriptionReducer";
+import {
+  setIsEmailVerified,
+  setOnlinePaymentPayload,
+  useAddSubscriptionMutation,
+} from "reducers/subscriptionReducer";
 import { RootStackNavigationProp } from "utils/types/navigators/RootStackNavigators";
 import DisplayAlert from "components/CustomAlert";
 import {
   useExpireCheckoutSessionMutation,
   useRetrieveCheckoutSessionMutation,
 } from "reducers/paymongoReducer";
+import {
+  setOTPToken,
+  useSendEmailPaymentVerificationMutation,
+} from "reducers/authReducer";
 const config = loadConfig();
 const ProcessCheckout = () => {
   const {
@@ -26,6 +34,7 @@ const ProcessCheckout = () => {
     result,
     checkout_url,
     clientKey,
+    userPaymentEmail,
     message,
     checkOutStatus,
     createPayment,
@@ -57,6 +66,12 @@ const ProcessCheckout = () => {
   const [retrieveCheckout, { data: sessionData, status: retrieveStatus }] =
     useRetrieveCheckoutSessionMutation();
 
+  const dispatch: AppDispatch = useDispatch();
+
+  const [
+    sendOTPEmail,
+    { data: emailCode, status: emailStat, error: emailErr },
+  ] = useSendEmailPaymentVerificationMutation();
   useEffect(() => {
     if (url !== "") {
       //for success transac
@@ -70,6 +85,7 @@ const ProcessCheckout = () => {
         console.log("current url in use effect", url);
         retrieveCheckout(checkOutId);
       }
+      dispatch(setIsEmailVerified(false));
     }
   }, [url]);
 
@@ -136,6 +152,7 @@ const ProcessCheckout = () => {
 
   useEffect(() => {
     if (sendPaymentStat === "fulfilled") {
+      dispatch(setIsEmailVerified(false));
       const resetAction = CommonActions.reset({
         index: 0,
         routes: [{ name: "DashboardScreen" }],
@@ -156,6 +173,7 @@ const ProcessCheckout = () => {
 
             onPress: async () => {
               expireSession(checkOutId);
+              dispatch(setIsEmailVerified(false));
             },
           },
         ]

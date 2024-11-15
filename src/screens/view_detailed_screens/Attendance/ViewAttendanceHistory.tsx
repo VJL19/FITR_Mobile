@@ -99,13 +99,22 @@ const ViewAttendanceHistory = () => {
           placeholder="Enter attendance date"
         />
         <DisplayFormError errors={errors.attendanceDate} />
-        <Text style={styles.labelStyle}>
-          Selected Date: {getValues("attendanceDate")}
+        <Text style={styles.text}>
+          Selected Date:{" "}
+          <Text style={styles.labelStyle}>{getValues("attendanceDate")}</Text>
         </Text>
         <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
         >
-          <Text>Your Attendance history for this selected date is empty!</Text>
+          <Text
+            style={{ fontSize: 24, fontFamily: "Inter-Bold", color: "red" }}
+          >
+            Your Attendance history for this selected date is empty!
+          </Text>
         </View>
       </React.Fragment>
     );
@@ -123,8 +132,9 @@ const ViewAttendanceHistory = () => {
         placeholder="Enter attendance date"
       />
       <DisplayFormError errors={errors.attendanceDate} />
-      <Text style={styles.labelStyle}>
-        Selected Date: {getValues("attendanceDate")}
+      <Text style={styles.text}>
+        Selected Date:{" "}
+        <Text style={styles.labelStyle}>{getValues("attendanceDate")}</Text>
       </Text>
       <FlatList
         alwaysBounceVertical={true}
@@ -140,7 +150,14 @@ const ViewAttendanceHistory = () => {
 export default ViewAttendanceHistory;
 
 const styles = StyleSheet.create({
+  text: {
+    fontSize: 20,
+
+    fontFamily: "Inter-Regular",
+  },
   labelStyle: {
     fontSize: 20,
+
+    fontFamily: "Inter-Bold",
   },
 });
